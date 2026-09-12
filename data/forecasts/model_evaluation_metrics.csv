@@ -1,0 +1,7 @@
+commodity,ensemble_mae,ensemble_rmse,ensemble_mape,prophet_mape,sarimax_mape
+Beans,1217.31,1501.94,27.02,15.19,38.84
+Groundnuts,1459.32,1858.02,33.36,27.37,39.35
+Maize,302.79,342.76,37.63,45.48,29.79
+Rice,786.32,877.58,21.21,32.34,10.07
+Soya beans,654.23,698.75,14.81,25.36,4.27
+Tomatoes,676.05,689.27,49.18,51.13,47.23

@@ -1,0 +1,25 @@
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Python cache & bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+
+# System & IDE files
+.DS_Store
+Thumbs.db
+*.metadata.json
+.vscode/
+.idea/
+
+# Large raw datasets (raw downloads are re-fetchable via data_ingest/)
+data/raw/*.csv
+!data/raw/.gitkeep
+
+# Jupyter checkpoints
+*.ipynb_checkpoints
+

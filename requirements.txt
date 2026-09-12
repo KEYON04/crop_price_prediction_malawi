@@ -1,0 +1,7 @@
+streamlit
+pandas
+pyarrow
+statsmodels
+prophet
+plotly
+requests
