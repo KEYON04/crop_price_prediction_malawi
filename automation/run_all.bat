@@ -8,7 +8,7 @@ if exist ".venv\Scripts\python.exe" (
 )
 
 echo ============================================================
-echo Starting Crop Price Data & Indicator Pipeline (Northern Region)
+echo Starting Crop Price Data & Indicator Pipeline (Nationwide All Regions)
 echo Using Python: %PYTHON_CMD%
 echo ============================================================
 

@@ -37,6 +37,10 @@ def fit_prophet_model(df_crop, horizon_months=6, regressor_cols=None):
     df_p.rename(columns={'date': 'ds', 'price': 'y'}, inplace=True)
     df_p = df_p.sort_values('ds').reset_index(drop=True)
     
+    avail_regressors = [c for c in regressor_cols if c in df_p.columns]
+    for r in avail_regressors:
+        df_p[r] = df_p[r].bfill().ffill().fillna(0)
+    
     # Train/validation split: last 6 months for evaluation
     val_len = min(6, max(2, int(len(df_p) * 0.1)))
     train_df = df_p.iloc[:-val_len].copy()
@@ -50,7 +54,6 @@ def fit_prophet_model(df_crop, horizon_months=6, regressor_cols=None):
         interval_width=0.95
     )
     
-    avail_regressors = [c for c in regressor_cols if c in df_p.columns]
     for r in avail_regressors:
         m.add_regressor(r)
         
@@ -96,6 +99,9 @@ def fit_prophet_model(df_crop, horizon_months=6, regressor_cols=None):
             df_future[r] = last_row[r]
             
     full_future_df = pd.concat([df_p[['ds'] + avail_regressors], df_future], ignore_index=True)
+    for r in avail_regressors:
+        full_future_df[r] = full_future_df[r].bfill().ffill().fillna(0)
+        
     full_fc = m_full.predict(full_future_df)
     
     out_df = full_fc[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].tail(horizon_months).copy()
@@ -108,8 +114,11 @@ def fit_prophet_model(df_crop, horizon_months=6, regressor_cols=None):
     
     # 80% interval approximation
     spread_95 = (out_df['price_upper_95'] - out_df['price_lower_95']) / (2 * 1.96)
-    out_df['price_lower_80'] = out_df['price_pred'] - 1.28 * spread_95
-    out_df['price_upper_80'] = out_df['price_pred'] + 1.28 * spread_95
+    out_df['price_lower_80'] = np.maximum(0, out_df['price_pred'] - 1.28 * spread_95)
+    out_df['price_upper_80'] = np.maximum(0, out_df['price_pred'] + 1.28 * spread_95)
+    out_df['price_pred'] = np.maximum(0, out_df['price_pred'])
+    out_df['price_lower_95'] = np.maximum(0, out_df['price_lower_95'])
+    out_df['price_upper_95'] = np.maximum(0, out_df['price_upper_95'])
     out_df['model'] = 'Prophet'
     
     return out_df, metrics
@@ -123,6 +132,8 @@ def fit_sarimax_model(df_crop, horizon_months=6, regressor_cols=None):
         
     df_s = df_crop.sort_values('date').reset_index(drop=True)
     avail_regressors = [c for c in regressor_cols if c in df_s.columns]
+    for r in avail_regressors:
+        df_s[r] = df_s[r].bfill().ffill().fillna(0)
     
     y = df_s['price'].astype(float)
     X = df_s[avail_regressors].astype(float) if avail_regressors else None
@@ -210,7 +221,6 @@ def fit_ensemble_model(df_crop, horizon_months=6):
         print(f"Warning: SARIMAX fitting failed ({e})")
         
     if prophet_df is not None and sarimax_df is not None:
-        # 50/50 blend of predictions and intervals
         ensemble_df = prophet_df.copy()
         for col in ['price_pred', 'price_lower_80', 'price_upper_80', 'price_lower_95', 'price_upper_95']:
             ensemble_df[col] = (prophet_df[col].values + sarimax_df[col].values) / 2.0

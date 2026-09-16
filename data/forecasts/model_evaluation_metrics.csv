@@ -1,7 +1,19 @@
-commodity,ensemble_mae,ensemble_rmse,ensemble_mape,prophet_mape,sarimax_mape
-Beans,1217.31,1501.94,27.02,15.19,38.84
-Groundnuts,1459.32,1858.02,33.36,27.37,39.35
-Maize,302.79,342.76,37.63,45.48,29.79
-Rice,786.32,877.58,21.21,32.34,10.07
-Soya beans,654.23,698.75,14.81,25.36,4.27
-Tomatoes,676.05,689.27,49.18,51.13,47.23
+region,commodity,ensemble_mae,ensemble_rmse,ensemble_mape,prophet_mape,sarimax_mape
+Central Region,Beans,1552.01,1905.72,40.78,34.06,47.51
+Central Region,Groundnuts,1679.47,2122.53,33.73,28.24,39.21
+Central Region,Maize,261.73,312.93,28.36,38.79,17.92
+Central Region,Rice,650.33,693.25,15.98,28.78,3.18
+Central Region,Soya beans,586.63,748.0,26.43,27.62,25.24
+Central Region,Tomatoes,1240.32,1623.28,51.55,57.68,45.43
+Northern Region,Beans,1407.06,1699.4,30.83,16.4,45.26
+Northern Region,Groundnuts,1561.04,1981.43,35.62,32.66,38.59
+Northern Region,Maize,232.67,263.02,25.65,30.77,20.53
+Northern Region,Rice,557.31,620.88,13.49,22.59,4.39
+Northern Region,Soya beans,1121.58,1470.68,25.21,25.14,25.29
+Northern Region,Tomatoes,696.84,713.88,50.7,54.35,47.05
+Southern Region,Beans,1008.56,1215.74,20.16,17.29,23.02
+Southern Region,Groundnuts,1259.09,1487.68,22.41,14.41,30.41
+Southern Region,Maize,332.15,375.07,34.12,22.56,45.67
+Southern Region,Rice,2077.98,2149.16,56.91,90.72,23.11
+Southern Region,Soya beans,465.14,601.9,21.38,20.89,21.88
+Southern Region,Tomatoes,1150.61,1333.21,47.42,53.71,41.14
