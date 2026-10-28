@@ -1,16 +1,16 @@
 commodity,origin_region,destination_region,origin_price_mwk,destination_price_mwk,gross_spread_mwk,pct_spread,freight_cost_mwk,net_margin_mwk,net_roi_pct,status,badge,action_summary
-Maize,Central Region,Northern Region,750.0,755.4,5.4,0.7,140.0,-134.6,-15.1,UNPROFITABLE,NO ARBITRAGE,Regional price difference (5 MWK/kg) is insufficient to offset transport costs (140 MWK/kg).
-Maize,Central Region,Southern Region,750.0,855.0,105.0,14.0,140.0,-35.0,-3.9,UNPROFITABLE,NO ARBITRAGE,Regional price difference (105 MWK/kg) is insufficient to offset transport costs (140 MWK/kg).
-Maize,Northern Region,Southern Region,755.4,855.0,99.6,13.2,140.0,-40.4,-4.5,UNPROFITABLE,NO ARBITRAGE,Regional price difference (100 MWK/kg) is insufficient to offset transport costs (140 MWK/kg).
-Beans,Central Region,Northern Region,4000.0,4000.0,0.0,0.0,140.0,-140.0,-3.4,UNPROFITABLE,NO ARBITRAGE,Regional price difference (0 MWK/kg) is insufficient to offset transport costs (140 MWK/kg).
-Beans,Central Region,Southern Region,4000.0,4750.0,750.0,18.8,140.0,610.0,14.7,VIABLE ARBITRAGE,TRADE OPPORTUNITY,"Buy in Central (4,000 MWK), ship to Southern (4,750 MWK). Estimated net profit: 610 MWK/kg (+14.7% ROI)."
-Beans,Northern Region,Southern Region,4000.0,4750.0,750.0,18.8,140.0,610.0,14.7,VIABLE ARBITRAGE,TRADE OPPORTUNITY,"Buy in Northern (4,000 MWK), ship to Southern (4,750 MWK). Estimated net profit: 610 MWK/kg (+14.7% ROI)."
-Rice,Northern Region,Central Region,3675.0,3900.0,225.0,6.1,140.0,85.0,2.2,MARGINAL SPREAD,MARGINAL,Spread (225 MWK/kg) marginally covers freight (140 MWK/kg). Low safety buffer for transport delays.
-Rice,Southern Region,Central Region,3500.0,3900.0,400.0,11.4,140.0,260.0,7.1,MARGINAL SPREAD,MARGINAL,Spread (400 MWK/kg) marginally covers freight (140 MWK/kg). Low safety buffer for transport delays.
-Rice,Southern Region,Northern Region,3500.0,3675.0,175.0,5.0,140.0,35.0,1.0,MARGINAL SPREAD,MARGINAL,Spread (175 MWK/kg) marginally covers freight (140 MWK/kg). Low safety buffer for transport delays.
-Groundnuts,Northern Region,Central Region,3500.0,4000.0,500.0,14.3,140.0,360.0,9.9,MARGINAL SPREAD,MARGINAL,Spread (500 MWK/kg) marginally covers freight (140 MWK/kg). Low safety buffer for transport delays.
-Groundnuts,Central Region,Southern Region,4000.0,4500.0,500.0,12.5,140.0,360.0,8.7,MARGINAL SPREAD,MARGINAL,Spread (500 MWK/kg) marginally covers freight (140 MWK/kg). Low safety buffer for transport delays.
-Groundnuts,Northern Region,Southern Region,3500.0,4500.0,1000.0,28.6,140.0,860.0,23.6,VIABLE ARBITRAGE,TRADE OPPORTUNITY,"Buy in Northern (3,500 MWK), ship to Southern (4,500 MWK). Estimated net profit: 860 MWK/kg (+23.6% ROI)."
-Soya beans,Central Region,Northern Region,2000.0,4500.0,2500.0,125.0,140.0,2360.0,110.3,VIABLE ARBITRAGE,TRADE OPPORTUNITY,"Buy in Central (2,000 MWK), ship to Northern (4,500 MWK). Estimated net profit: 2,360 MWK/kg (+110.3% ROI)."
-Soya beans,Southern Region,Central Region,1900.0,2000.0,100.0,5.3,140.0,-40.0,-2.0,UNPROFITABLE,NO ARBITRAGE,Regional price difference (100 MWK/kg) is insufficient to offset transport costs (140 MWK/kg).
-Soya beans,Southern Region,Northern Region,1900.0,4500.0,2600.0,136.8,140.0,2460.0,120.6,VIABLE ARBITRAGE,TRADE OPPORTUNITY,"Buy in Southern (1,900 MWK), ship to Northern (4,500 MWK). Estimated net profit: 2,460 MWK/kg (+120.6% ROI)."
+Maize,Central Region,Northern Region,750,755.4,5.4,0.7,140,-134.6,-15.1,UNPROFITABLE,NO ARBITRAGE,Regional price difference (5 MWK/kg) is insufficient to offset transport costs (140 MWK/kg).
+Maize,Central Region,Southern Region,750,855,105,14,140,-35,-3.9,UNPROFITABLE,NO ARBITRAGE,Regional price difference (105 MWK/kg) is insufficient to offset transport costs (140 MWK/kg).
+Maize,Northern Region,Southern Region,755.4,855,99.6,13.2,140,-40.4,-4.5,UNPROFITABLE,NO ARBITRAGE,Regional price difference (100 MWK/kg) is insufficient to offset transport costs (140 MWK/kg).
+Beans,Central Region,Northern Region,4000,4000,0,0,140,-140,-3.4,UNPROFITABLE,NO ARBITRAGE,Regional price difference (0 MWK/kg) is insufficient to offset transport costs (140 MWK/kg).
+Beans,Central Region,Southern Region,4000,4750,750,18.8,140,610,14.7,VIABLE ARBITRAGE,TRADE OPPORTUNITY,"Buy in Central (4,000 MWK), ship to Southern (4,750 MWK). Estimated net profit: 610 MWK/kg (+14.7% ROI)."
+Beans,Northern Region,Southern Region,4000,4750,750,18.8,140,610,14.7,VIABLE ARBITRAGE,TRADE OPPORTUNITY,"Buy in Northern (4,000 MWK), ship to Southern (4,750 MWK). Estimated net profit: 610 MWK/kg (+14.7% ROI)."
+Rice,Northern Region,Central Region,3675,3900,225,6.1,140,85,2.2,MARGINAL SPREAD,MARGINAL,Spread (225 MWK/kg) marginally covers freight (140 MWK/kg). Low safety buffer for transport delays.
+Rice,Southern Region,Central Region,3500,3900,400,11.4,140,260,7.1,MARGINAL SPREAD,MARGINAL,Spread (400 MWK/kg) marginally covers freight (140 MWK/kg). Low safety buffer for transport delays.
+Rice,Southern Region,Northern Region,3500,3675,175,5,140,35,1,MARGINAL SPREAD,MARGINAL,Spread (175 MWK/kg) marginally covers freight (140 MWK/kg). Low safety buffer for transport delays.
+Groundnuts,Northern Region,Central Region,3500,4000,500,14.3,140,360,9.9,MARGINAL SPREAD,MARGINAL,Spread (500 MWK/kg) marginally covers freight (140 MWK/kg). Low safety buffer for transport delays.
+Groundnuts,Central Region,Southern Region,4000,4500,500,12.5,140,360,8.7,MARGINAL SPREAD,MARGINAL,Spread (500 MWK/kg) marginally covers freight (140 MWK/kg). Low safety buffer for transport delays.
+Groundnuts,Northern Region,Southern Region,3500,4500,1000,28.6,140,860,23.6,VIABLE ARBITRAGE,TRADE OPPORTUNITY,"Buy in Northern (3,500 MWK), ship to Southern (4,500 MWK). Estimated net profit: 860 MWK/kg (+23.6% ROI)."
+Soya beans,Central Region,Northern Region,2000,4500,2500,125,140,2360,110.3,VIABLE ARBITRAGE,TRADE OPPORTUNITY,"Buy in Central (2,000 MWK), ship to Northern (4,500 MWK). Estimated net profit: 2,360 MWK/kg (+110.3% ROI)."
+Soya beans,Southern Region,Central Region,1900,2000,100,5.3,140,-40,-2,UNPROFITABLE,NO ARBITRAGE,Regional price difference (100 MWK/kg) is insufficient to offset transport costs (140 MWK/kg).
+Soya beans,Southern Region,Northern Region,1900,4500,2600,136.8,140,2460,120.6,VIABLE ARBITRAGE,TRADE OPPORTUNITY,"Buy in Southern (1,900 MWK), ship to Northern (4,500 MWK). Estimated net profit: 2,460 MWK/kg (+120.6% ROI)."
