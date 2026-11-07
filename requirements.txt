@@ -1,5 +1,11 @@
-streamlit
+# Web Backend & API
+django>=5.0
+djangorestframework
+django-cors-headers
+
+# Data Science & Forecasting
 pandas
+numpy
 pyarrow
 statsmodels
 prophet

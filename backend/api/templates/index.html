@@ -1,0 +1,2109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriPrice Malawi | National Crop Price & Market Intelligence System</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                            950: '#022c22',
+                        },
+                        amber: {
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
+                        heading: ['Outfit', 'Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Leaflet Map CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .font-heading {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #022c22 0%, #064e3b 50%, #047857 100%);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+        }
+
+        .auth-backdrop {
+            background: linear-gradient(rgba(2, 44, 34, 0.85), rgba(6, 78, 59, 0.9)), url('/static/images/corn_field.jpg') center/cover no-repeat;
+        }
+
+        .badge-hold {
+            background-color: #dcfce7;
+            color: #15803d;
+            border: 1px solid #86efac;
+        }
+
+        .badge-sell {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fca5a5;
+        }
+
+        .badge-monitor {
+            background-color: #fef3c7;
+            color: #b45309;
+            border: 1px solid #fcd34d;
+        }
+
+        .badge-opportunity {
+            background-color: #dcfce7;
+            color: #166534;
+            font-weight: 700;
+        }
+
+        .badge-moderate {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-marginal {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-unprofitable {
+            background-color: #f1f5f9;
+            color: #64748b;
+        }
+
+        #malawi-map {
+            height: 520px;
+            border-radius: 14px;
+            z-index: 10;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+        }
+
+        @media print {
+            body {
+                background: white !important;
+                color: #0f172a !important;
+            }
+
+            .no-print,
+            header,
+            footer,
+            section.hero-gradient,
+            main,
+            #auth-modal-overlay {
+                display: none !important;
+            }
+
+            #brief-modal-overlay {
+                display: block !important;
+                position: static !important;
+                background: transparent !important;
+                padding: 0 !important;
+            }
+
+            #brief-modal-container {
+                max-width: 100% !important;
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .brief-page-break {
+                page-break-before: always;
+            }
+
+            .brief-avoid-break {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Brand & Official Logo -->
+            <div class="flex items-center space-x-3.5">
+                <img src="/static/images/logo.jpg" alt="AgriPrice Malawi Logo"
+                    class="w-11 h-11 object-cover rounded-xl shadow-sm border border-slate-200">
+                <div>
+                    <h1 class="font-heading font-extrabold text-xl text-slate-900 tracking-tight leading-none">
+                        AgriPrice <span class="text-emerald-700">Malawi</span>
+                    </h1>
+                    <p class="text-[11px] text-slate-500 font-medium mt-0.5">
+                        National Agricultural Market Intelligence System
+                    </p>
+                </div>
+            </div>
+
+            <!-- Navigation Controls & User Bar -->
+            <div class="flex items-center space-x-3">
+                <!-- User Sign In / Subscription Status Pill -->
+                <div id="user-nav-container">
+                    <button onclick="openAuthModal('signup')" id="btn-auth-trigger"
+                        class="inline-flex items-center space-x-1.5 text-xs font-bold bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 px-3.5 py-2 rounded-xl transition-all shadow-xs">
+                        <i data-lucide="mail-check" class="w-4 h-4 text-emerald-700"></i>
+                        <span>Subscribe for Email Reports</span>
+                    </button>
+                </div>
+
+                <!-- Supervisor Brief Button -->
+                <button onclick="openSupervisorBriefModal()"
+                    class="no-print inline-flex items-center space-x-2 bg-emerald-800 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm transition-all hover:scale-102">
+                    <i data-lucide="file-text" class="w-4 h-4 text-emerald-300"></i>
+                    <span>Official Supervisor Brief</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Hero Banner -->
+    <section class="hero-gradient text-white pt-8 pb-10 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="max-w-3xl mb-6">
+                <span
+                    class="inline-flex items-center space-x-2 text-xs font-bold tracking-wider uppercase bg-emerald-950/70 text-emerald-300 px-3.5 py-1 rounded-full mb-3 border border-emerald-800/80">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                    <span>District Crop Decision & Arbitrage Platform</span>
+                </span>
+                <h1
+                    class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-2 leading-tight">
+                    Malawi Agricultural Intelligence
+                </h1>
+                <p class="text-emerald-100 text-xs sm:text-sm leading-relaxed font-normal">
+                    Real-time market tracking, price forecasts, and sell vs. hold guidance for <strong>Maize
+                        (Chimanga)</strong>, <strong>Rice (Mpunga)</strong>, and <strong>Beans (Nyemba)</strong> across
+                    all 28 districts of Malawi.
+                </p>
+            </div>
+
+            <!-- Global Filter Toolbar -->
+            <div
+                class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 shadow-xl grid grid-cols-1 md:grid-cols-4 gap-4 items-center text-slate-800">
+                <!-- District Selection -->
+                <div class="bg-white rounded-xl p-2.5 shadow-sm border border-slate-200">
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5 inline mr-1 text-emerald-600"></i>Target District
+                        (Boma)
+                    </label>
+                    <select id="district-select" onchange="onDistrictChange()"
+                        class="w-full text-sm font-bold text-slate-900 bg-transparent focus:outline-none">
+                        <optgroup label="Central Region (9 Districts)">
+                            <option value="lilongwe" selected>Lilongwe (Capital Hub)</option>
+                            <option value="kasungu">Kasungu (Commercial Basin)</option>
+                            <option value="dedza">Dedza (Highland Bean Center)</option>
+                            <option value="dowa">Dowa (Mponela Grain Depot)</option>
+                            <option value="mchinji">Mchinji (Zambia Border)</option>
+                            <option value="nkhotakota">Nkhotakota (Lakeshore Rice)</option>
+                            <option value="ntcheu">Ntcheu (M1 Corridor)</option>
+                            <option value="ntchisi">Ntchisi (Highland Agricultural)</option>
+                            <option value="salima">Salima (Chipoka / Lake Depot)</option>
+                        </optgroup>
+                        <optgroup label="Northern Region (6 Districts)">
+                            <option value="mzimba">Mzimba (Jenda / Grain Basin)</option>
+                            <option value="karonga">Karonga (Songwe / Rice Hub)</option>
+                            <option value="chitipa">Chitipa (Northern Highlands)</option>
+                            <option value="rumphi">Rumphi (Agricultural Valley)</option>
+                            <option value="nkhata_bay">Nkhata Bay (Lake Port Depot)</option>
+                            <option value="likoma">Likoma (Island Market)</option>
+                        </optgroup>
+                        <optgroup label="Southern Region (13 Districts)">
+                            <option value="blantyre">Blantyre (Commercial Premium Hub)</option>
+                            <option value="zomba">Zomba (Chinamwali Basin)</option>
+                            <option value="mangochi">Mangochi (Lakeshore Hub)</option>
+                            <option value="balaka">Balaka (Transport Junction)</option>
+                            <option value="machinga">Machinga (Liwonde Depot)</option>
+                            <option value="mulanje">Mulanje (Tea Belt / Border)</option>
+                            <option value="thyolo">Thyolo (Luchenza Hub)</option>
+                            <option value="chiradzulu">Chiradzulu (Peri-Urban)</option>
+                            <option value="chikwawa">Chikwawa (Lower Shire Valley)</option>
+                            <option value="nsanje">Nsanje (Southern Border)</option>
+                            <option value="mwanza">Mwanza (Mozambique Transit)</option>
+                            <option value="neno">Neno (Highland Depot)</option>
+                            <option value="phalombe">Phalombe (Chilwa Basin)</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <!-- Commodity Selection Pills (With Photos & Chichewa Names, No Emojis) -->
+                <div class="bg-white rounded-xl p-2.5 shadow-sm border border-slate-200 md:col-span-2">
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                        <i data-lucide="sprout" class="w-3.5 h-3.5 inline mr-1 text-emerald-600"></i>Commodity (Sankhani
+                        Mbewu)
+                    </label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="setCommodity('Maize')" id="btn-crop-Maize"
+                            class="crop-btn flex items-center justify-center space-x-2 py-1.5 px-3 rounded-lg text-xs font-bold transition-all bg-emerald-700 text-white shadow-sm border border-emerald-800">
+                            <img src="/static/images/maize.jpg" alt="Maize" class="w-5 h-5 rounded-full object-cover">
+                            <span>Maize <span class="text-[10px] opacity-80">(Chimanga)</span></span>
+                        </button>
+                        <button onclick="setCommodity('Rice')" id="btn-crop-Rice"
+                            class="crop-btn flex items-center justify-center space-x-2 py-1.5 px-3 rounded-lg text-xs font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200">
+                            <img src="/static/images/rice.jpg" alt="Rice" class="w-5 h-5 rounded-full object-cover">
+                            <span>Rice <span class="text-[10px] opacity-80">(Mpunga)</span></span>
+                        </button>
+                        <button onclick="setCommodity('Beans')" id="btn-crop-Beans"
+                            class="crop-btn flex items-center justify-center space-x-2 py-1.5 px-3 rounded-lg text-xs font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200">
+                            <img src="/static/images/beans.jpg" alt="Beans" class="w-5 h-5 rounded-full object-cover">
+                            <span>Beans <span class="text-[10px] opacity-80">(Nyemba)</span></span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Forecast Horizon Toggle -->
+                <div class="bg-white rounded-xl p-2.5 shadow-sm border border-slate-200">
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                        <i data-lucide="clock" class="w-3.5 h-3.5 inline mr-1 text-emerald-600"></i>Forecast Period
+                        (Nthawi)
+                    </label>
+                    <div class="grid grid-cols-2 gap-1.5 bg-slate-100 p-1 rounded-lg">
+                        <button onclick="setHorizon('weeks')" id="btn-horizon-weeks"
+                            class="horizon-btn py-1 text-xs font-bold rounded-md transition-all bg-white text-emerald-800 shadow-xs">
+                            Weeks (1-4w)
+                        </button>
+                        <button onclick="setHorizon('months')" id="btn-horizon-months"
+                            class="horizon-btn py-1 text-xs font-bold rounded-md transition-all text-slate-600 hover:text-slate-900">
+                            Months (1-6m)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Prominent Spot Price Ground Calibration Bar -->
+    <div class="bg-white border-b border-slate-200 shadow-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                <div class="flex items-center space-x-3">
+                    <div
+                        class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-200">
+                        <i data-lucide="sliders" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs font-extrabold uppercase tracking-wider text-slate-900">Spot Price
+                                Calibration</span>
+                            <span class="text-xs font-semibold text-emerald-700">(Sinthani Mtengo wa Lero m'Boma)</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500">
+                            Enter today's field market price to immediately update all forecasts, storage economics, and
+                            trade corridors.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2">
+                    <div
+                        class="flex items-center bg-slate-100 rounded-lg p-1 border border-slate-200 text-xs font-medium">
+                        <span class="px-2 text-slate-500">Benchmark: <strong class="text-slate-900"
+                                id="calib-baseline-display">-- MWK</strong></span>
+                    </div>
+
+                    <div class="flex items-center space-x-1.5">
+                        <div class="relative">
+                            <input type="number" id="calib-spot-input" placeholder="e.g. 780"
+                                class="w-28 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-600 bg-white">
+                            <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 font-bold">MWK</span>
+                        </div>
+
+                        <button onclick="adjustCalibration(-50)"
+                            class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-2 py-1.5 rounded-lg border border-slate-200 transition-colors">-50</button>
+                        <button onclick="adjustCalibration(50)"
+                            class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-2 py-1.5 rounded-lg border border-slate-200 transition-colors">+50</button>
+
+                        <button onclick="applyCalibration()"
+                            class="inline-flex items-center space-x-1 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold px-3.5 py-1.5 rounded-lg transition-colors shadow-xs">
+                            <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                            <span>Calibrate</span>
+                        </button>
+                        <button onclick="resetCalibration()" id="calib-reset-btn"
+                            class="hidden bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-colors">
+                            Reset
+                        </button>
+                    </div>
+
+                    <span id="calib-status-badge"
+                        class="hidden text-[11px] font-bold px-2.5 py-1 rounded-md bg-amber-100 text-amber-900 border border-amber-200">
+                        Calibrated Active
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Body -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 space-y-8">
+
+        <!-- Top District Snapshot Banner (Simplified English & Chichewa) -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <!-- 1. Spot Price -->
+            <div class="glass-card rounded-2xl p-5 shadow-sm border border-slate-200 flex items-center space-x-4">
+                <div
+                    class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-100">
+                    <i data-lucide="tag" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                        Current Spot Benchmark
+                    </p>
+                    <p class="text-[10px] text-emerald-700 font-semibold mb-0.5">Mtengo wa Pano m'Boma</p>
+                    <h3 class="text-2xl font-black text-slate-900 font-heading"><span id="stat-current-price">--</span>
+                        <span class="text-xs font-semibold text-slate-500">MWK/kg</span>
+                    </h3>
+                    <p class="text-[11px] text-slate-500 mt-0.5"><span id="stat-district-name">Lilongwe</span> • <span
+                            id="stat-region-name">Central Region</span></p>
+                </div>
+            </div>
+
+            <!-- 2. Bag Price -->
+            <div class="glass-card rounded-2xl p-5 shadow-sm border border-slate-200 flex items-center space-x-4">
+                <div
+                    class="w-12 h-12 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center border border-purple-100">
+                    <i data-lucide="package" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                        Per 50kg Bag (Thumba)
+                    </p>
+                    <p class="text-[10px] text-purple-700 font-semibold mb-0.5">Mtengo wa Thumba Lathunthu</p>
+                    <h3 class="text-2xl font-black text-slate-900 font-heading"><span id="stat-bag-price">--</span>
+                        <span class="text-xs font-semibold text-slate-500">MWK</span>
+                    </h3>
+                    <p class="text-[11px] text-slate-500 mt-0.5">Standard farmer trading unit</p>
+                </div>
+            </div>
+
+            <!-- 3. Short Term Forecast -->
+            <div class="glass-card rounded-2xl p-5 shadow-sm border border-slate-200 flex items-center space-x-4">
+                <div
+                    class="w-12 h-12 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center border border-blue-100">
+                    <i data-lucide="trending-up" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                        Short-Term (4 Weeks)
+                    </p>
+                    <p class="text-[10px] text-blue-700 font-semibold mb-0.5">Masabata Anayi Akubwera</p>
+                    <h3 class="text-2xl font-black text-slate-900 font-heading"><span id="stat-4w-price">--</span> <span
+                            class="text-xs font-semibold text-slate-500">MWK</span></h3>
+                    <p class="text-[11px] font-bold" id="stat-4w-change">--</p>
+                </div>
+            </div>
+
+            <!-- 4. Seasonal Peak -->
+            <div class="glass-card rounded-2xl p-5 shadow-sm border border-slate-200 flex items-center space-x-4">
+                <div
+                    class="w-12 h-12 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center border border-amber-100">
+                    <i data-lucide="calendar" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                        Seasonal Peak (12 Weeks)
+                    </p>
+                    <p class="text-[10px] text-amber-700 font-semibold mb-0.5">Mtengo wa M'chisanu</p>
+                    <h3 class="text-2xl font-black text-slate-900 font-heading"><span id="stat-12w-price">--</span>
+                        <span class="text-xs font-semibold text-slate-500">MWK</span>
+                    </h3>
+                    <p class="text-[11px] font-bold" id="stat-12w-change">--</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 1 & 2: Forecast Chart & Decision Engine Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+            <!-- Left 7 Cols: Interactive Price Forecast Engine -->
+            <div class="lg:col-span-7 space-y-6">
+                <div class="glass-card rounded-2xl p-6 shadow-sm border border-slate-200">
+                    <div
+                        class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 pb-3 border-b border-slate-100 gap-2">
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                <h2 class="text-xl font-bold text-slate-900 font-heading" id="chart-main-title">
+                                    Price Trajectory: Maize in Lilongwe
+                                </h2>
+                                <span class="bg-slate-100 text-slate-700 text-xs px-2.5 py-0.5 rounded-full font-bold"
+                                    id="badge-horizon-type">Weekly (1-4w)</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-0.5">
+                                Statistical trajectory with 80% & 95% Confidence Bounds (Zolosera Zoyembekezeka)
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Chart Canvas -->
+                    <div class="relative w-full h-[320px]">
+                        <canvas id="forecastChart"></canvas>
+                    </div>
+
+                    <!-- Forecast Horizons Breakdown Cards -->
+                    <div class="mt-6 pt-4 border-t border-slate-100">
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-600">
+                                Projected Milestones & Price Bands (Mitengo Yoyembekezeka)
+                            </h4>
+                            <span class="text-[11px] text-slate-500">Simple Guide: 80% confidence interval</span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="horizon-cards-container">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right 5 Cols: Core 2 Decision Making Engine -->
+            <div class="lg:col-span-5 space-y-6">
+                <div class="glass-card rounded-2xl p-6 shadow-sm border border-slate-200 relative overflow-hidden"
+                    id="decision-card-container">
+                    <div class="flex items-center justify-between mb-3">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-500 block">Core 2:
+                                Decision Engine</span>
+                            <span class="text-xs font-semibold text-emerald-800">Kugulitsa kapena Kusunga Mbewu</span>
+                        </div>
+                        <span id="decision-risk-badge"
+                            class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">
+                            Medium Risk
+                        </span>
+                    </div>
+
+                    <!-- Main Decision Callout (English & Chichewa) -->
+                    <div class="text-center py-4 px-3 rounded-2xl mb-4" id="decision-banner-bg"
+                        style="background-color: #ecfdf5;">
+                        <span class="text-[11px] font-bold uppercase tracking-widest text-slate-600 block mb-1">
+                            Strategic Recommended Action (Uphungu wa Katswiri)
+                        </span>
+                        <div class="text-2xl sm:text-3xl font-extrabold tracking-tight font-heading mb-0.5"
+                            id="decision-badge-text">
+                            HOLD & STORE
+                        </div>
+                        <div class="text-sm font-bold text-emerald-800 mb-1" id="decision-chichewa-text">
+                            Sungani Mbewu / Musagulitse Pano
+                        </div>
+                        <p class="text-xs font-medium text-slate-600 max-w-sm mx-auto" id="decision-summary-text">
+                            Loading strategic decision metrics...
+                        </p>
+                    </div>
+
+                    <!-- Storage Economics Calculations (Clear & Plain English/Chichewa) -->
+                    <div class="space-y-3 mb-5 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Storage Economics
+                                (Phindu Posunga)</span>
+                            <span class="text-[11px] text-slate-500 font-semibold">12-Week Horizon</span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 pt-1">
+                            <div>
+                                <span class="text-[11px] text-slate-500 block">Projected Surge (Kukwera):</span>
+                                <span class="text-sm font-bold text-emerald-700" id="dec-surge-pct">+0.0%</span>
+                            </div>
+                            <div>
+                                <span class="text-[11px] text-slate-500 block">Carrying Cost (Ndalama Zosungira):</span>
+                                <span class="text-sm font-bold text-slate-600" id="dec-carrying-cost">-7.5%</span>
+                            </div>
+                            <div>
+                                <span class="text-[11px] text-slate-500 block">Net Profit ROI (% Phindu):</span>
+                                <span class="text-base font-black text-slate-900 font-heading"
+                                    id="dec-net-roi">+0.0%</span>
+                            </div>
+                            <div>
+                                <span class="text-[11px] text-slate-500 block">Net Gain (pa Thumba la 50kg):</span>
+                                <span class="text-base font-black text-emerald-700 font-heading" id="dec-bag-gain">+0
+                                    MWK</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stakeholder Specific Advisories (Clean Lucide Icons, No Emojis) -->
+                    <div class="space-y-2.5">
+                        <div class="p-3 bg-emerald-50/70 rounded-xl border border-emerald-100">
+                            <span class="text-xs font-bold text-emerald-900 flex items-center space-x-1.5 mb-1">
+                                <i data-lucide="user" class="w-3.5 h-3.5 text-emerald-700"></i>
+                                <span>Smallholder Farmers & Clubs (Alimi Aang'ono):</span>
+                            </span>
+                            <p class="text-xs text-slate-700 leading-relaxed" id="advisory-smallholder">
+                                Advisory text loading...
+                            </p>
+                        </div>
+
+                        <div class="p-3 bg-blue-50/70 rounded-xl border border-blue-100">
+                            <span class="text-xs font-bold text-blue-900 flex items-center space-x-1.5 mb-1">
+                                <i data-lucide="users" class="w-3.5 h-3.5 text-blue-700"></i>
+                                <span>Cooperatives & Aggregators (Mabungwe a Alimi):</span>
+                            </span>
+                            <p class="text-xs text-slate-700 leading-relaxed" id="advisory-coop">
+                                Advisory text loading...
+                            </p>
+                        </div>
+
+                        <div class="p-3 bg-slate-100/70 rounded-xl border border-slate-200">
+                            <span class="text-xs font-bold text-slate-900 flex items-center space-x-1.5 mb-1">
+                                <i data-lucide="building-2" class="w-3.5 h-3.5 text-slate-700"></i>
+                                <span>Institutional Buyers (ADMARC / NFRA / WFP):</span>
+                            </span>
+                            <p class="text-xs text-slate-700 leading-relaxed" id="advisory-institutional">
+                                Advisory text loading...
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Hermetic Storage Guidelines -->
+                    <div class="mt-4 pt-3 border-t border-slate-200 text-[11px] text-slate-500 space-y-1">
+                        <span class="font-bold text-slate-700 block mb-0.5">PICS Hermetic Storage Checklist (Kusunga
+                            Motetezeka):</span>
+                        <p>1. Ensure moisture is under 13.5% (Maize/Rice) or 12.0% (Beans) before bagging.</p>
+                        <p>2. Seal each of the 2 internal polyethylene liners individually with airtight twists.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Market Recommendation & Inter-District Arbitrage Engine -->
+        <div class="glass-card rounded-2xl p-6 shadow-sm border border-slate-200 space-y-6">
+            <div
+                class="flex flex-col md:flex-row md:items-center md:justify-between pb-4 border-b border-slate-200 gap-4">
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-0.5 rounded-full">Core
+                            3 Engine</span>
+                        <h2 class="text-2xl font-bold text-slate-900 font-heading">
+                            Market Recommendation: Where to Buy or Sell for Maximum Profit
+                        </h2>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-1">
+                        Cross-district trade optimizer comparing prices across all 28 districts against realistic M1 /
+                        M5 road corridor freight tariffs.
+                    </p>
+                </div>
+
+                <!-- Tonnage Simulator Control -->
+                <div class="bg-slate-100 p-2.5 rounded-xl flex items-center space-x-3 text-xs">
+                    <span class="font-bold text-slate-700 whitespace-nowrap">
+                        <i data-lucide="truck" class="w-4 h-4 inline mr-1 text-emerald-700"></i>Trade Volume:
+                    </span>
+                    <input type="range" id="tonnage-slider" min="1" max="30" value="5" step="1"
+                        oninput="onTonnageChange(this.value)" class="w-28 accent-emerald-600">
+                    <span class="font-extrabold text-emerald-800 bg-white px-2.5 py-1 rounded-md shadow-xs"
+                        id="tonnage-display">5 Metric Tons</span>
+                </div>
+            </div>
+
+            <!-- Trade Simulator Financial Summary -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-emerald-900 text-white rounded-xl">
+                <div>
+                    <span class="text-[11px] text-emerald-200 uppercase tracking-wider block">Origin Sourcing
+                        District:</span>
+                    <span class="text-lg font-bold" id="sim-origin-name">Lilongwe</span>
+                    <p class="text-xs text-emerald-300">Purchase at <strong class="text-white"
+                            id="sim-origin-price">--</strong> MWK/kg</p>
+                </div>
+                <div>
+                    <span class="text-[11px] text-emerald-200 uppercase tracking-wider block">Top Selling
+                        Destination:</span>
+                    <span class="text-lg font-bold" id="sim-best-dest-name">--</span>
+                    <p class="text-xs text-emerald-300">Selling at <strong class="text-white"
+                            id="sim-dest-price">--</strong> MWK/kg</p>
+                </div>
+                <div>
+                    <span class="text-[11px] text-emerald-200 uppercase tracking-wider block">Estimated Freight &
+                        Tariffs:</span>
+                    <span class="text-lg font-bold" id="sim-freight-total">-- MWK</span>
+                    <p class="text-xs text-emerald-300" id="sim-distance-summary">-- km transit</p>
+                </div>
+                <div>
+                    <span class="text-[11px] text-emerald-200 uppercase tracking-wider block">Simulated Net
+                        Profit:</span>
+                    <span class="text-xl font-extrabold text-emerald-300" id="sim-net-profit">-- MWK</span>
+                    <p class="text-xs font-semibold text-white" id="sim-net-roi">-- ROI</p>
+                </div>
+            </div>
+
+            <!-- Ranked Destinations Table -->
+            <div>
+                <h3
+                    class="text-sm font-bold uppercase tracking-wider text-slate-700 mb-3 flex items-center justify-between">
+                    <span>Ranked Selling Opportunities from <span id="tbl-origin-label"
+                            class="text-emerald-700">Lilongwe</span> (Top Corridors)</span>
+                    <span class="text-xs text-slate-500 font-normal">Sorted by highest Net Profit Margin per kg</span>
+                </h3>
+
+                <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                    <table class="min-w-full divide-y divide-slate-200 text-xs text-left">
+                        <thead class="bg-slate-50 text-slate-600 font-bold uppercase tracking-wider">
+                            <tr>
+                                <th class="px-4 py-3">Destination District</th>
+                                <th class="px-4 py-3">Region</th>
+                                <th class="px-4 py-3">Distance (Road)</th>
+                                <th class="px-4 py-3">Dest. Price</th>
+                                <th class="px-4 py-3">Gross Spread</th>
+                                <th class="px-4 py-3">Freight Cost</th>
+                                <th class="px-4 py-3">Net Margin / kg</th>
+                                <th class="px-4 py-3">Net ROI (%)</th>
+                                <th class="px-4 py-3">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 bg-white" id="arbitrage-tbody">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Nationwide Top Arbitrage Corridors Across Malawi (No Emojis) -->
+        <div class="glass-card rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 font-heading">
+                        Nationwide Top Arbitrage Routes (All 28 Districts)
+                    </h2>
+                    <p class="text-xs text-slate-500">
+                        The highest-margin inter-district trade corridors currently active across Malawi.
+                    </p>
+                </div>
+                <span class="bg-slate-100 text-slate-700 text-xs font-semibold px-3 py-1 rounded-full">
+                    Scanning 756 District Corridors
+                </span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="national-top-routes-grid">
+                <!-- Populated via JS -->
+            </div>
+        </div>
+
+        <!-- Section 5: Interactive Malawi District Geographic Map (Clean, No Watermarks) -->
+        <div class="glass-card rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 font-heading">
+                        Interactive Malawi District Map
+                    </h2>
+                    <p class="text-xs text-slate-500">
+                        Click any district marker to inspect local spot prices and re-run all intelligence engines.
+                    </p>
+                </div>
+                <div class="flex items-center space-x-3 text-xs">
+                    <span class="flex items-center"><span
+                            class="w-3 h-3 rounded-full bg-emerald-600 inline-block mr-1"></span> Low Price
+                        (Surplus)</span>
+                    <span class="flex items-center"><span
+                            class="w-3 h-3 rounded-full bg-blue-600 inline-block mr-1"></span> Medium Price</span>
+                    <span class="flex items-center"><span
+                            class="w-3 h-3 rounded-full bg-red-600 inline-block mr-1"></span> High Price
+                        (Deficit)</span>
+                </div>
+            </div>
+            <div id="malawi-map"></div>
+        </div>
+
+    </main>
+
+    <!-- Sign In / Sign Up Modal with corn_field.jpg Background -->
+    <div id="auth-modal-overlay"
+        class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div
+            class="auth-backdrop max-w-xl w-full rounded-3xl shadow-2xl p-6 sm:p-8 text-white border border-white/20 relative my-auto">
+            <!-- Modal Close Button -->
+            <button onclick="closeAuthModal()"
+                class="absolute top-4 right-4 text-white/70 hover:text-white p-1.5 rounded-full hover:bg-white/10 transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <!-- Modal Content Card -->
+            <div class="space-y-5">
+                <div class="flex items-center space-x-3.5 border-b border-white/15 pb-4">
+                    <img src="/static/images/logo.jpg" alt="Logo"
+                        class="w-12 h-12 rounded-2xl object-cover shadow-md border border-white/30">
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-black font-heading tracking-tight text-white leading-tight">
+                            AgriPrice Malawi
+                        </h2>
+                        <p class="text-xs text-emerald-200">
+                            Market Intelligence & Decision Network
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Mode Switcher -->
+                <div class="grid grid-cols-2 gap-2 bg-black/30 p-1 rounded-xl">
+                    <button onclick="setAuthMode('signup')" id="tab-signup"
+                        class="py-2 text-xs font-bold rounded-lg transition-all bg-emerald-600 text-white shadow-sm">
+                        Sign Up / Subscribe (Lembetsani)
+                    </button>
+                    <button onclick="setAuthMode('signin')" id="tab-signin"
+                        class="py-2 text-xs font-bold rounded-lg transition-all text-emerald-200 hover:text-white">
+                        Sign In (Lowani)
+                    </button>
+                </div>
+
+                <!-- Form -->
+                <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-3.5">
+                    <!-- Full Name -->
+                    <div id="auth-name-group">
+                        <label class="block text-xs font-semibold text-emerald-100 mb-1">
+                            Full Name (Dzina Lanu)
+                        </label>
+                        <input type="text" id="auth-name" placeholder="e.g. Kondwani Phiri"
+                            class="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-emerald-200/50 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                    </div>
+
+                    <!-- Email Address -->
+                    <div>
+                        <label class="block text-xs font-semibold text-emerald-100 mb-1">
+                            Email Address (Imelo Yanu) <span class="text-emerald-400">*</span>
+                        </label>
+                        <input type="email" id="auth-email" required placeholder="e.g. kphiri@gmail.com"
+                            class="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-emerald-200/50 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                    </div>
+
+                    <!-- Additional Details (Sign Up Only) -->
+                    <div id="auth-signup-extra" class="space-y-3.5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <!-- District -->
+                            <div>
+                                <label class="block text-xs font-semibold text-emerald-100 mb-1">
+                                    Primary District (Boma Lanu)
+                                </label>
+                                <select id="auth-district"
+                                    class="w-full text-xs font-semibold px-3 py-2.5 rounded-xl bg-emerald-950/90 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                                    <option value="Lilongwe">Lilongwe</option>
+                                    <option value="Blantyre">Blantyre</option>
+                                    <option value="Kasungu">Kasungu</option>
+                                    <option value="Dedza">Dedza</option>
+                                    <option value="Mzimba">Mzimba</option>
+                                    <option value="Karonga">Karonga</option>
+                                    <option value="Zomba">Zomba</option>
+                                    <option value="Mangochi">Mangochi</option>
+                                    <option value="Salima">Salima</option>
+                                    <option value="Dowa">Dowa</option>
+                                    <option value="Ntcheu">Ntcheu</option>
+                                </select>
+                            </div>
+
+                            <!-- Role / Stakeholder -->
+                            <div>
+                                <label class="block text-xs font-semibold text-emerald-100 mb-1">
+                                    Your Role (Ntchito Yanu)
+                                </label>
+                                <select id="auth-role"
+                                    class="w-full text-xs font-semibold px-3 py-2.5 rounded-xl bg-emerald-950/90 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                                    <option value="farmer">Smallholder Farmer (Mlimi)</option>
+                                    <option value="coop">Agricultural Cooperative</option>
+                                    <option value="trader">Grain Aggregator / Trader</option>
+                                    <option value="institutional">Supervisor / Policy / NGO</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Report Frequency Preference -->
+                        <div>
+                            <label class="block text-xs font-semibold text-emerald-100 mb-1.5">
+                                Select Email Report Frequency (Masabata kapena Mwezi)
+                            </label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <label
+                                    class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-white/10 border border-white/20 cursor-pointer hover:bg-white/20 text-center transition-all">
+                                    <input type="radio" name="report_freq" value="weekly" checked
+                                        class="accent-emerald-400 mb-1">
+                                    <span class="text-xs font-bold">Weekly</span>
+                                    <span class="text-[10px] text-emerald-300">Masabata Onse</span>
+                                </label>
+                                <label
+                                    class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-white/10 border border-white/20 cursor-pointer hover:bg-white/20 text-center transition-all">
+                                    <input type="radio" name="report_freq" value="monthly"
+                                        class="accent-emerald-400 mb-1">
+                                    <span class="text-xs font-bold">Monthly</span>
+                                    <span class="text-[10px] text-emerald-300">Mwezi Uliwonse</span>
+                                </label>
+                                <label
+                                    class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-white/10 border border-white/20 cursor-pointer hover:bg-white/20 text-center transition-all">
+                                    <input type="radio" name="report_freq" value="both" class="accent-emerald-400 mb-1">
+                                    <span class="text-xs font-bold">Both</span>
+                                    <span class="text-[10px] text-emerald-300">Masabata & Mwezi</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feedback message -->
+                    <div id="auth-status-msg" class="hidden text-xs p-3 rounded-xl"></div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" id="auth-submit-btn"
+                        class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs py-3 px-4 rounded-xl shadow-lg transition-all hover:scale-101 flex items-center justify-center space-x-2">
+                        <i data-lucide="check-circle" class="w-4 h-4"></i>
+                        <span id="auth-submit-label">Subscribe for Market Reports</span>
+                    </button>
+                </form>
+
+                <p class="text-[11px] text-emerald-200/80 text-center">
+                    Automated market reports with price forecasts and trade corridors will be sent directly to your
+                    inbox.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Official Supervisor Brief Report Modal -->
+    <div id="brief-modal-overlay"
+        class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[9999] hidden flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+        <div id="brief-modal-container"
+            class="bg-white max-w-4xl w-full rounded-2xl shadow-2xl p-6 sm:p-10 text-slate-800 border border-slate-200 relative my-auto">
+            <!-- Modal Actions Bar (hidden when printing) -->
+            <div
+                class="no-print flex items-center justify-between pb-4 mb-6 border-b border-slate-200 sticky top-0 bg-white z-20">
+                <div class="flex items-center space-x-2">
+                    <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-full">Official
+                        Briefing Document</span>
+                    <span class="text-xs text-slate-500 font-medium">Ready for Supervisory Presentation</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button onclick="window.print()"
+                        class="inline-flex items-center space-x-1.5 bg-emerald-800 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm transition-all hover:scale-105">
+                        <i data-lucide="printer" class="w-4 h-4"></i>
+                        <span>Print / Save as PDF</span>
+                    </button>
+                    <button onclick="closeSupervisorBriefModal()"
+                        class="text-slate-400 hover:text-slate-700 p-2 rounded-lg hover:bg-slate-100 transition-colors">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Printable Document Body -->
+            <div id="printable-brief-document" class="space-y-6">
+                <!-- Document Header -->
+                <div class="border-b-2 border-emerald-800 pb-5">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div class="flex items-center space-x-3.5">
+                            <img src="/static/images/logo.jpg" alt="Logo"
+                                class="w-14 h-14 rounded-xl object-cover shadow-sm border border-slate-200">
+                            <div>
+                                <span
+                                    class="text-[10px] font-extrabold uppercase tracking-widest text-emerald-800 block">Republic
+                                    of Malawi • Agricultural Market Intelligence Network</span>
+                                <h1 class="text-xl sm:text-2xl font-black text-slate-900 font-heading">
+                                    NATIONAL CROP PRICE & MARKET INTELLIGENCE BRIEF
+                                </h1>
+                                <p class="text-xs text-slate-500 font-medium">Predictive Analytics & Strategic Arbitrage
+                                    Advisory</p>
+                            </div>
+                        </div>
+                        <div class="text-left sm:text-right text-xs text-slate-500 space-y-0.5">
+                            <div><strong class="text-slate-800">Doc Ref:</strong> <span id="brief-doc-ref"
+                                    class="font-mono">AGRI-MWI-2026/W45</span></div>
+                            <div><strong class="text-slate-800">Date Issued:</strong> <span
+                                    id="brief-date-issued">--</span></div>
+                            <div><strong class="text-slate-800">Classification:</strong> <span
+                                    class="text-emerald-700 font-bold">OFFICIAL DECISION SUPPORT</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 1. Executive Summary -->
+                <div class="brief-avoid-break">
+                    <h3 class="text-xs font-extrabold uppercase tracking-wider text-emerald-900 mb-2 flex items-center">
+                        <span class="w-2 h-2 rounded-full bg-emerald-700 inline-block mr-2"></span>
+                        1. Executive Market Context (Nationwide Overview)
+                    </h3>
+                    <p
+                        class="text-xs text-slate-700 leading-relaxed bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                        This briefing delivers multi-district wholesale and retail price forecasts, grain storage
+                        economics, and inter-district trade optimization across Malawi. Market evaluations are
+                        restricted to the 3 primary national commodities: <strong class="text-slate-900">Maize
+                            (Chimanga)</strong>, <strong class="text-slate-900">Rice (Mpunga)</strong>, and <strong
+                            class="text-slate-900">Beans (Nyemba)</strong> across all 28 districts. Price projections
+                        utilize ensemble time-series models (Prophet + SARIMAX) calibrated with historical market
+                        records (WFP VAM, FAMIS Malawi) and exogenous regressors (M1 corridor transport fuel tariffs,
+                        MWK/USD exchange rate dynamics, and regional rainfall patterns).
+                    </p>
+                </div>
+
+                <!-- 2. Target District Profile & Forecast Milestones -->
+                <div class="brief-avoid-break">
+                    <h3 class="text-xs font-extrabold uppercase tracking-wider text-emerald-900 mb-2 flex items-center">
+                        <span class="w-2 h-2 rounded-full bg-emerald-700 inline-block mr-2"></span>
+                        2. Target District Profile & Price Projections (<span id="brief-target-district-title"
+                            class="text-emerald-700">Lilongwe</span>)
+                    </h3>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
+                        <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
+                            <span class="text-[10px] text-slate-500 uppercase block font-bold">District / Hub:</span>
+                            <span class="text-xs font-bold text-slate-900" id="brief-dist-meta">Lilongwe
+                                (Central)</span>
+                        </div>
+                        <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
+                            <span class="text-[10px] text-slate-500 uppercase block font-bold">Target Commodity:</span>
+                            <span class="text-xs font-bold text-emerald-800" id="brief-crop-meta">Maize
+                                (Chimanga)</span>
+                        </div>
+                        <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
+                            <span class="text-[10px] text-slate-500 uppercase block font-bold">Current Spot
+                                Price:</span>
+                            <span class="text-xs font-black text-slate-900 font-heading" id="brief-spot-meta">780
+                                MWK/kg</span>
+                        </div>
+                        <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
+                            <span class="text-[10px] text-slate-500 uppercase block font-bold">Standard 50kg Bag:</span>
+                            <span class="text-xs font-black text-emerald-700 font-heading" id="brief-bag-meta">39,000
+                                MWK</span>
+                        </div>
+                    </div>
+
+                    <!-- Forecast Horizons Table -->
+                    <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                        <table class="min-w-full divide-y divide-slate-200 text-xs text-left">
+                            <thead class="bg-slate-100 text-slate-700 font-bold uppercase text-[10px]">
+                                <tr>
+                                    <th class="px-3 py-2">Forecast Horizon</th>
+                                    <th class="px-3 py-2">Projected Date</th>
+                                    <th class="px-3 py-2">Point Forecast (MWK/kg)</th>
+                                    <th class="px-3 py-2">80% Confidence Interval</th>
+                                    <th class="px-3 py-2">95% Confidence Interval</th>
+                                    <th class="px-3 py-2">Projected Net Change</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 bg-white" id="brief-forecast-tbody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 3. Decision Matrix & Grain Storage Economics -->
+                <div class="brief-avoid-break">
+                    <h3 class="text-xs font-extrabold uppercase tracking-wider text-emerald-900 mb-2 flex items-center">
+                        <span class="w-2 h-2 rounded-full bg-emerald-700 inline-block mr-2"></span>
+                        3. Strategic Decision Advisory & Storage Economics Assessment
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
+                        <div class="p-4 rounded-xl border flex flex-col justify-center items-center text-center"
+                            id="brief-decision-box" style="background-color: #ecfdf5; border-color: #a7f3d0;">
+                            <span
+                                class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">Recommended
+                                Action</span>
+                            <span class="text-2xl font-black font-heading mb-1" id="brief-decision-badge"
+                                style="color: #15803d;">HOLD & STORE</span>
+                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white text-slate-700"
+                                id="brief-decision-risk">Low Risk</span>
+                        </div>
+
+                        <div
+                            class="md:col-span-2 p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1.5">
+                            <div class="font-bold text-slate-800 text-[11px] mb-1">Hermetic Storage Economics Breakdown
+                                (12-Week Horizon):</div>
+                            <div class="grid grid-cols-2 gap-2 text-[11px]">
+                                <div>Projected Seasonal Surge: <strong class="text-emerald-700"
+                                        id="brief-surge-pct">+0.0%</strong></div>
+                                <div>Carrying Overhead (2.5%/mo): <strong class="text-slate-600">-7.5%</strong></div>
+                                <div>Net Storage Return (% ROI): <strong class="text-slate-900"
+                                        id="brief-net-roi">+0.0%</strong></div>
+                                <div>Net Profit per 50kg PICS Bag: <strong class="text-emerald-700"
+                                        id="brief-bag-gain">+0 MWK</strong></div>
+                            </div>
+                            <p class="text-[10px] text-slate-500 pt-1 border-t border-slate-200 mt-1"
+                                id="brief-decision-summary">
+                                Summary rationale loading...
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Stakeholder Directives -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                        <div class="p-2.5 bg-emerald-50/50 rounded-lg border border-emerald-200">
+                            <strong class="text-emerald-900 block text-[11px] mb-1">Smallholder Farmers:</strong>
+                            <p class="text-[10.5px] text-slate-700" id="brief-smallholder-text">--</p>
+                        </div>
+                        <div class="p-2.5 bg-blue-50/50 rounded-lg border border-blue-200">
+                            <strong class="text-blue-900 block text-[11px] mb-1">Cooperatives:</strong>
+                            <p class="text-[10.5px] text-slate-700" id="brief-coop-text">--</p>
+                        </div>
+                        <div class="p-2.5 bg-slate-100/60 rounded-lg border border-slate-200">
+                            <strong class="text-slate-900 block text-[11px] mb-1">Institutional Buyers:</strong>
+                            <p class="text-[10.5px] text-slate-700" id="brief-institutional-text">--</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Inter-District Arbitrage Opportunities -->
+                <div class="brief-avoid-break">
+                    <h3 class="text-xs font-extrabold uppercase tracking-wider text-emerald-900 mb-2 flex items-center">
+                        <span class="w-2 h-2 rounded-full bg-emerald-700 inline-block mr-2"></span>
+                        4. Inter-District Arbitrage & Market Recommendations (Where to Buy or Sell for Maximum Profit)
+                    </h3>
+
+                    <div
+                        class="p-3 bg-emerald-900 text-white rounded-lg text-xs mb-3 flex flex-wrap justify-between items-center gap-2">
+                        <div>
+                            <span class="text-[10px] text-emerald-300 uppercase block font-semibold">Origin Sourcing
+                                Market:</span>
+                            <span class="font-bold text-sm" id="brief-sim-origin">Lilongwe</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-emerald-300 uppercase block font-semibold">Optimal Destination
+                                Market:</span>
+                            <span class="font-bold text-sm text-emerald-200" id="brief-sim-dest">--</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-emerald-300 uppercase block font-semibold">Freight &
+                                Tariffs:</span>
+                            <span class="font-bold text-sm" id="brief-sim-freight">--</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-emerald-300 uppercase block font-semibold">Simulated Net
+                                Profit (<span id="brief-sim-tonnage">5</span> MT Load):</span>
+                            <span class="font-black text-sm text-emerald-300" id="brief-sim-profit">-- MWK</span>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                        <table class="min-w-full divide-y divide-slate-200 text-xs text-left">
+                            <thead class="bg-slate-100 text-slate-700 font-bold uppercase text-[10px]">
+                                <tr>
+                                    <th class="px-3 py-2">Destination District</th>
+                                    <th class="px-3 py-2">Region</th>
+                                    <th class="px-3 py-2">Road Distance</th>
+                                    <th class="px-3 py-2">Dest. Price</th>
+                                    <th class="px-3 py-2">Gross Spread</th>
+                                    <th class="px-3 py-2">Freight Cost</th>
+                                    <th class="px-3 py-2">Net Margin/kg</th>
+                                    <th class="px-3 py-2">Net ROI %</th>
+                                    <th class="px-3 py-2">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 bg-white" id="brief-arbitrage-tbody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 5. Formal Authentication & Signature Block -->
+                <div class="brief-avoid-break pt-4 border-t-2 border-slate-200 mt-6">
+                    <div class="grid grid-cols-2 gap-8 text-xs text-slate-600">
+                        <div>
+                            <div class="border-b border-slate-400 pb-8 mb-2"></div>
+                            <span class="font-bold text-slate-900 block">Lead Agricultural Market Intelligence
+                                Analyst</span>
+                            <span class="text-[11px] text-slate-500">AgriPrice Malawi Research & Forecasting
+                                Directorate</span>
+                        </div>
+                        <div>
+                            <div class="border-b border-slate-400 pb-8 mb-2"></div>
+                            <span class="font-bold text-slate-900 block">Supervisory Approval / Director of
+                                Marketing</span>
+                            <span class="text-[11px] text-slate-500">Ministry of Agriculture Decision Review
+                                Board</span>
+                        </div>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-4 text-center">
+                        Generated by AgriPrice Malawi Decision Support System • Powered by Machine Learning Time-Series
+                        & Cross-District Corridor Intelligence
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-12 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4">
+            <p class="font-medium text-slate-700">AgriPrice Malawi • National Agricultural Market Intelligence Platform
+            </p>
+            <p class="mt-1 text-slate-500">Maize, Rice, and Beans Coverage across all 28 Districts of Malawi • WFP VAM &
+                FAMIS Ground Data</p>
+        </div>
+    </footer>
+
+    <!-- Frontend Interactive Logic -->
+    <script>
+        // Global State
+        let state = {
+            currentDistrict: 'lilongwe',
+            currentCommodity: 'Maize',
+            currentHorizon: 'weeks', // 'weeks' or 'months'
+            tonnage: 5.0,
+            customSpot: null,
+            districts: [],
+            predictionData: null,
+            decisionData: null,
+            arbitrageData: null,
+            topArbitrageData: null,
+            currentUser: null,
+            authMode: 'signup' // 'signup' or 'signin'
+        };
+
+        let chartInstance = null;
+        let mapInstance = null;
+        let mapMarkers = [];
+
+        // Initialization
+        document.addEventListener('DOMContentLoaded', async () => {
+            lucide.createIcons();
+            initMap();
+            await checkAuthStatus();
+            await loadDistricts();
+            await refreshAllData();
+        });
+
+        // Initialize Leaflet Map locked strictly to Malawi (Zero watermarks, No API key)
+        function initMap() {
+            const malawiBounds = L.latLngBounds([
+                [-17.15, 32.65], // Southernmost tip: Nsanje
+                [-9.35, 35.95]   // Northernmost tip: Chitipa
+            ]);
+
+            mapInstance = L.map('malawi-map', {
+                scrollWheelZoom: false,
+                zoomControl: true,
+                maxBounds: malawiBounds.pad(0.06),
+                maxBoundsViscosity: 1.0,
+                minZoom: 6.5,
+                maxZoom: 12
+            });
+
+            // 1. Esri World Street Map (Default: 100% free, NO API key required, zero watermarks)
+            const esriStreet = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+                maxZoom: 18,
+                attribution: 'Map &copy; Esri & Contributors'
+            });
+
+            // 2. Esri World Topo Map (Topography, terrain contours, rivers & Lake Malawi)
+            const esriTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+                maxZoom: 18,
+                attribution: 'Map &copy; Esri Topo'
+            });
+
+            esriStreet.addTo(mapInstance);
+
+            L.control.layers({
+                "Street Map (Default)": esriStreet,
+                "Topographic Terrain": esriTopo
+            }, null, { position: 'topright' }).addTo(mapInstance);
+
+            mapInstance.fitBounds(malawiBounds, { padding: [15, 15] });
+
+            // National boundary outline of Malawi
+            const malawiBoundaryCoords = [
+                [-9.37, 33.05], [-9.45, 33.25], [-9.60, 33.60], [-9.85, 33.85],
+                [-10.25, 34.20], [-10.80, 34.30], [-11.50, 34.40], [-12.20, 34.50],
+                [-12.80, 34.55], [-13.50, 34.60], [-13.90, 35.10], [-14.40, 35.40],
+                [-14.70, 35.80], [-15.20, 35.90], [-15.80, 35.85], [-16.20, 35.50],
+                [-16.70, 35.30], [-17.12, 35.25], [-17.05, 35.10], [-16.50, 34.70],
+                [-16.00, 34.50], [-15.50, 34.40], [-14.80, 34.60], [-14.30, 34.30],
+                [-14.10, 33.50], [-13.70, 32.85], [-13.20, 33.10], [-12.50, 33.30],
+                [-11.80, 33.30], [-11.00, 33.60], [-10.30, 33.40], [-9.70, 33.00],
+                [-9.37, 33.05]
+            ];
+            L.polygon(malawiBoundaryCoords, {
+                color: '#047857',
+                weight: 2.5,
+                opacity: 0.9,
+                fillColor: '#10b981',
+                fillOpacity: 0.04,
+                dashArray: '5, 5'
+            }).addTo(mapInstance);
+
+            setTimeout(() => {
+                if (mapInstance) {
+                    mapInstance.invalidateSize();
+                    mapInstance.fitBounds(malawiBounds, { padding: [15, 15] });
+                }
+            }, 300);
+        }
+
+        // Fetch District Registry from API
+        async function loadDistricts() {
+            try {
+                const res = await fetch('/api/districts/');
+                const data = await res.json();
+                state.districts = data.districts;
+                plotMapMarkers();
+            } catch (err) {
+                console.error("Failed to load districts:", err);
+            }
+        }
+
+        // Plot districts onto Leaflet Map
+        function plotMapMarkers() {
+            if (!mapInstance || !state.districts.length) return;
+
+            mapMarkers.forEach(m => mapInstance.removeLayer(m));
+            mapMarkers = [];
+
+            state.districts.forEach(d => {
+                const isSelected = d.id === state.currentDistrict;
+                const crop = state.currentCommodity || 'Maize';
+                const factor = (d.base_factor && d.base_factor[crop]) ? d.base_factor[crop] : 1.0;
+
+                let markerColor = '#2563eb'; // Blue (Medium)
+                if (factor <= 0.95) {
+                    markerColor = '#16a34a'; // Green (Surplus/Cheaper)
+                } else if (factor >= 1.06) {
+                    markerColor = '#dc2626'; // Red (Deficit/Premium)
+                }
+
+                const marker = L.circleMarker([d.lat, d.lon], {
+                    radius: isSelected ? 12 : 7,
+                    fillColor: isSelected ? '#047857' : markerColor,
+                    color: isSelected ? '#f59e0b' : '#ffffff',
+                    weight: isSelected ? 3.5 : 1.5,
+                    opacity: 1,
+                    fillOpacity: isSelected ? 0.95 : 0.8
+                }).addTo(mapInstance);
+
+                marker.bindTooltip(`<strong>${d.name}</strong><br/>${d.region}`, {
+                    direction: 'top',
+                    offset: [0, -6]
+                });
+
+                marker.bindPopup(`
+                    <div style="font-family: sans-serif; font-size: 12px; line-height: 1.5; min-width: 170px;">
+                        <div style="font-size: 14px; font-weight: bold; color: #0f172a; margin-bottom: 2px;">${d.name} District</div>
+                        <div style="color: #64748b; font-size: 11px; margin-bottom: 4px;">${d.market_center}</div>
+                        <div style="display: inline-block; background: #ecfdf5; color: #047857; font-weight: 600; font-size: 10px; padding: 1px 6px; border-radius: 4px; margin-bottom: 6px;">${d.region}</div>
+                        <div style="font-size: 11px; color: #334155; margin-bottom: 6px;">
+                            <strong>Market Profile:</strong><br/>${d.market_type || 'Agricultural Market'}
+                        </div>
+                        <button onclick="selectDistrictFromMap('${d.id}')" style="width: 100%; background: #047857; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; transition: background 0.2s;">
+                            Select & Analyze
+                        </button>
+                    </div>
+                `);
+
+                mapMarkers.push(marker);
+            });
+
+            const active = state.districts.find(d => d.id === state.currentDistrict);
+            if (active && mapInstance) {
+                mapInstance.panTo([active.lat, active.lon]);
+            }
+        }
+
+        function selectDistrictFromMap(distId) {
+            document.getElementById('district-select').value = distId;
+            onDistrictChange();
+        }
+
+        // Refresh all dashboard sections
+        async function refreshAllData() {
+            await Promise.all([
+                fetchPredictions(),
+                fetchDecisions(),
+                fetchArbitrage(),
+                fetchTopArbitrage()
+            ]);
+            lucide.createIcons();
+        }
+
+        // Core 1: Fetch Predictions & Draw Chart
+        async function fetchPredictions() {
+            let url = `/api/predictions/?district=${state.currentDistrict}&commodity=${state.currentCommodity}`;
+            if (state.customSpot) {
+                url += `&custom_spot_price=${state.customSpot}`;
+            }
+
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                state.predictionData = data;
+                updatePredictionUI(data);
+            } catch (err) {
+                console.error("Error fetching predictions:", err);
+            }
+        }
+
+        function updatePredictionUI(data) {
+            document.getElementById('stat-district-name').textContent = data.district.name;
+            document.getElementById('stat-region-name').textContent = data.district.region;
+            document.getElementById('stat-current-price').textContent = Number(data.current_price).toLocaleString();
+            document.getElementById('stat-bag-price').textContent = (Number(data.current_price) * 50).toLocaleString();
+
+            // Spot calibration bar display
+            document.getElementById('calib-baseline-display').textContent = `${Number(data.current_price).toLocaleString()} MWK/kg`;
+            if (!state.customSpot) {
+                document.getElementById('calib-spot-input').value = Math.round(data.current_price);
+            }
+
+            const change4w = data.recommendation_summary["4w_change_pct"];
+            const change12w = data.recommendation_summary["12w_change_pct"];
+
+            const p4w = data.weekly_forecast[3] ? data.weekly_forecast[3].price_pred : data.current_price;
+            const p12w = data.monthly_forecast[2] ? data.monthly_forecast[2].price_pred : data.current_price;
+
+            document.getElementById('stat-4w-price').textContent = Math.round(p4w).toLocaleString();
+            document.getElementById('stat-12w-price').textContent = Math.round(p12w).toLocaleString();
+
+            const el4w = document.getElementById('stat-4w-change');
+            el4w.textContent = (change4w >= 0 ? '+' : '') + change4w + '% (4 Weeks)';
+            el4w.className = 'text-xs font-bold ' + (change4w >= 0 ? 'text-emerald-700' : 'text-red-600');
+
+            const el12w = document.getElementById('stat-12w-change');
+            el12w.textContent = (change12w >= 0 ? '+' : '') + change12w + '% (12 Weeks)';
+            el12w.className = 'text-xs font-bold ' + (change12w >= 0 ? 'text-emerald-700' : 'text-red-600');
+
+            const chichewaNames = { 'Maize': 'Chimanga', 'Rice': 'Mpunga', 'Beans': 'Nyemba' };
+            document.getElementById('chart-main-title').textContent = `Price Trajectory: ${state.currentCommodity} (${chichewaNames[state.currentCommodity]}) in ${data.district.name}`;
+            document.getElementById('badge-horizon-type').textContent = state.currentHorizon === 'weeks' ? 'Weekly (1-4w)' : 'Monthly (1-6m)';
+
+            renderChart(data);
+            renderHorizonCards(data);
+        }
+
+        function renderChart(data) {
+            const ctx = document.getElementById('forecastChart').getContext('2d');
+            const isWeekly = state.currentHorizon === 'weeks';
+            const futurePoints = isWeekly ? data.weekly_forecast : data.monthly_forecast;
+
+            const labels = [];
+            const actualHistory = [];
+            const forecastLine = [];
+            const lower80 = [];
+            const upper80 = [];
+
+            data.historical.forEach(h => {
+                labels.push(h.label);
+                actualHistory.push(h.price);
+                forecastLine.push(null);
+                lower80.push(null);
+                upper80.push(null);
+            });
+
+            labels.push('Today (Spot)');
+            actualHistory.push(data.current_price);
+            forecastLine.push(data.current_price);
+            lower80.push(data.current_price);
+            upper80.push(data.current_price);
+
+            futurePoints.forEach(f => {
+                labels.push(f.label);
+                actualHistory.push(null);
+                forecastLine.push(f.price_pred);
+                lower80.push(f.price_lower_80);
+                upper80.push(f.price_upper_80);
+            });
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Historical Actual (MWK/kg)',
+                            data: actualHistory,
+                            borderColor: '#64748b',
+                            borderWidth: 2,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#64748b',
+                            fill: false,
+                            tension: 0.2
+                        },
+                        {
+                            label: 'Ensemble Forecast (MWK/kg)',
+                            data: forecastLine,
+                            borderColor: '#047857',
+                            borderWidth: 3,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#047857',
+                            fill: false,
+                            tension: 0.2
+                        },
+                        {
+                            label: '80% Confidence Band (Upper)',
+                            data: upper80,
+                            borderColor: 'transparent',
+                            backgroundColor: 'rgba(16, 185, 129, 0.18)',
+                            pointRadius: 0,
+                            fill: '+1'
+                        },
+                        {
+                            label: '80% Confidence Band (Lower)',
+                            data: lower80,
+                            borderColor: 'transparent',
+                            backgroundColor: 'rgba(16, 185, 129, 0.18)',
+                            pointRadius: 0,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                boxWidth: 12,
+                                font: { size: 11, family: 'Plus Jakarta Sans' }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    if (context.parsed.y !== null) {
+                                        return `${context.dataset.label}: ${Math.round(context.parsed.y).toLocaleString()} MWK/kg`;
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: { color: '#f1f5f9' },
+                            ticks: {
+                                font: { size: 11 },
+                                callback: val => `${val.toLocaleString()} MWK`
+                            }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 10 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderHorizonCards(data) {
+            const container = document.getElementById('horizon-cards-container');
+            container.innerHTML = '';
+
+            const isWeekly = state.currentHorizon === 'weeks';
+            const items = isWeekly ? data.weekly_forecast : data.monthly_forecast.slice(0, 4);
+
+            items.forEach(item => {
+                const change = item.change_from_current_pct;
+                const changeClass = change >= 0 ? 'text-emerald-700' : 'text-red-600';
+                const changeSign = change >= 0 ? '+' : '';
+
+                const card = document.createElement('div');
+                card.className = 'p-3 bg-slate-50 border border-slate-200 rounded-xl text-center';
+                card.innerHTML = `
+                    <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">${item.horizon}</span>
+                    <span class="text-base font-extrabold text-slate-900 font-heading block mt-0.5">${Math.round(item.price_pred).toLocaleString()} <span class="text-[10px] font-normal text-slate-500">MWK</span></span>
+                    <span class="text-xs font-bold ${changeClass}">${changeSign}${change}%</span>
+                    <div class="mt-1 text-[10px] text-slate-400 font-mono">
+                        [${Math.round(item.price_lower_80)} - ${Math.round(item.price_upper_80)}]
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Core 2: Fetch Decision & Storage Advisory
+        async function fetchDecisions() {
+            let url = `/api/decisions/?district=${state.currentDistrict}&commodity=${state.currentCommodity}`;
+            if (state.customSpot) {
+                url += `&custom_spot_price=${state.customSpot}`;
+            }
+
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                state.decisionData = data;
+                updateDecisionUI(data);
+            } catch (err) {
+                console.error("Error fetching decisions:", err);
+            }
+        }
+
+        function updateDecisionUI(data) {
+            const badgeText = document.getElementById('decision-badge-text');
+            const chichewaText = document.getElementById('decision-chichewa-text');
+            const summaryText = document.getElementById('decision-summary-text');
+            const bannerBg = document.getElementById('decision-banner-bg');
+            const riskBadge = document.getElementById('decision-risk-badge');
+
+            badgeText.textContent = data.decision;
+            chichewaText.textContent = data.decision_chichewa || (data.decision === 'HOLD & STORE' ? 'Sungani Mbewu / Musagulitse Pano' : data.decision === 'SELL NOW' ? 'Gulisani Tsopano' : 'Dikirani ndi Kuyang\'anira');
+            summaryText.textContent = data.simple_summary || data.advisory.summary;
+            riskBadge.textContent = data.risk_level;
+
+            if (data.decision === 'HOLD & STORE') {
+                bannerBg.style.backgroundColor = '#ecfdf5';
+                badgeText.style.color = '#15803d';
+                chichewaText.className = 'text-sm font-bold text-emerald-800 mb-1';
+                riskBadge.className = 'text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200';
+            } else if (data.decision === 'SELL NOW') {
+                bannerBg.style.backgroundColor = '#fef2f2';
+                badgeText.style.color = '#b91c1c';
+                chichewaText.className = 'text-sm font-bold text-red-800 mb-1';
+                riskBadge.className = 'text-xs font-bold px-2.5 py-0.5 rounded-full bg-red-100 text-red-800 border border-red-200';
+            } else {
+                bannerBg.style.backgroundColor = '#fffbeb';
+                badgeText.style.color = '#b45309';
+                chichewaText.className = 'text-sm font-bold text-amber-800 mb-1';
+                riskBadge.className = 'text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200';
+            }
+
+            document.getElementById('dec-surge-pct').textContent = `+${data.metrics.change_12w_pct}%`;
+            document.getElementById('dec-carrying-cost').textContent = `-${data.metrics.carrying_cost_12w_pct}%`;
+            document.getElementById('dec-net-roi').textContent = `${data.metrics.net_storage_roi_pct >= 0 ? '+' : ''}${data.metrics.net_storage_roi_pct}%`;
+            document.getElementById('dec-bag-gain').textContent = `${data.metrics.net_profit_per_50kg_bag_mwk >= 0 ? '+' : ''}${Math.round(data.metrics.net_profit_per_50kg_bag_mwk).toLocaleString()} MWK`;
+
+            document.getElementById('advisory-smallholder').textContent = data.advisory.smallholder;
+            document.getElementById('advisory-coop').textContent = data.advisory.cooperative;
+            document.getElementById('advisory-institutional').textContent = data.advisory.institutional;
+        }
+
+        // Core 3: Fetch Inter-District Arbitrage
+        async function fetchArbitrage() {
+            let url = `/api/arbitrage/?origin=${state.currentDistrict}&commodity=${state.currentCommodity}&tonnage=${state.tonnage}`;
+            if (state.customSpot) {
+                url += `&custom_origin_price=${state.customSpot}`;
+            }
+
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                state.arbitrageData = data;
+                updateArbitrageUI(data);
+            } catch (err) {
+                console.error("Error fetching arbitrage:", err);
+            }
+        }
+
+        function updateArbitrageUI(data) {
+            document.getElementById('tbl-origin-label').textContent = data.origin_district.name;
+            document.getElementById('sim-origin-name').textContent = data.origin_district.name;
+
+            const tbody = document.getElementById('arbitrage-tbody');
+            tbody.innerHTML = '';
+
+            const routes = data.ranked_routes;
+            if (routes.length > 0) {
+                const best = routes[0];
+                document.getElementById('sim-origin-price').textContent = Math.round(best.origin_price_mwk).toLocaleString();
+                document.getElementById('sim-best-dest-name').textContent = best.destination.name;
+                document.getElementById('sim-dest-price').textContent = Math.round(best.destination_price_mwk).toLocaleString();
+                document.getElementById('sim-freight-total').textContent = Math.round(best.cargo_simulation.freight_outlay_mwk).toLocaleString() + ' MWK';
+                document.getElementById('sim-distance-summary').textContent = `${best.distance_km} km road freight (${best.freight_tariff_mwk_per_kg} MWK/kg)`;
+                document.getElementById('sim-net-profit').textContent = Math.round(best.cargo_simulation.net_profit_mwk).toLocaleString() + ' MWK';
+                document.getElementById('sim-net-roi').textContent = `${best.net_roi_pct >= 0 ? '+' : ''}${best.net_roi_pct}% Net ROI`;
+            }
+
+            routes.forEach((r, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = idx % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/50 hover:bg-slate-50';
+
+                let badgeHtml = '';
+                if (r.status === 'TRADE OPPORTUNITY') {
+                    badgeHtml = `<span class="badge-opportunity px-2 py-0.5 rounded-full text-[10px]">OPPORTUNITY</span>`;
+                } else if (r.status === 'MODERATE MARGIN') {
+                    badgeHtml = `<span class="badge-moderate px-2 py-0.5 rounded-full text-[10px]">MODERATE</span>`;
+                } else if (r.status === 'MARGINAL SPREAD') {
+                    badgeHtml = `<span class="badge-marginal px-2 py-0.5 rounded-full text-[10px]">MARGINAL</span>`;
+                } else {
+                    badgeHtml = `<span class="badge-unprofitable px-2 py-0.5 rounded-full text-[10px]">UNPROFITABLE</span>`;
+                }
+
+                const marginClass = r.net_margin_mwk_per_kg > 0 ? 'text-emerald-700 font-bold' : 'text-slate-400';
+                const roiClass = r.net_roi_pct > 0 ? 'text-emerald-700 font-bold' : 'text-slate-400';
+
+                tr.innerHTML = `
+                    <td class="px-4 py-3 font-semibold text-slate-900">${r.destination.name}</td>
+                    <td class="px-4 py-3 text-slate-500">${r.destination.region}</td>
+                    <td class="px-4 py-3 text-slate-600">${r.distance_km} km</td>
+                    <td class="px-4 py-3 font-medium text-slate-900">${Math.round(r.destination_price_mwk).toLocaleString()} MWK</td>
+                    <td class="px-4 py-3 font-medium text-slate-700">${r.gross_spread_mwk >= 0 ? '+' : ''}${Math.round(r.gross_spread_mwk)} MWK</td>
+                    <td class="px-4 py-3 text-slate-500">${r.freight_tariff_mwk_per_kg} MWK</td>
+                    <td class="px-4 py-3 ${marginClass}">${r.net_margin_mwk_per_kg >= 0 ? '+' : ''}${Math.round(r.net_margin_mwk_per_kg)} MWK</td>
+                    <td class="px-4 py-3 ${roiClass}">${r.net_roi_pct >= 0 ? '+' : ''}${r.net_roi_pct}%</td>
+                    <td class="px-4 py-3">${badgeHtml}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Core 4: Nationwide Top Arbitrage
+        async function fetchTopArbitrage() {
+            let url = `/api/arbitrage/top/?commodity=${state.currentCommodity}&limit=6&tonnage=${state.tonnage}`;
+
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                state.topArbitrageData = data;
+                updateTopArbitrageUI(data);
+            } catch (err) {
+                console.error("Error fetching top arbitrage:", err);
+            }
+        }
+
+        function updateTopArbitrageUI(data) {
+            const grid = document.getElementById('national-top-routes-grid');
+            grid.innerHTML = '';
+
+            data.top_routes.forEach(r => {
+                const card = document.createElement('div');
+                card.className = 'p-4 bg-white border border-slate-200 rounded-xl shadow-xs hover:border-emerald-400 transition-all';
+                card.innerHTML = `
+                    <div class="flex items-center justify-between text-xs font-bold mb-2">
+                        <span class="text-slate-900 flex items-center space-x-1">
+                            <span class="text-emerald-700 font-extrabold">${r.origin.name}</span>
+                            <i data-lucide="arrow-right" class="w-3.5 h-3.5 inline mx-1 text-slate-400"></i>
+                            <span class="text-blue-700 font-extrabold">${r.destination.name}</span>
+                        </span>
+                        <span class="badge-opportunity text-[10px] px-2 py-0.5 rounded-full">+${r.net_roi_pct}% ROI</span>
+                    </div>
+                    <div class="text-[11px] text-slate-500 space-y-1">
+                        <div class="flex justify-between">
+                            <span>Price Spread:</span>
+                            <span class="font-bold text-slate-800">${Math.round(r.origin_price_mwk)} → ${Math.round(r.destination_price_mwk)} MWK</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Freight Tariff (${r.distance_km} km):</span>
+                            <span>${r.freight_tariff_mwk_per_kg} MWK/kg</span>
+                        </div>
+                        <div class="flex justify-between border-t border-slate-100 pt-1 text-xs">
+                            <span class="font-bold text-slate-700">Net Profit (${state.tonnage} MT):</span>
+                            <span class="font-black text-emerald-700">+${Math.round(r.cargo_simulation.net_profit_mwk).toLocaleString()} MWK</span>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        // Spot Price Ground Calibration Helpers
+        function adjustCalibration(delta) {
+            const currentVal = parseFloat(document.getElementById('calib-spot-input').value) || 0;
+            const newVal = Math.max(10, currentVal + delta);
+            document.getElementById('calib-spot-input').value = newVal;
+            applyCalibration();
+        }
+
+        function applyCalibration() {
+            const val = parseFloat(document.getElementById('calib-spot-input').value);
+            if (!isNaN(val) && val > 0) {
+                state.customSpot = val;
+                document.getElementById('calib-reset-btn').classList.remove('hidden');
+                document.getElementById('calib-status-badge').classList.remove('hidden');
+                document.getElementById('calib-status-badge').textContent = `Calibrated: ${val} MWK/kg`;
+                refreshAllData();
+            }
+        }
+
+        function resetCalibration() {
+            state.customSpot = null;
+            document.getElementById('calib-reset-btn').classList.add('hidden');
+            document.getElementById('calib-status-badge').classList.add('hidden');
+            if (state.predictionData) {
+                document.getElementById('calib-spot-input').value = Math.round(state.predictionData.current_price);
+            }
+            refreshAllData();
+        }
+
+        // User Event Handlers
+        function onDistrictChange() {
+            state.currentDistrict = document.getElementById('district-select').value;
+            plotMapMarkers();
+            refreshAllData();
+        }
+
+        function setCommodity(crop) {
+            state.currentCommodity = crop;
+            document.querySelectorAll('.crop-btn').forEach(btn => {
+                btn.className = 'crop-btn flex items-center justify-center space-x-2 py-1.5 px-3 rounded-lg text-xs font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200';
+            });
+            const activeBtn = document.getElementById(`btn-crop-${crop}`);
+            if (activeBtn) {
+                activeBtn.className = 'crop-btn flex items-center justify-center space-x-2 py-1.5 px-3 rounded-lg text-xs font-bold transition-all bg-emerald-700 text-white shadow-sm border border-emerald-800';
+            }
+
+            plotMapMarkers();
+            refreshAllData();
+        }
+
+        function setHorizon(horizon) {
+            state.currentHorizon = horizon;
+            const btnWeeks = document.getElementById('btn-horizon-weeks');
+            const btnMonths = document.getElementById('btn-horizon-months');
+
+            if (horizon === 'weeks') {
+                btnWeeks.className = 'horizon-btn py-1 text-xs font-bold rounded-md transition-all bg-white text-emerald-800 shadow-xs';
+                btnMonths.className = 'horizon-btn py-1 text-xs font-bold rounded-md transition-all text-slate-600 hover:text-slate-900';
+            } else {
+                btnMonths.className = 'horizon-btn py-1 text-xs font-bold rounded-md transition-all bg-white text-emerald-800 shadow-xs';
+                btnWeeks.className = 'horizon-btn py-1 text-xs font-bold rounded-md transition-all text-slate-600 hover:text-slate-900';
+            }
+
+            if (state.predictionData) {
+                updatePredictionUI(state.predictionData);
+            }
+        }
+
+        function onTonnageChange(val) {
+            state.tonnage = parseFloat(val);
+            document.getElementById('tonnage-display').textContent = `${val} Metric Tons`;
+            fetchArbitrage();
+            fetchTopArbitrage();
+        }
+
+        // Authentication & Subscription Modal Logic
+        function openAuthModal(mode = 'signup') {
+            setAuthMode(mode);
+            document.getElementById('auth-modal-overlay').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeAuthModal() {
+            document.getElementById('auth-modal-overlay').classList.add('hidden');
+        }
+
+        function setAuthMode(mode) {
+            state.authMode = mode;
+            const tabSignup = document.getElementById('tab-signup');
+            const tabSignin = document.getElementById('tab-signin');
+            const nameGroup = document.getElementById('auth-name-group');
+            const extraGroup = document.getElementById('auth-signup-extra');
+            const submitLabel = document.getElementById('auth-submit-label');
+
+            if (mode === 'signup') {
+                tabSignup.className = 'py-2 text-xs font-bold rounded-lg transition-all bg-emerald-600 text-white shadow-sm';
+                tabSignin.className = 'py-2 text-xs font-bold rounded-lg transition-all text-emerald-200 hover:text-white';
+                nameGroup.classList.remove('hidden');
+                extraGroup.classList.remove('hidden');
+                submitLabel.textContent = 'Subscribe for Market Reports';
+            } else {
+                tabSignin.className = 'py-2 text-xs font-bold rounded-lg transition-all bg-emerald-600 text-white shadow-sm';
+                tabSignup.className = 'py-2 text-xs font-bold rounded-lg transition-all text-emerald-200 hover:text-white';
+                nameGroup.classList.add('hidden');
+                extraGroup.classList.add('hidden');
+                submitLabel.textContent = 'Sign In to AgriPrice';
+            }
+            document.getElementById('auth-status-msg').classList.add('hidden');
+        }
+
+        async function handleAuthSubmit(event) {
+            event.preventDefault();
+            const email = document.getElementById('auth-email').value.trim();
+            const fullName = document.getElementById('auth-name').value.trim();
+            const district = document.getElementById('auth-district').value;
+            const role = document.getElementById('auth-role').value;
+            const reportFreq = document.querySelector('input[name="report_freq"]:checked')?.value || 'weekly';
+
+            const statusMsg = document.getElementById('auth-status-msg');
+            const submitBtn = document.getElementById('auth-submit-btn');
+
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-70');
+
+            try {
+                let endpoint = state.authMode === 'signup' ? '/api/auth/signup/' : '/api/auth/signin/';
+                let payload = state.authMode === 'signup'
+                    ? { email, full_name: fullName, district, organization_type: role, report_frequency: reportFreq }
+                    : { email };
+
+                const res = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    state.currentUser = data.subscriber;
+                    renderUserNav(data.subscriber);
+                    statusMsg.className = 'text-xs p-3 rounded-xl bg-emerald-600/40 text-emerald-100 border border-emerald-400/40';
+                    statusMsg.textContent = data.message || 'Success! Your email report subscription is active.';
+                    statusMsg.classList.remove('hidden');
+
+                    setTimeout(() => {
+                        closeAuthModal();
+                    }, 1600);
+                } else {
+                    statusMsg.className = 'text-xs p-3 rounded-xl bg-red-600/40 text-red-100 border border-red-400/40';
+                    statusMsg.textContent = data.error || 'Failed to authenticate. Please check your email.';
+                    statusMsg.classList.remove('hidden');
+                }
+            } catch (err) {
+                console.error("Auth error:", err);
+                statusMsg.className = 'text-xs p-3 rounded-xl bg-red-600/40 text-red-100 border border-red-400/40';
+                statusMsg.textContent = 'Network error. Please try again.';
+                statusMsg.classList.remove('hidden');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-70');
+            }
+        }
+
+        async function checkAuthStatus() {
+            try {
+                const res = await fetch('/api/auth/me/');
+                const data = await res.json();
+                if (data.authenticated && data.subscriber) {
+                    state.currentUser = data.subscriber;
+                    renderUserNav(data.subscriber);
+                }
+            } catch (err) {
+                console.error("Auth check failed:", err);
+            }
+        }
+
+        function renderUserNav(user) {
+            const container = document.getElementById('user-nav-container');
+            if (user) {
+                container.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <div class="hidden sm:flex items-center space-x-2 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-xl text-xs">
+                            <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+                            <span class="font-bold text-slate-800">${user.full_name}</span>
+                            <span class="text-emerald-700 font-semibold">• ${user.report_frequency.toUpperCase()} Reports</span>
+                        </div>
+                        <button onclick="sendTestReport()" title="Send Instant Market Bulletin to your email"
+                            class="inline-flex items-center space-x-1 text-xs font-bold bg-emerald-800 text-white hover:bg-emerald-700 px-3 py-2 rounded-xl transition-all shadow-xs">
+                            <i data-lucide="send" class="w-3.5 h-3.5 text-emerald-300"></i>
+                            <span class="hidden md:inline">Send Test Bulletin</span>
+                        </button>
+                        <button onclick="handleSignOut()" title="Sign Out"
+                            class="text-slate-400 hover:text-slate-700 p-2 rounded-xl hover:bg-slate-100 transition-colors">
+                            <i data-lucide="log-out" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <button onclick="openAuthModal('signup')" id="btn-auth-trigger"
+                        class="inline-flex items-center space-x-1.5 text-xs font-bold bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 px-3.5 py-2 rounded-xl transition-all shadow-xs">
+                        <i data-lucide="mail-check" class="w-4 h-4 text-emerald-700"></i>
+                        <span>Subscribe for Email Reports</span>
+                    </button>
+                `;
+            }
+            lucide.createIcons();
+        }
+
+        async function handleSignOut() {
+            try {
+                await fetch('/api/auth/signout/', { method: 'POST' });
+                state.currentUser = null;
+                renderUserNav(null);
+            } catch (err) {
+                console.error("Sign out error:", err);
+            }
+        }
+
+        async function sendTestReport() {
+            if (!state.currentUser) return;
+            try {
+                const res = await fetch('/api/reports/send/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: state.currentUser.email,
+                        district: state.currentDistrict,
+                        commodity: state.currentCommodity
+                    })
+                });
+                const data = await res.json();
+                alert(`AgriPrice Bulletin Dispatched!\n\n${data.message}\nFrequency: ${state.currentUser.report_frequency}`);
+            } catch (err) {
+                alert("Failed to dispatch report test. Please try again.");
+            }
+        }
+
+        // Supervisor Brief Modal Logic
+        function openSupervisorBriefModal() {
+            if (!state.predictionData || !state.decisionData || !state.arbitrageData) {
+                alert("Data is still synchronizing. Please wait a moment and try again.");
+                return;
+            }
+
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+            document.getElementById('brief-date-issued').textContent = dateStr;
+            document.getElementById('brief-doc-ref').textContent = `APM-MKT-${now.getFullYear()}-W${Math.ceil(now.getDate() / 7)}`;
+
+            const dist = state.predictionData.district;
+            document.getElementById('brief-target-district-title').textContent = `${dist.name} (${dist.region})`;
+            document.getElementById('brief-dist-meta').textContent = `${dist.name} (${dist.region}) • ${dist.market_center}`;
+            document.getElementById('brief-crop-meta').textContent = `${state.currentCommodity} (${state.currentCommodity === 'Maize' ? 'Chimanga' : state.currentCommodity === 'Rice' ? 'Mpunga' : 'Nyemba'})`;
+            document.getElementById('brief-spot-meta').textContent = `${Number(state.predictionData.current_price).toLocaleString()} MWK/kg`;
+            document.getElementById('brief-bag-meta').textContent = `${(Number(state.predictionData.current_price) * 50).toLocaleString()} MWK`;
+
+            const fTbody = document.getElementById('brief-forecast-tbody');
+            fTbody.innerHTML = '';
+
+            state.predictionData.weekly_forecast.forEach(w => {
+                const tr = document.createElement('tr');
+                const chg = w.change_from_current_pct;
+                const chgColor = chg >= 0 ? 'text-emerald-700 font-bold' : 'text-red-600 font-bold';
+                tr.innerHTML = `
+                    <td class="px-3 py-2 font-semibold text-slate-800">${w.horizon} (Short-term)</td>
+                    <td class="px-3 py-2 text-slate-500">${w.date}</td>
+                    <td class="px-3 py-2 font-bold text-slate-900">${Math.round(w.price_pred).toLocaleString()} MWK</td>
+                    <td class="px-3 py-2 text-slate-500">[${Math.round(w.price_lower_80).toLocaleString()} - ${Math.round(w.price_upper_80).toLocaleString()}]</td>
+                    <td class="px-3 py-2 text-slate-400">[${Math.round(w.price_lower_95).toLocaleString()} - ${Math.round(w.price_upper_95).toLocaleString()}]</td>
+                    <td class="px-3 py-2 ${chgColor}">${chg >= 0 ? '+' : ''}${chg}%</td>
+                `;
+                fTbody.appendChild(tr);
+            });
+
+            [0, 2, 5].forEach(idx => {
+                const m = state.predictionData.monthly_forecast[idx];
+                if (m) {
+                    const tr = document.createElement('tr');
+                    tr.className = 'bg-slate-50/70';
+                    const chg = m.change_from_current_pct;
+                    const chgColor = chg >= 0 ? 'text-emerald-700 font-bold' : 'text-red-600 font-bold';
+                    tr.innerHTML = `
+                        <td class="px-3 py-2 font-bold text-emerald-900">${m.horizon} (Seasonal)</td>
+                        <td class="px-3 py-2 text-slate-600">${m.date}</td>
+                        <td class="px-3 py-2 font-extrabold text-slate-900">${Math.round(m.price_pred).toLocaleString()} MWK</td>
+                        <td class="px-3 py-2 text-slate-600">[${Math.round(m.price_lower_80).toLocaleString()} - ${Math.round(m.price_upper_80).toLocaleString()}]</td>
+                        <td class="px-3 py-2 text-slate-400">[${Math.round(m.price_lower_95).toLocaleString()} - ${Math.round(m.price_upper_95).toLocaleString()}]</td>
+                        <td class="px-3 py-2 ${chgColor}">${chg >= 0 ? '+' : ''}${chg}%</td>
+                    `;
+                    fTbody.appendChild(tr);
+                }
+            });
+
+            const dec = state.decisionData;
+            const decBox = document.getElementById('brief-decision-box');
+            const decBadge = document.getElementById('brief-decision-badge');
+            decBadge.textContent = dec.decision;
+            document.getElementById('brief-decision-risk').textContent = dec.risk_level;
+
+            if (dec.decision === 'HOLD & STORE') {
+                decBox.style.backgroundColor = '#ecfdf5';
+                decBox.style.borderColor = '#86efac';
+                decBadge.style.color = '#15803d';
+            } else if (dec.decision === 'SELL NOW') {
+                decBox.style.backgroundColor = '#fef2f2';
+                decBox.style.borderColor = '#fca5a5';
+                decBadge.style.color = '#b91c1c';
+            } else {
+                decBox.style.backgroundColor = '#fffbeb';
+                decBox.style.borderColor = '#fcd34d';
+                decBadge.style.color = '#b45309';
+            }
+
+            document.getElementById('brief-surge-pct').textContent = `+${dec.metrics.change_12w_pct}%`;
+            document.getElementById('brief-net-roi').textContent = `${dec.metrics.net_storage_roi_pct >= 0 ? '+' : ''}${dec.metrics.net_storage_roi_pct}%`;
+            document.getElementById('brief-bag-gain').textContent = `${dec.metrics.net_profit_per_50kg_bag_mwk >= 0 ? '+' : ''}${Math.round(dec.metrics.net_profit_per_50kg_bag_mwk).toLocaleString()} MWK`;
+            document.getElementById('brief-decision-summary').textContent = dec.advisory.summary;
+
+            document.getElementById('brief-smallholder-text').textContent = dec.advisory.smallholder;
+            document.getElementById('brief-coop-text').textContent = dec.advisory.cooperative;
+            document.getElementById('brief-institutional-text').textContent = dec.advisory.institutional;
+
+            const arb = state.arbitrageData;
+            document.getElementById('brief-sim-origin').textContent = `${arb.origin_district.name} (${Math.round(arb.ranked_routes[0]?.origin_price_mwk || 0).toLocaleString()} MWK/kg)`;
+            if (arb.ranked_routes.length > 0) {
+                const top = arb.ranked_routes[0];
+                document.getElementById('brief-sim-dest').textContent = `${top.destination.name} (${Math.round(top.destination_price_mwk).toLocaleString()} MWK/kg)`;
+                document.getElementById('brief-sim-freight').textContent = `${top.distance_km} km (${top.freight_tariff_mwk_per_kg} MWK/kg)`;
+                document.getElementById('brief-sim-tonnage').textContent = state.tonnage;
+                document.getElementById('brief-sim-profit').textContent = `+${Math.round(top.cargo_simulation.net_profit_mwk).toLocaleString()} MWK (+${top.net_roi_pct}% ROI)`;
+            }
+
+            const aTbody = document.getElementById('brief-arbitrage-tbody');
+            aTbody.innerHTML = '';
+            arb.ranked_routes.slice(0, 5).forEach((r, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/60';
+                const marginColor = r.net_margin_mwk_per_kg > 0 ? 'text-emerald-700 font-bold' : 'text-slate-500';
+                const roiColor = r.net_roi_pct > 0 ? 'text-emerald-700 font-bold' : 'text-slate-500';
+
+                let statusBadge = r.status === 'TRADE OPPORTUNITY'
+                    ? '<span class="badge-opportunity px-2 py-0.5 rounded text-[10px]">OPPORTUNITY</span>'
+                    : r.status === 'MODERATE MARGIN'
+                        ? '<span class="badge-moderate px-2 py-0.5 rounded text-[10px]">MODERATE</span>'
+                        : '<span class="badge-marginal px-2 py-0.5 rounded text-[10px]">MARGINAL</span>';
+
+                tr.innerHTML = `
+                    <td class="px-3 py-2 font-semibold text-slate-900">${r.destination.name}</td>
+                    <td class="px-3 py-2 text-slate-500">${r.destination.region}</td>
+                    <td class="px-3 py-2 text-slate-600">${r.distance_km} km</td>
+                    <td class="px-3 py-2 font-medium">${Math.round(r.destination_price_mwk).toLocaleString()} MWK</td>
+                    <td class="px-3 py-2">${r.gross_spread_mwk >= 0 ? '+' : ''}${Math.round(r.gross_spread_mwk)} MWK</td>
+                    <td class="px-3 py-2 text-slate-500">${r.freight_tariff_mwk_per_kg} MWK</td>
+                    <td class="px-3 py-2 ${marginColor}">${r.net_margin_mwk_per_kg >= 0 ? '+' : ''}${Math.round(r.net_margin_mwk_per_kg)} MWK</td>
+                    <td class="px-3 py-2 ${roiColor}">${r.net_roi_pct >= 0 ? '+' : ''}${r.net_roi_pct}%</td>
+                    <td class="px-3 py-2">${statusBadge}</td>
+                `;
+                aTbody.appendChild(tr);
+            });
+
+            const modal = document.getElementById('brief-modal-overlay');
+            modal.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            lucide.createIcons();
+        }
+
+        function closeSupervisorBriefModal() {
+            document.getElementById('brief-modal-overlay').classList.add('hidden');
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeSupervisorBriefModal();
+                closeAuthModal();
+            }
+        });
+    </script>
+</body>
+
+</html>

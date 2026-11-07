@@ -1,102 +1,114 @@
-# Malawi Crop Price Prediction & Market Intelligence System
+# AgriPrice Malawi — National Crop Price & Decision Intelligence System
 
-## Overview
-This repository implements an end-to-end short-term (2–4 weeks) and seasonal (12 weeks) price forecasting, strategic market advisory, and **inter-regional arbitrage platform** for key staple and cash crops across all three agro-economic regions of Malawi:
-- **Northern Region** (Mzuzu, Karonga, Chitipa, Rumphi, Nkhata Bay, Mzimba)
-- **Central Region** (Lilongwe, Kasungu, Dedza, Salima, Dowa, Mchinji)
-- **Southern Region** (Blantyre, Zomba, Mangochi, Mulanje, Chikwawa, Nsanje)
+## Executive Overview
+**AgriPrice Malawi** is an enterprise-grade agricultural market intelligence, price forecasting, and inter-district trade arbitrage platform. It is engineered to assist smallholder farmers, grain cooperatives (NASFAM, regional clubs), commercial aggregators, and institutional buyers (ADMARC, NFRA, WFP) in making data-driven marketing decisions.
 
-Target Commodities: **Maize**, **Beans**, **Groundnuts**, **Rice**, **Soya beans**, and **Tomatoes**.
-
-The system integrates food commodity market data (**WFP VAM**, **FAMIS Malawi**, **FEWS NET**) with macroeconomic and climate drivers (**World Bank** exchange rates and inflation, **Open-Meteo** historical regional rainfall/temperatures, and fuel logistics tariffs) with dedicated machine learning models for each region and commodity.
-
----
-
-## Quick Start
-
-```powershell
-# 1. Open the repository directory
-cd "C:/Users/LOUIS KEYON/.gemini/antigravity/brain/11a23fa9-9fb0-47a8-9b19-97a98b8735b3/crop_price_prediction_malawi"
-
-# 2. Activate virtual environment
-.\.venv\Scripts\activate
-
-# 3. (Optional) Install dependencies
-pip install -r requirements.txt
-
-# 4. Run the full automated pipeline (Ingest → Enrich → Multi-Region Forecast → Arbitrage → Bulletins)
-.\.venv\Scripts\python.exe automation/run_all.py
-# (Or on Windows, double click automation\run_all.bat)
-
-# 5. Launch the interactive dashboard
-streamlit run app/streamlit_app.py
-```
+### Core Focus:
+- **Commodities**: **Maize (Chimanga)**, **Rice (Mpunga)**, and **Beans (Nyemba)**.
+- **Coverage**: **All 28 Districts across Malawi** (Northern, Central, and Southern regions).
+- **Backend Architecture**: **Django & Django REST Framework** delivering modular, real-time analytics APIs.
+- **Frontend Architecture**: **Enterprise Web Dashboard** powered by Tailwind CSS, Chart.js time-series curves with 80% & 95% confidence cones, interactive Leaflet geographic maps, and cargo profitability simulators.
 
 ---
 
-## System Architecture
+## The Three Core Pillars
 
 ```mermaid
 graph TD
-    A[WFP Food Prices<br/>41k South, 26k Central, 12k North] --> C[clean_and_enrich_data.py]
-    B[Open-Meteo Regional Climate<br/>Mzuzu, Lilongwe, Blantyre] --> C
-    M[World Bank FX & Inflation + Fuel Tariffs] --> C
-    C --> D[(Enriched Multi-Region Dataset<br/>6,138 monthly observations)]
-    D --> E[Multi-Region Trainer<br/>3 Regions x 6 Crops = 18 Series]
-    E --> F[Prophet Regional Models]
-    E --> G[SARIMAX Regional Models]
-    F --> H[Ensemble Regional Forecasters]
-    G --> H
-    H --> I[Market Recommendation Engine<br/>Storage Economics + Regional Arbitrage]
-    I --> J[Streamlit Interactive Dashboard<br/>Region Filter + National Arbitrage Map]
-    I --> K[Multi-Region Weekly Bulletins]
+    subgraph "Core 1: Predictive Engine"
+        A[Historical Market Records] --> P[Weekly & Monthly Forecasting]
+        P --> P1[1 to 4 Weeks Horizon]
+        P --> P2[1 to 6 Months Horizon]
+        P --> P3[80% & 95% Confidence Bounds]
+    end
+
+    subgraph "Core 2: Decision Making Engine"
+        P --> D[Storage Economics Analysis]
+        D --> D1[Carrying Cost ~2.5%/mo]
+        D --> D2[Net Storage ROI vs Influx]
+        D --> D3["HOLD & STORE (PICS Bags)"]
+        D --> D4["SELL NOW (Spot Liquidity)"]
+        D --> D5["MONITOR (Equilibrium)"]
+    end
+
+    subgraph "Core 3: Market Recommendation & Arbitrage"
+        P --> M[Inter-District Trade Optimizer]
+        M --> M1[Sourcing Market: Surplus/Low Price]
+        M --> M2[Destination Market: Deficit/Premium Price]
+        M --> M3[M1 / M5 Freight Cost Modeling]
+        M --> M4[Net Margin & Cargo ROI Simulator]
+    end
 ```
 
----
+### 1. Prediction (District-Level Forecasting)
+- Short-term **Weekly Forecasts (1 to 4 Weeks)** for immediate marketing decisions.
+- Medium-term **Monthly Forecasts (1 to 6 Months)** for seasonal storage planning.
+- Statistical confidence cones (80% and 95% uncertainty intervals).
+- Dynamic **Ground-Truth Calibration**: Allows enumerators or supervisors to input today's spot price to re-anchor the forecast curve in real time.
 
-## Project Layout
+### 2. Decision Making (Hold & Store vs. Sell Now)
+- Evaluates **storage economics** against a benchmark monthly carrying cost of **~2.5%/month** (PICS hermetic bags amortization, warehousing, and cost of capital).
+- Delivers unambiguous status badges:
+  - **`HOLD & STORE`**: Projected price appreciation exceeds storage carrying costs with positive net return.
+  - **`SELL NOW`**: Prices are softening or projected gains do not cover monthly carrying costs.
+  - **`MONITOR`**: Market is in equilibrium; staggered selling advised.
+- Actionable advisories tailored for **Smallholders**, **Cooperatives**, and **Institutional Buyers**.
 
-- **`data_ingest/`**
-  - `fetch_wfp_data.py` – Ingests raw food price datasets from HDX / WFP VAM for all regions with caching and timeout failovers.
-  - `fetch_exogenous_data.py` – Retrieves regional Open-Meteo climate data (Mzuzu, Lilongwe, Blantyre), official MWK/USD rates, and fuel logistics indicators.
-- **`data_preprocess/`**
-  - `clean_and_enrich_data.py` – Harmonizes commodity taxonomies, cleans bag vs kg unit errors, aggregates monthly median prices across all 3 regions, and computes lag/seasonal features.
-- **`forecast/`**
-  - `models.py` – Implements Prophet, SARIMAX, and Ensemble forecasters with 80% & 95% confidence cones and validation metrics (MAE, RMSE, MAPE).
-  - `recommendations.py` – Strategic advisory logic evaluating grain storage economics (~2.5%/mo carrying costs) and **inter-regional arbitrage spreads** against freight costs (~140 MWK/kg).
-  - `train_and_forecast.py` – Automated training loop for all 18 region-crop pairs.
-- **`app/`**
-  - `streamlit_app.py` – Interactive dashboard featuring regional filters, cross-regional comparison charts, inter-regional trade opportunity cards, what-if stress tester, and bulletin downloads.
-- **`reports/`**
-  - `generate_weekly_report.py` – Compiles national and regional market bulletins in Markdown and printable HTML.
-- **`automation/`**
-  - `run_all.py` – Python orchestrator for the automated workflow.
-  - `run_all.bat` – Windows batch script for one-click execution.
-  - `setup_scheduled_task.ps1` – Windows Task Scheduler script to run weekly on Monday at 6:00 AM.
+### 4. Market Bulletins & Email Subscriptions
+- Direct email registration for automated market bulletins.
+- Customizable delivery schedule: **Weekly Bulletins (Masabata Onse)**, **Monthly Strategic Outlook (Mwezi Uliwonse)**, or **Both**.
+- Automated instant bulletin testing tool right from the user bar.
 
----
-
-## Market Decision Logic & Arbitrage Rules
-
-| Action / Badge | Criteria & Agricultural Context | Stakeholder Advisory |
-| :--- | :--- | :--- |
-| **`HOLD & STORE`** | Price projected to rise > 12% over 12 weeks, exceeding monthly carrying costs (~2.5%/mo). | Smallholders and cooperatives store storable grains using hermetic bags (PICS) to capture lean season price peaks. |
-| **`SELL NOW`** | Price projected to soften (-3% or more) due to harvest supply expansion or perishable crop (Tomatoes). | Farmers offload produce immediately to regional depots to avoid post-harvest losses. |
-| **`TRADE OPPORTUNITY`** | Inter-regional price spread exceeds M1 corridor freight costs (~140 MWK/kg) with $\ge 15\%$ ROI. | Cooperatives and aggregators buy in surplus/low-price regions (e.g. Central) and offload in deficit/premium regions (e.g. Southern). |
-| **`MONITOR`** | Projected price movements within standard ±3% equilibrium band. | Continue standard staggered marketing. |
+### 5. Ground Calibration & Plain Language (with Chichewa)
+- Prominent **Spot Price Calibration Bar** on the main dashboard for instant recalculation of forecasts and trade corridors from field observations.
+- Bilingual metrics and advisories in **Simple English** and **Chichewa** for farmers, cooperatives, and district extension officers.
+- Clean, executive interface with official branding, zero emojis, and pure Esri cartography without watermarks.
+- Interactive **Cargo Volume Simulator (1 MT to 30 MT)** calculating total capital outlay, freight expenses, and net profit in MWK.
+- Surfaces the **Top 10 Most Lucrative Arbitrage Corridors** nationwide.
 
 ---
 
-## Verification & Testing
+## Quick Start (How to Launch for Presentation)
 
-To test the complete workflow and verify that all 18 models train and all outputs are produced:
+### Option A: One-Click Launch (Windows)
+Double-click:
+```bat
+run_server.bat
+```
+
+### Option B: Terminal Launch
 ```powershell
-.\.venv\Scripts\python.exe automation/run_all.py
+# 1. Navigate to the project directory
+cd crop_price_prediction_malawi
+
+# 2. Run the server launcher (starts Django and opens browser automatically)
+python run_server.py
 ```
-Outputs produced:
-- `data/processed/clean_malawi_all_regions_enriched_prices.csv` (6,138 rows across 3 regions)
-- `data/forecasts/crop_price_forecasts.csv` (108 forecast rows with 80% & 95% intervals)
-- `data/forecasts/model_evaluation_metrics.csv` (MAE, RMSE, MAPE per region and crop)
-- `data/forecasts/market_recommendations.csv` (18 regional recommendation records)
-- `data/forecasts/regional_arbitrage_opportunities.csv` (15 cross-regional trade corridor evaluations)
-- `reports/weekly_market_bulletin_latest.html` (Printable nationwide bulletin)
+Open **[http://127.0.0.1:8000/](http://127.0.0.1:8000/)** in your browser.
+
+---
+
+## REST API Endpoints
+
+| Endpoint | Method | Description |
+| :--- | :--- | :--- |
+| `/api/districts/` | `GET` | All 28 districts with geographic coordinates, region, and market classifications. |
+| `/api/commodities/` | `GET` | Metadata and storage parameters for Maize, Rice, and Beans. |
+| `/api/predictions/?district={id}&commodity={name}` | `GET` | Historical prices, 4-week forecasts, and 6-month forecasts with 80%/95% confidence intervals. |
+| `/api/decisions/?district={id}&commodity={name}` | `GET` | Strategic action badge, storage carrying economics, net margin, and stakeholder advisories. |
+| `/api/arbitrage/?origin={id}&commodity={name}&tonnage={mt}` | `GET` | Ranked destination selling markets from the selected origin with freight tariffs and net ROI. |
+| `/api/arbitrage/top/?commodity={name}&limit=10` | `GET` | Top 10 most profitable inter-district trade corridors across Malawi. |
+
+---
+
+## Geographic & Commodity Coverage
+
+### 28 Districts of Malawi:
+- **Northern Region (6)**: Chitipa, Karonga, Likoma, Mzimba, Nkhata Bay, Rumphi.
+- **Central Region (9)**: Dedza, Dowa, Kasungu, Lilongwe, Mchinji, Nkhotakota, Ntcheu, Ntchisi, Salima.
+- **Southern Region (13)**: Balaka, Blantyre, Chikwawa, Chiradzulu, Machinga, Mangochi, Mulanje, Mwanza, Neno, Nsanje, Phalombe, Thyolo, Zomba.
+
+### Core Commodities:
+- **Maize (*Zea mays* / Chimanga)**: Malawi's primary staple; subject to post-harvest price spikes during the hunger season (Dec–Mar).
+- **Rice (*Oryza sativa* / Mpunga)**: Premium cash crop (Kilombero, Faya); strong urban demand centers in Blantyre, Lilongwe, and Zomba.
+- **Beans (*Phaseolus vulgaris* / Nyemba)**: Major protein legume; high storage returns when preserved in hermetic PICS bags.
