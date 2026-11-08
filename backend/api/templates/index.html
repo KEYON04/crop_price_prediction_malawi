@@ -1742,7 +1742,7 @@
     <script>
         // Global State
         let state = {
-            currentView: 'landing', // 'landing' or 'dashboard'
+            currentView: 'dashboard', // default to live dashboard so all interactive components load immediately
             currentDistrict: 'lilongwe',
             currentCommodity: 'Maize',
             currentHorizon: 'weeks',
@@ -1765,6 +1765,7 @@
         // Initialization
         document.addEventListener('DOMContentLoaded', async () => {
             lucide.createIcons();
+            switchView('dashboard');
             initMap();
             await checkAuthStatus();
             await loadDistricts();
@@ -1804,93 +1805,105 @@
             const btnDashboard = document.getElementById('nav-btn-dashboard');
 
             if (viewName === 'landing') {
-                landingSection.classList.remove('hidden');
-                dashboardContainer.classList.add('hidden');
-                btnLanding.className = 'px-3.5 py-1.5 rounded-lg transition-all bg-white text-emerald-800 shadow-xs';
-                btnDashboard.className = 'px-3.5 py-1.5 rounded-lg transition-all text-slate-600 hover:text-slate-900';
+                if (landingSection) landingSection.classList.remove('hidden');
+                if (dashboardContainer) dashboardContainer.classList.add('hidden');
+                if (btnLanding) btnLanding.className = 'px-3.5 py-1.5 rounded-lg transition-all bg-white text-emerald-800 shadow-xs font-bold';
+                if (btnDashboard) btnDashboard.className = 'px-3.5 py-1.5 rounded-lg transition-all text-slate-600 hover:text-slate-900 font-bold';
             } else {
-                landingSection.classList.add('hidden');
-                dashboardContainer.classList.remove('hidden');
-                btnDashboard.className = 'px-3.5 py-1.5 rounded-lg transition-all bg-white text-emerald-800 shadow-xs';
-                btnLanding.className = 'px-3.5 py-1.5 rounded-lg transition-all text-slate-600 hover:text-slate-900';
+                if (landingSection) landingSection.classList.add('hidden');
+                if (dashboardContainer) dashboardContainer.classList.remove('hidden');
+                if (btnDashboard) btnDashboard.className = 'px-3.5 py-1.5 rounded-lg transition-all bg-white text-emerald-800 shadow-xs font-bold';
+                if (btnLanding) btnLanding.className = 'px-3.5 py-1.5 rounded-lg transition-all text-slate-600 hover:text-slate-900 font-bold';
                 
                 setTimeout(() => {
                     if (mapInstance) {
                         mapInstance.invalidateSize();
+                    }
+                    if (chartInstance) {
+                        chartInstance.resize();
                     }
                 }, 150);
             }
         }
 
         function promptFeatureAccess(feature) {
-            if (!state.currentUser) {
-                openAuthModal('signup');
-            } else {
-                switchView('dashboard');
-                window.scrollTo({ top: 400, behavior: 'smooth' });
-            }
+            switchView('dashboard');
+            window.scrollTo({ top: 400, behavior: 'smooth' });
         }
 
         // Initialize Leaflet Map locked strictly to Malawi
         function initMap() {
-            const malawiBounds = L.latL           [-17.15, 32.65],
-                [-9.35, 35.95]
-            ]);
+            try {
+                const mapEl = document.getElementById('malawi-map');
+                if (!mapEl) return;
 
-            mapInstance = L.map('malawi-map', {
-                scrollWheelZoom: false,
-                zoomControl: true,
-                maxBounds: malawiBounds.pad(0.08),
-                maxBoundsViscosity: 1.0,
-                minZoom: 6.5,
-                maxZoom: 12
-            });
-
-            const esriStreet = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-                maxZoom: 18,
-                attribution: 'Map &copy; Esri & Contributors'
-            });
-
-            const esriTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
-                maxZoom: 18,
-                attribution: 'Map &copy; Esri Topo'
-            });
-
-            esriStreet.addTo(mapInstance);
-
-            L.control.layers({
-                "Street Map (Default)": esriStreet,
-                "Topographic Terrain": esriTopo
-            }, null, { position: 'topright' }).addTo(mapInstance);
-
-            mapInstance.fitBounds(malawiBounds, { padding: [15, 15] });
-
-            const malawiBoundaryCoords = [
-                [-9.37, 33.05], [-9.45, 33.25], [-9.60, 33.60], [-9.85, 33.85],
-                [-10.25, 34.20], [-10.80, 34.30], [-11.50, 34.40], [-12.20, 34.50],
-                [-12.80, 34.55], [-13.50, 34.60], [-13.90, 35.10], [-14.40, 35.40],
-                [-14.70, 35.80], [-15.20, 35.90], [-15.80, 35.85], [-16.20, 35.50],
-                [-16.70, 35.30], [-17.12, 35.25], [-17.05, 35.10], [-16.50, 34.70],
-                [-16.00, 34.50], [-15.50, 34.40], [-14.80, 34.60], [-14.30, 34.30],
-                [-14.10, 33.50], [-13.70, 32.85], [-13.20, 33.10], [-12.50, 33.30],
-                [-11.80, 33.30], [-11.00, 33.60], [-10.30, 33.40], [-9.70, 33.00],
-                [-9.37, 33.05]
-            ];
-            L.polygon(malawiBoundaryCoords, {
-                color: '#047857',
-                weight: 2.5,
-                opacity: 0.9,
-                fillColor: '#10b981',
-                fillOpacity: 0.04,
-                dashArray: '5, 5'
-            }).addTo(mapInstance);
-
-            setTimeout(() => {
                 if (mapInstance) {
-                    mapInstance.invalidateSize();
-                    mapInstance.fitBounds(malawiBounds, { padding: [15, 15] });
+                    mapInstance.remove();
+                    mapInstance = null;
                 }
-            }, 300);
+
+                const malawiBounds = L.latLngBounds([
+                    [-17.15, 32.65],
+                    [-9.35, 35.95]
+                ]);
+
+                mapInstance = L.map('malawi-map', {
+                    scrollWheelZoom: false,
+                    zoomControl: true,
+                    maxBounds: malawiBounds.pad(0.08),
+                    maxBoundsViscosity: 1.0,
+                    minZoom: 6.5,
+                    maxZoom: 12
+                });
+
+                const esriStreet = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+                    maxZoom: 18,
+                    attribution: 'Map &copy; Esri & Contributors'
+                });
+
+                const esriTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+                    maxZoom: 18,
+                    attribution: 'Map &copy; Esri Topo'
+                });
+
+                esriStreet.addTo(mapInstance);
+
+                L.control.layers({
+                    "Street Map (Default)": esriStreet,
+                    "Topographic Terrain": esriTopo
+                }, null, { position: 'topright' }).addTo(mapInstance);
+
+                mapInstance.fitBounds(malawiBounds, { padding: [15, 15] });
+
+                const malawiBoundaryCoords = [
+                    [-9.37, 33.05], [-9.45, 33.25], [-9.60, 33.60], [-9.85, 33.85],
+                    [-10.25, 34.20], [-10.80, 34.30], [-11.50, 34.40], [-12.20, 34.50],
+                    [-12.80, 34.55], [-13.50, 34.60], [-13.90, 35.10], [-14.40, 35.40],
+                    [-14.70, 35.80], [-15.20, 35.90], [-15.80, 35.85], [-16.20, 35.50],
+                    [-16.70, 35.30], [-17.12, 35.25], [-17.05, 35.10], [-16.50, 34.70],
+                    [-16.00, 34.50], [-15.50, 34.40], [-14.80, 34.60], [-14.30, 34.30],
+                    [-14.10, 33.50], [-13.70, 32.85], [-13.20, 33.10], [-12.50, 33.30],
+                    [-11.80, 33.30], [-11.00, 33.60], [-10.30, 33.40], [-9.70, 33.00],
+                    [-9.37, 33.05]
+                ];
+                L.polygon(malawiBoundaryCoords, {
+                    color: '#047857',
+                    weight: 2.5,
+                    opacity: 0.9,
+                    fillColor: '#10b981',
+                    fillOpacity: 0.04,
+                    dashArray: '5, 5'
+                }).addTo(mapInstance);
+
+                setTimeout(() => {
+                    if (mapInstance) {
+                        mapInstance.invalidateSize();
+                        mapInstance.fitBounds(malawiBounds, { padding: [15, 15] });
+                    }
+                }, 300);
+            } catch (err) {
+                console.error("Map initialization error:", err);
+            }
         }
 
         async function loadDistricts() {
