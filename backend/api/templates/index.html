@@ -63,18 +63,40 @@
             font-family: 'Outfit', sans-serif;
         }
 
-        /* Clear, vibrant hero background (Not blurred, no image shuffling) */
+        /* Clear, vibrant agricultural photos (Strictly unblurred, crisp rendering) */
+        img {
+            filter: none !important;
+            -webkit-filter: none !important;
+        }
+
         .hero-banner-clear {
             position: relative;
             background-image: url('/static/images/corn_field.jpg');
             background-size: cover;
-            background-position: center 35%;
+            background-position: center 30%;
+            filter: none !important;
         }
 
+        /* Light, crisp overlay - leaves corn field visibly sharp and clear */
         .hero-banner-overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(135deg, rgba(2, 44, 34, 0.82) 0%, rgba(6, 78, 59, 0.72) 50%, rgba(4, 120, 87, 0.65) 100%);
+            background: linear-gradient(135deg, rgba(2, 44, 34, 0.38) 0%, rgba(6, 78, 59, 0.26) 50%, rgba(2, 44, 34, 0.45) 100%);
+        }
+
+        /* Dedicated Login Page Background (Clear corn field photo) */
+        .login-page-bg {
+            position: relative;
+            background-image: url('/static/images/corn_field.jpg');
+            background-size: cover;
+            background-position: center;
+            filter: none !important;
+        }
+
+        .login-page-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(2, 44, 34, 0.42) 0%, rgba(15, 23, 42, 0.48) 100%);
         }
 
         /* Light Gray Card Background */
@@ -164,6 +186,11 @@
             animation-play-state: paused;
         }
 
+        @page {
+            size: A4 portrait;
+            margin: 10mm 12mm 12mm 12mm;
+        }
+
         @media print {
             body {
                 background: white !important;
@@ -177,8 +204,12 @@
             main,
             #auth-modal-overlay,
             #landing-section,
+            #login-page-view,
+            #dashboard-view-container,
             #news-ticker-bar,
-            #top-utility-bar {
+            #top-utility-bar,
+            #about-modal-overlay,
+            #contact-modal-overlay {
                 display: none !important;
             }
 
@@ -187,6 +218,8 @@
                 position: static !important;
                 background: transparent !important;
                 padding: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
             }
 
             #brief-modal-container {
@@ -195,14 +228,17 @@
                 border: none !important;
                 padding: 0 !important;
                 margin: 0 !important;
+                width: 100% !important;
             }
 
             .brief-page-break {
-                page-break-before: always;
+                page-break-before: always !important;
+                break-before: page !important;
             }
 
             .brief-avoid-break {
-                page-break-inside: avoid;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
             }
         }
     </style>
@@ -210,10 +246,10 @@
 
 <body class="text-slate-800 antialiased min-h-screen flex flex-col">
 
-    <!-- Top Utility Bar: Home, About Us, Contact Us, and Connect with us (WhatsApp, Facebook) -->
+    <!-- Top Utility Bar: Home, About Us, Contact Us, and Sign In (aligned together on top) -->
     <div id="top-utility-bar" class="bg-slate-900 text-slate-300 text-xs border-b border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-10 flex items-center justify-between">
-            <!-- Left: Top Navigation Links -->
+            <!-- Left: Top Navigation Links (Home, About Us, Contact Us, and Sign In aligned together) -->
             <div class="flex items-center space-x-6">
                 <button onclick="goToHome()"
                     class="flex items-center space-x-1.5 text-slate-200 hover:text-emerald-400 font-semibold transition-colors">
@@ -230,33 +266,17 @@
                     <i data-lucide="phone" class="w-3.5 h-3.5 text-slate-400"></i>
                     <span>Contact Us</span>
                 </button>
+                <!-- Sign In aligned directly with Home, About Us, Contact Us -->
+                <button onclick="goToLogin('signin')" id="top-bar-login-btn"
+                    class="flex items-center space-x-1.5 text-emerald-400 hover:text-emerald-300 font-bold transition-colors">
+                    <i data-lucide="log-in" class="w-3.5 h-3.5 text-emerald-400"></i>
+                    <span>Sign In (Lowani)</span>
+                </button>
             </div>
 
-            <!-- Right: Connect With Us (WhatsApp & Facebook Logos) -->
-            <div class="flex items-center space-x-3">
-                <span class="text-[11px] font-medium text-slate-400 hidden sm:inline">Connect with us:</span>
-
-                <!-- WhatsApp Link & Official Logo -->
-                <a href="https://wa.me/265991234567" target="_blank" rel="noopener noreferrer"
-                    title="Chat on WhatsApp (+265 991 234 567)"
-                    class="flex items-center space-x-1.5 bg-[#25D366] hover:bg-[#20ba5a] text-white px-2.5 py-1 rounded-lg text-[11px] font-bold shadow-xs transition-transform hover:scale-105">
-                    <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
-                        <path
-                            d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
-                    </svg>
-                    <span>WhatsApp</span>
-                </a>
-
-                <!-- Facebook Link & Official Logo -->
-                <a href="https://facebook.com/AgriPriceMalawi" target="_blank" rel="noopener noreferrer"
-                    title="Follow on Facebook"
-                    class="flex items-center space-x-1.5 bg-[#1877F2] hover:bg-[#166fe5] text-white px-2.5 py-1 rounded-lg text-[11px] font-bold shadow-xs transition-transform hover:scale-105">
-                    <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
-                        <path
-                            d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                    </svg>
-                    <span>Facebook</span>
-                </a>
+            <!-- Right: User Auth Status & National Network Identifier -->
+            <div class="flex items-center space-x-3 text-slate-400 text-[11px]" id="top-bar-user-status">
+                <span class="hidden sm:inline">Republic of Malawi • Agricultural Market Intelligence Network</span>
             </div>
         </div>
     </div>
@@ -282,11 +302,11 @@
             <div
                 class="hidden md:flex items-center space-x-1 bg-slate-100 p-1 rounded-xl text-xs font-bold text-slate-600">
                 <button onclick="switchView('landing')" id="nav-btn-landing"
-                    class="px-3.5 py-1.5 rounded-lg transition-all text-slate-600 hover:text-slate-900">
+                    class="px-3.5 py-1.5 rounded-lg transition-all bg-white text-emerald-800 shadow-xs">
                     Overview (Chidule)
                 </button>
                 <button onclick="switchView('dashboard')" id="nav-btn-dashboard"
-                    class="px-3.5 py-1.5 rounded-lg transition-all bg-white text-emerald-800 shadow-xs">
+                    class="px-3.5 py-1.5 rounded-lg transition-all text-slate-600 hover:text-slate-900">
                     Live Dashboard (Msika wa Lero)
                 </button>
             </div>
@@ -294,14 +314,14 @@
             <!-- User Auth Bar & Actions -->
             <div class="flex items-center space-x-3">
                 <div id="user-nav-container">
-                    <button onclick="openAuthModal('signup')" id="btn-auth-trigger"
+                    <button onclick="goToLogin('signup')" id="btn-auth-trigger"
                         class="inline-flex items-center space-x-1.5 text-xs font-bold bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 px-3.5 py-2 rounded-xl transition-all shadow-xs">
-                        <i data-lucide="user-check" class="w-4 h-4 text-emerald-700"></i>
-                        <span>Sign In / Subscribe (Lowani)</span>
+                        <i data-lucide="user-plus" class="w-4 h-4 text-emerald-700"></i>
+                        <span>Register (Lembetsani)</span>
                     </button>
                 </div>
 
-                <!-- Supervisor Brief Button -->
+                <!-- Official Report Brief Button -->
                 <button onclick="openSupervisorBriefModal()"
                     class="no-print inline-flex items-center space-x-1.5 bg-emerald-800 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-sm transition-all hover:scale-102">
                     <i data-lucide="file-text" class="w-4 h-4 text-emerald-300"></i>
@@ -518,31 +538,183 @@
 
         <!-- Call to Action Banner (Clear, unblurred paddy rice image) -->
         <div class="relative rounded-3xl overflow-hidden p-8 sm:p-12 text-white shadow-xl"
-            style="background: linear-gradient(135deg, rgba(2, 44, 34, 0.85) 0%, rgba(6, 78, 59, 0.80) 100%), url('/static/images/paddy_rice.jpg') center/cover;">
+            style="background: linear-gradient(135deg, rgba(2, 44, 34, 0.45) 0%, rgba(6, 78, 59, 0.35) 100%), url('/static/images/paddy_rice.jpg') center/cover no-repeat; filter: none !important;">
             <div class="max-w-2xl space-y-3 relative z-10">
                 <span
-                    class="text-xs font-bold uppercase tracking-wider text-emerald-300 bg-emerald-950/80 px-3 py-1 rounded-full border border-emerald-800">
-                    Free Registration & Instant Access
+                    class="text-xs font-bold uppercase tracking-wider text-emerald-300 bg-emerald-950/85 px-3 py-1 rounded-full border border-emerald-800">
+                    Farmer & Trader Access
                 </span>
                 <h3 class="text-2xl sm:text-3xl font-extrabold font-heading">
-                    Unlock Full District Predictions & Calibration
+                    Unlock Full District Predictions & Official Reports
                 </h3>
-                <p class="text-xs sm:text-sm text-emerald-100 leading-relaxed">
-                    Sign up with your phone number or email to run customized spot price recalibrations, simulate truck
-                    cargo freight margins, and receive weekly market bulletins.
+                <p class="text-xs sm:text-sm text-emerald-100 leading-relaxed font-normal">
+                    Sign in or register as a <strong>Farmer</strong> or <strong>Trader</strong> to inspect live spot recalibrations, simulate truck cargo freight margins, and download the Official AgriPrice Malawi Report.
                 </p>
                 <div class="pt-2 flex flex-wrap gap-3">
-                    <button onclick="openAuthModal('signup')"
+                    <button onclick="goToLogin('signup')"
                         class="bg-emerald-400 hover:bg-emerald-300 text-slate-950 text-xs font-extrabold px-5 py-3 rounded-xl shadow-lg transition-all hover:scale-102 flex items-center space-x-2">
                         <i data-lucide="user-plus" class="w-4 h-4"></i>
-                        <span>Register with Phone or Email</span>
+                        <span>Register as Farmer / Trader</span>
                     </button>
-                    <button onclick="switchView('dashboard')"
-                        class="bg-white/20 hover:bg-white/30 text-white text-xs font-bold px-5 py-3 rounded-xl border border-white/30 transition-all">
-                        <span>Continue to Live Dashboard Preview</span>
+                    <button onclick="goToLogin('signin')"
+                        class="bg-white/20 hover:bg-white/30 text-white text-xs font-bold px-5 py-3 rounded-xl border border-white/30 transition-all flex items-center space-x-1.5">
+                        <i data-lucide="log-in" class="w-4 h-4"></i>
+                        <span>Sign In to Your Account</span>
                     </button>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- DEDICATED LOGIN / REGISTRATION PAGE (Own Page with clear corn field background) -->
+    <section id="login-page-view" class="hidden relative min-h-[calc(100vh-104px)] flex items-center justify-center p-4 sm:p-8"
+        style="background: linear-gradient(135deg, rgba(2, 44, 34, 0.40) 0%, rgba(15, 23, 42, 0.46) 100%), url('/static/images/corn_field.jpg') center/cover no-repeat; filter: none !important;">
+        <div class="w-full max-w-lg auth-card-light rounded-3xl p-6 sm:p-8 space-y-5 shadow-2xl relative z-10 my-8">
+            <!-- Header with Logo -->
+            <div class="flex items-center space-x-3.5 border-b border-slate-300 pb-4">
+                <img src="/static/images/logo.jpg" alt="Logo" class="w-12 h-12 rounded-2xl object-cover shadow-sm border border-slate-300">
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-black font-heading text-slate-900 leading-tight">
+                        AgriPrice Malawi
+                    </h2>
+                    <p class="text-xs text-emerald-800 font-semibold">
+                        Farmer & Trader Market Intelligence Portal
+                    </p>
+                </div>
+            </div>
+
+            <!-- Gated Feature Alert Banner (shown when user is prompted to sign in first) -->
+            <div id="login-gate-banner" class="hidden text-xs p-3.5 rounded-xl bg-amber-50 text-amber-900 border border-amber-300 flex items-start space-x-2.5">
+                <i data-lucide="shield-alert" class="w-4 h-4 text-amber-700 shrink-0 mt-0.5"></i>
+                <span id="login-gate-message" class="font-medium leading-relaxed">Please sign in as a Farmer or Trader to access this feature.</span>
+            </div>
+
+            <!-- Mode Switcher Tabs (Sign In & Register - NO FORGOT PIN) -->
+            <div class="grid grid-cols-2 gap-1.5 bg-slate-200/90 p-1.5 rounded-xl text-xs font-bold text-center">
+                <button type="button" onclick="setAuthTab('signin')" id="page-tab-signin"
+                    class="py-2.5 rounded-lg transition-all bg-emerald-700 text-white shadow-sm font-bold">
+                    Sign In (Lowani)
+                </button>
+                <button type="button" onclick="setAuthTab('signup')" id="page-tab-signup"
+                    class="py-2.5 rounded-lg transition-all text-slate-700 hover:text-slate-950 font-bold">
+                    Sign Up / Register (Lembetsani)
+                </button>
+            </div>
+
+            <!-- Main Auth Form -->
+            <form id="page-auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                <!-- Full Name (Sign Up only) -->
+                <div id="page-auth-name-group" class="hidden">
+                    <label class="block text-xs font-bold text-slate-700 mb-1">
+                        Full Name (Dzina Lonse) <span class="text-emerald-700">*</span>
+                    </label>
+                    <input type="text" id="auth-name" placeholder="e.g. Chimwemwe Banda"
+                        class="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600">
+                </div>
+
+                <!-- Phone or Email -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1" id="page-auth-identifier-label">
+                        Phone Number or Email (Lamya kapena Imelo) <span class="text-emerald-700">*</span>
+                    </label>
+                    <input type="text" id="auth-identifier" required
+                        placeholder="e.g. +265 991 234 567 or farmer@gmail.com"
+                        class="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600">
+                </div>
+
+                <!-- Security PIN (No Forgot PIN link) -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">
+                        Security PIN (PIN Yachinsinsi) <span class="text-emerald-700">*</span>
+                    </label>
+                    <input type="password" id="auth-pin" required maxlength="12"
+                        placeholder="Enter 4-6 digit numeric PIN"
+                        class="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600">
+                </div>
+
+                <!-- Sign Up Extras: Role (STRICTLY FARMER OR TRADER) & District & Report Frequency -->
+                <div id="page-auth-signup-extra" class="hidden space-y-3.5 pt-1">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <!-- Sector Role: STRICTLY FARMER OR TRADER -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">
+                                Sector Role (Maudindo) <span class="text-emerald-700">*</span>
+                            </label>
+                            <select id="auth-role"
+                                class="w-full text-xs font-bold px-3 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600">
+                                <option value="farmer">Farmer (Mlimi)</option>
+                                <option value="trader">Trader (Wamalonda / Wogulitsa)</option>
+                            </select>
+                        </div>
+
+                        <!-- District (All 28 districts & Mzuzu) -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">
+                                District (Boma)
+                            </label>
+                            <select id="auth-district"
+                                class="w-full text-xs font-semibold px-3 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600">
+                                <option value="Mzuzu">Mzuzu (North)</option>
+                                <option value="Lilongwe" selected>Lilongwe (Central)</option>
+                                <option value="Blantyre">Blantyre (South)</option>
+                                <option value="Kasungu">Kasungu</option>
+                                <option value="Dedza">Dedza</option>
+                                <option value="Mzimba">Mzimba</option>
+                                <option value="Karonga">Karonga</option>
+                                <option value="Salima">Salima</option>
+                                <option value="Mangochi">Mangochi</option>
+                                <option value="Zomba">Zomba</option>
+                                <option value="Dowa">Dowa</option>
+                                <option value="Ntcheu">Ntcheu</option>
+                                <option value="Balaka">Balaka</option>
+                                <option value="Mchinji">Mchinji</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Report Frequency (Weekly or Monthly reports via email/SMS) -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">
+                            Market Intelligence Delivery (Kulandira Malipoti)
+                        </label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <label class="flex flex-col items-center justify-center p-2 rounded-xl bg-white border border-slate-300 cursor-pointer text-center text-xs font-bold">
+                                <input type="radio" name="report_freq" value="weekly" checked class="accent-emerald-700 mb-1">
+                                <span>Weekly</span>
+                                <span class="text-[10px] text-slate-500 font-normal">Masabata Onse</span>
+                            </label>
+                            <label class="flex flex-col items-center justify-center p-2 rounded-xl bg-white border border-slate-300 cursor-pointer text-center text-xs font-bold">
+                                <input type="radio" name="report_freq" value="monthly" class="accent-emerald-700 mb-1">
+                                <span>Monthly</span>
+                                <span class="text-[10px] text-slate-500 font-normal">Mwezi Uliwonse</span>
+                            </label>
+                            <label class="flex flex-col items-center justify-center p-2 rounded-xl bg-white border border-slate-300 cursor-pointer text-center text-xs font-bold">
+                                <input type="radio" name="report_freq" value="both" class="accent-emerald-700 mb-1">
+                                <span>Both</span>
+                                <span class="text-[10px] text-slate-500 font-normal">Zonse</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feedback status message -->
+                <div id="auth-status-msg" class="hidden text-xs p-3 rounded-xl font-medium"></div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="auth-submit-btn"
+                    class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs py-3.5 px-4 rounded-xl shadow-md transition-all hover:scale-101 flex items-center justify-center space-x-2">
+                    <i data-lucide="log-in" class="w-4 h-4" id="auth-submit-icon"></i>
+                    <span id="auth-submit-label">Sign In to AgriPrice (Lowani)</span>
+                </button>
+
+                <div class="pt-2 text-center">
+                    <button type="button" onclick="goToHome()" class="text-xs text-slate-500 hover:text-slate-800 font-semibold">
+                        ← Back to Overview (Bwererani)
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
         </div>
     </section>
 
@@ -891,12 +1063,12 @@
                             </div>
                         </div>
 
-                        <!-- Stakeholder Specific Advisories -->
+                        <!-- Stakeholder Specific Advisories (Strictly Farmers & Traders) -->
                         <div class="space-y-2.5">
                             <div class="p-3 bg-emerald-50/70 rounded-xl border border-emerald-100">
                                 <span class="text-xs font-bold text-emerald-900 flex items-center space-x-1.5 mb-1">
-                                    <i data-lucide="user" class="w-3.5 h-3.5 text-emerald-700"></i>
-                                    <span>Smallholder Farmers & Clubs (Alimi Aang'ono):</span>
+                                    <i data-lucide="sprout" class="w-3.5 h-3.5 text-emerald-700"></i>
+                                    <span>Farmers & Producers (Alimi):</span>
                                 </span>
                                 <p class="text-xs text-slate-700 leading-relaxed" id="advisory-smallholder">
                                     Advisory text loading...
@@ -905,20 +1077,10 @@
 
                             <div class="p-3 bg-blue-50/70 rounded-xl border border-blue-100">
                                 <span class="text-xs font-bold text-blue-900 flex items-center space-x-1.5 mb-1">
-                                    <i data-lucide="users" class="w-3.5 h-3.5 text-blue-700"></i>
-                                    <span>Cooperatives & Aggregators (Mabungwe a Alimi):</span>
+                                    <i data-lucide="truck" class="w-3.5 h-3.5 text-blue-700"></i>
+                                    <span>Traders & Aggregators (Wamalonda / Wogulitsa):</span>
                                 </span>
-                                <p class="text-xs text-slate-700 leading-relaxed" id="advisory-coop">
-                                    Advisory text loading...
-                                </p>
-                            </div>
-
-                            <div class="p-3 bg-slate-100/70 rounded-xl border border-slate-200">
-                                <span class="text-xs font-bold text-slate-900 flex items-center space-x-1.5 mb-1">
-                                    <i data-lucide="building-2" class="w-3.5 h-3.5 text-slate-700"></i>
-                                    <span>Institutional Buyers (ADMARC / NFRA / WFP):</span>
-                                </span>
-                                <p class="text-xs text-slate-700 leading-relaxed" id="advisory-institutional">
+                                <p class="text-xs text-slate-700 leading-relaxed" id="advisory-trader">
                                     Advisory text loading...
                                 </p>
                             </div>
@@ -1112,221 +1274,6 @@
         </main>
     </div>
 
-    <!-- Sign In / Sign Up / Forgot PIN Modal (Light Gray Box Theme) -->
-    <div id="auth-modal-overlay"
-        class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs z-[9999] hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="auth-card-light max-w-lg w-full rounded-3xl p-6 sm:p-8 text-slate-800 relative my-auto">
-            <!-- Modal Close Button -->
-            <button onclick="closeAuthModal()"
-                class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 p-1.5 rounded-full hover:bg-slate-200 transition-colors">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
-
-            <!-- Modal Header -->
-            <div class="space-y-4">
-                <div class="flex items-center space-x-3.5 border-b border-slate-300/80 pb-4">
-                    <img src="/static/images/logo.jpg" alt="Logo"
-                        class="w-12 h-12 rounded-2xl object-cover shadow-sm border border-slate-300">
-                    <div>
-                        <h2
-                            class="text-xl sm:text-2xl font-black font-heading tracking-tight text-slate-900 leading-tight">
-                            AgriPrice Malawi
-                        </h2>
-                        <p class="text-xs text-emerald-800 font-semibold">
-                            Market Intelligence & Decision Network
-                        </p>
-                    </div>
-                </div>
-
-                <!-- 3-Way Mode Switcher (Sign Up, Sign In, Forgot PIN) -->
-                <div class="grid grid-cols-3 gap-1 bg-slate-200/90 p-1 rounded-xl text-xs font-bold text-center">
-                    <button onclick="setAuthMode('signup')" id="tab-signup"
-                        class="py-2 rounded-lg transition-all bg-emerald-700 text-white shadow-sm">
-                        Sign Up
-                    </button>
-                    <button onclick="setAuthMode('signin')" id="tab-signin"
-                        class="py-2 rounded-lg transition-all text-slate-600 hover:text-slate-900">
-                        Sign In
-                    </button>
-                    <button onclick="setAuthMode('forgot')" id="tab-forgot"
-                        class="py-2 rounded-lg transition-all text-slate-600 hover:text-slate-900">
-                        Forgot PIN?
-                    </button>
-                </div>
-
-                <!-- FORM 1 & 2: SIGN UP & SIGN IN -->
-                <form id="auth-main-form" onsubmit="handleAuthSubmit(event)" class="space-y-3.5">
-                    <!-- Full Name (Sign Up only) -->
-                    <div id="auth-name-group">
-                        <label class="block text-xs font-bold text-slate-700 mb-1">
-                            Full Name (Dzina Lanu Lamu)
-                        </label>
-                        <input type="text" id="auth-name" placeholder="e.g. Kondwani Phiri"
-                            class="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600">
-                    </div>
-
-                    <!-- Phone Number or Email (Accepted for both Sign Up & Sign In) -->
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1" id="auth-identifier-label">
-                            Phone Number or Email (Lamya kapena Imelo) <span class="text-emerald-700">*</span>
-                        </label>
-                        <input type="text" id="auth-identifier" required
-                            placeholder="e.g. +265 991 234 567 or user@gmail.com"
-                            class="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600">
-                    </div>
-
-                    <!-- Security PIN (4+ digits) -->
-                    <div id="auth-pin-group">
-                        <div class="flex items-center justify-between mb-1">
-                            <label class="text-xs font-bold text-slate-700">
-                                Security PIN / Password (PIN Yanu) <span class="text-emerald-700">*</span>
-                            </label>
-                            <button type="button" onclick="setAuthMode('forgot')"
-                                class="text-[11px] text-emerald-800 font-semibold hover:underline">
-                                Forgot PIN?
-                            </button>
-                        </div>
-                        <input type="password" id="auth-pin" required maxlength="12"
-                            placeholder="4-6 digit numeric PIN (e.g. 1234)"
-                            class="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600">
-                    </div>
-
-                    <!-- Additional Details (Sign Up Only) -->
-                    <div id="auth-signup-extra" class="space-y-3.5">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <!-- District (Includes Mzuzu!) -->
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">
-                                    Primary District (Boma)
-                                </label>
-                                <select id="auth-district"
-                                    class="w-full text-xs font-semibold px-3 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600">
-                                    <option value="Mzuzu">Mzuzu (North)</option>
-                                    <option value="Lilongwe" selected>Lilongwe (Central)</option>
-                                    <option value="Blantyre">Blantyre (South)</option>
-                                    <option value="Kasungu">Kasungu</option>
-                                    <option value="Dedza">Dedza</option>
-                                    <option value="Mzimba">Mzimba</option>
-                                    <option value="Karonga">Karonga</option>
-                                    <option value="Zomba">Zomba</option>
-                                    <option value="Mangochi">Mangochi</option>
-                                    <option value="Salima">Salima</option>
-                                    <option value="Dowa">Dowa</option>
-                                    <option value="Ntcheu">Ntcheu</option>
-                                </select>
-                            </div>
-
-                            <!-- Role / Stakeholder -->
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">
-                                    Your Sector / Role
-                                </label>
-                                <select id="auth-role"
-                                    class="w-full text-xs font-semibold px-3 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600">
-                                    <option value="farmer">Smallholder Farmer (Mlimi)</option>
-                                    <option value="coop">Agricultural Cooperative</option>
-                                    <option value="trader">Grain Aggregator / Trader</option>
-                                    <option value="institutional">Supervisor / Policy / Extension</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Report Frequency Preference -->
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5">
-                                Market Bulletins Frequency (Kulandira Malipoti)
-                            </label>
-                            <div class="grid grid-cols-3 gap-2">
-                                <label
-                                    class="flex flex-col items-center justify-center p-2 rounded-xl bg-white border border-slate-300 cursor-pointer hover:border-emerald-600 text-center transition-all">
-                                    <input type="radio" name="report_freq" value="weekly" checked
-                                        class="accent-emerald-700 mb-1">
-                                    <span class="text-xs font-bold text-slate-800">Weekly</span>
-                                    <span class="text-[10px] text-slate-500">Masabata Onse</span>
-                                </label>
-                                <label
-                                    class="flex flex-col items-center justify-center p-2 rounded-xl bg-white border border-slate-300 cursor-pointer hover:border-emerald-600 text-center transition-all">
-                                    <input type="radio" name="report_freq" value="monthly"
-                                        class="accent-emerald-700 mb-1">
-                                    <span class="text-xs font-bold text-slate-800">Monthly</span>
-                                    <span class="text-[10px] text-slate-500">Mwezi Uliwonse</span>
-                                </label>
-                                <label
-                                    class="flex flex-col items-center justify-center p-2 rounded-xl bg-white border border-slate-300 cursor-pointer hover:border-emerald-600 text-center transition-all">
-                                    <input type="radio" name="report_freq" value="both" class="accent-emerald-700 mb-1">
-                                    <span class="text-xs font-bold text-slate-800">Both</span>
-                                    <span class="text-[10px] text-slate-500">Zonse</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Feedback message -->
-                    <div id="auth-status-msg" class="hidden text-xs p-3 rounded-xl"></div>
-
-                    <!-- Submit Button -->
-                    <button type="submit" id="auth-submit-btn"
-                        class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs py-3 px-4 rounded-xl shadow-md transition-all hover:scale-101 flex items-center justify-center space-x-2">
-                        <i data-lucide="check-circle" class="w-4 h-4"></i>
-                        <span id="auth-submit-label">Subscribe & Create Account</span>
-                    </button>
-                </form>
-
-                <!-- FORM 3: FORGOT PIN & RESET FLOW -->
-                <form id="auth-forgot-form" onsubmit="handleForgotPinSubmit(event)" class="hidden space-y-3.5">
-                    <p class="text-xs text-slate-600 leading-relaxed">
-                        Enter your registered phone number or email. We will generate and dispatch a 6-digit
-                        verification code to reset your PIN.
-                    </p>
-
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">
-                            Registered Phone Number or Email
-                        </label>
-                        <input type="text" id="forgot-identifier" required
-                            placeholder="e.g. +265 991 234 567 or user@gmail.com"
-                            class="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600">
-                    </div>
-
-                    <!-- Step 2 Inputs (Shown after code is sent) -->
-                    <div id="forgot-step-2" class="hidden space-y-3 pt-1 border-t border-slate-300">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">
-                                Enter 6-Digit Verification Code (Khodi)
-                            </label>
-                            <input type="text" id="forgot-code" maxlength="6" placeholder="e.g. 482915"
-                                class="w-full text-sm font-mono tracking-widest text-center px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">
-                                Enter New Security PIN (PIN Yatsopano)
-                            </label>
-                            <input type="password" id="forgot-new-pin" maxlength="12"
-                                placeholder="Enter new 4-6 digit PIN"
-                                class="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600">
-                        </div>
-                    </div>
-
-                    <!-- Feedback message for reset flow -->
-                    <div id="forgot-status-msg" class="hidden text-xs p-3 rounded-xl"></div>
-
-                    <!-- Action Button -->
-                    <button type="submit" id="forgot-submit-btn"
-                        class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs py-3 px-4 rounded-xl shadow-md transition-all hover:scale-101 flex items-center justify-center space-x-2">
-                        <i data-lucide="key" class="w-4 h-4"></i>
-                        <span id="forgot-submit-label">Send Verification Code</span>
-                    </button>
-                </form>
-
-                <p class="text-[11px] text-slate-500 text-center">
-                    SMS and email bulletins provide district price trajectories, seasonal storage advice, and trade
-                    corridor profits.
-                </p>
-            </div>
-        </div>
-    </div>
-
     <!-- Official AgriPrice Malawi Report Document Modal -->
     <div id="brief-modal-overlay"
         class="fixed inset-0 bg-slate-950/80 backdrop-blur-xs z-[9999] hidden flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
@@ -1336,15 +1283,14 @@
             <div
                 class="no-print flex items-center justify-between pb-4 mb-6 border-b border-slate-200 sticky top-0 bg-white z-20">
                 <div class="flex items-center space-x-2">
-                    <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-full">Official
-                        Briefing Document</span>
+                    <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-full">Official Brief</span>
                     <span class="text-xs text-slate-700 font-bold">Official AgriPrice Malawi Report Document</span>
                 </div>
                 <div class="flex items-center space-x-3">
-                    <button onclick="window.print()"
-                        class="inline-flex items-center space-x-1.5 bg-emerald-800 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm transition-all hover:scale-105">
-                        <i data-lucide="printer" class="w-4 h-4"></i>
-                        <span>Print / Save as PDF</span>
+                    <button onclick="downloadReportPdf()"
+                        class="inline-flex items-center space-x-2 bg-emerald-800 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md transition-all hover:scale-105">
+                        <i data-lucide="download" class="w-4 h-4 text-emerald-300"></i>
+                        <span>Download Report as PDF</span>
                     </button>
                     <button onclick="closeSupervisorBriefModal()"
                         class="text-slate-400 hover:text-slate-700 p-2 rounded-lg hover:bg-slate-100 transition-colors">
@@ -1491,19 +1437,15 @@
                         </div>
                     </div>
 
-                    <!-- Stakeholder Directives -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-                        <div class="p-2.5 bg-emerald-50/50 rounded-lg border border-emerald-200">
-                            <strong class="text-emerald-900 block text-[11px] mb-1">Smallholder Farmers:</strong>
-                            <p class="text-[10.5px] text-slate-700" id="brief-smallholder-text">--</p>
+                    <!-- Stakeholder Directives (Strictly Focused on Farmers & Traders) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                        <div class="p-3 bg-emerald-50/60 rounded-xl border border-emerald-200">
+                            <strong class="text-emerald-900 block text-[11px] mb-1">Smallholder & Commercial Farmers (Alimi):</strong>
+                            <p class="text-[10.5px] text-slate-700 leading-relaxed" id="brief-smallholder-text">--</p>
                         </div>
-                        <div class="p-2.5 bg-blue-50/50 rounded-lg border border-blue-200">
-                            <strong class="text-blue-900 block text-[11px] mb-1">Cooperatives:</strong>
-                            <p class="text-[10.5px] text-slate-700" id="brief-coop-text">--</p>
-                        </div>
-                        <div class="p-2.5 bg-slate-100/60 rounded-lg border border-slate-200">
-                            <strong class="text-slate-900 block text-[11px] mb-1">Institutional Buyers:</strong>
-                            <p class="text-[10.5px] text-slate-700" id="brief-institutional-text">--</p>
+                        <div class="p-3 bg-blue-50/60 rounded-xl border border-blue-200">
+                            <strong class="text-blue-900 block text-[11px] mb-1">Grain Traders & Aggregators (Wamalonda / Wogulitsa):</strong>
+                            <p class="text-[10.5px] text-slate-700 leading-relaxed" id="brief-trader-text">--</p>
                         </div>
                     </div>
                 </div>
@@ -1728,13 +1670,44 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 py-6 mt-auto text-center text-xs text-slate-500">
-        <div class="max-w-7xl mx-auto px-4">
-            <p class="font-medium text-slate-700">AgriPrice Malawi • National Agricultural Market Intelligence Platform
-            </p>
-            <p class="mt-1 text-slate-500">Maize, Rice, and Beans Coverage across all 28 Districts and Cities • WFP VAM
-                & FAMIS Ground Data</p>
+    <!-- Footer with "Connect With Us" at the bottom of the platform -->
+    <footer class="bg-slate-900 text-white border-t border-slate-800 py-10 mt-auto text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+            <!-- Connect with us section at bottom of platform -->
+            <div class="flex flex-col sm:flex-row items-center justify-between pb-6 border-b border-slate-800 gap-4">
+                <div>
+                    <h4 class="font-heading font-extrabold text-base text-white">Connect with AgriPrice Malawi</h4>
+                    <p class="text-xs text-slate-400 mt-0.5">Direct crop bulletins, farmer advisories, and trade corridors across Malawi.</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <!-- WhatsApp Link & Official Logo -->
+                    <a href="https://wa.me/265991234567" target="_blank" rel="noopener noreferrer"
+                        title="Chat on WhatsApp (+265 991 234 567)"
+                        class="flex items-center space-x-2 bg-[#25D366] hover:bg-[#20ba5a] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md transition-transform hover:scale-105">
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path
+                                d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
+                        </svg>
+                        <span>WhatsApp (+265 991 234 567)</span>
+                    </a>
+
+                    <!-- Facebook Link & Official Logo -->
+                    <a href="https://facebook.com/AgriPriceMalawi" target="_blank" rel="noopener noreferrer"
+                        title="Follow on Facebook"
+                        class="flex items-center space-x-2 bg-[#1877F2] hover:bg-[#166fe5] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md transition-transform hover:scale-105">
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path
+                                d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                        </svg>
+                        <span>Facebook Page</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="text-center text-slate-400 space-y-1">
+                <p class="font-medium text-slate-200">AgriPrice Malawi • National Agricultural Market Intelligence Platform</p>
+                <p class="text-[11px] text-slate-500">Maize, Rice, and Beans Coverage across all 28 Districts and Cities • FAMIS & WFP VAM Ground Data</p>
+            </div>
         </div>
     </footer>
 

@@ -312,7 +312,7 @@ def api_auth_signin(request):
     # Validate PIN
     if pin and subscriber.pin and subscriber.pin != pin:
         return Response({
-            "error": "Incorrect security PIN. Please check your PIN or click 'Forgot PIN?' to reset it."
+            "error": "Incorrect security PIN. Please check your PIN and try again."
         }, status=401)
 
     request.session["subscriber_id"] = subscriber.id

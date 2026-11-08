@@ -8,10 +8,8 @@ class MarketSubscriber(models.Model):
     ]
 
     ORG_CHOICES = [
-        ('farmer', 'Smallholder Farmer (Mlimi Wamng\'ono)'),
-        ('coop', 'Agricultural Cooperative (Bungwe la Alimi)'),
-        ('trader', 'Grain Aggregator / Trader (Wogula ndi Wogulitsa)'),
-        ('institutional', 'Institutional / Government / NGO'),
+        ('farmer', 'Farmer (Mlimi)'),
+        ('trader', 'Trader (Wamalonda / Wogulitsa)'),
     ]
 
     full_name = models.CharField(max_length=150)
