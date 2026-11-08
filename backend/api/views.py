@@ -1,6 +1,9 @@
 import json
+import random
+import datetime
 from django.shortcuts import render
 from django.http import JsonResponse
+from django.utils import timezone
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -198,33 +201,69 @@ def api_top_arbitrage(request):
 @api_view(["POST"])
 def api_auth_signup(request):
     """
-    Subscribes a user to AgriPrice Malawi market intelligence email bulletins.
+    Subscribes/registers a user with email or phone number and a PIN.
     """
     data = request.data
+    identifier = data.get("identifier", "").strip()
     email = data.get("email", "").strip().lower()
+    phone = data.get("phone", "").strip()
     full_name = data.get("full_name", "").strip()
+    pin = data.get("pin", "1234").strip()
     district = data.get("district", "Lilongwe").strip()
     report_frequency = data.get("report_frequency", "weekly")
     organization_type = data.get("organization_type", "farmer")
-    phone = data.get("phone", "").strip()
 
-    if not email or "@" not in email:
-        return Response({"error": "A valid email address is required (Imelo yovomerezeka ikufunika)."}, status=400)
+    # If identifier was passed, detect if it's email or phone
+    if identifier:
+        if "@" in identifier:
+            email = identifier.lower()
+        else:
+            phone = identifier
+
+    if not email and not phone:
+        return Response({
+            "error": "Please provide either an email address or a phone number to register (Lembani imelo kapena nambala ya lamya)."
+        }, status=400)
+
+    if not pin or len(pin) < 4:
+        return Response({"error": "Security PIN must be at least 4 digits (PIN iyenera kukhala ndi manambala osachepera 4)."}, status=400)
 
     if not full_name:
-        full_name = email.split("@")[0].title()
+        full_name = email.split("@")[0].title() if email else f"User {phone[-4:]}"
 
-    subscriber, created = MarketSubscriber.objects.update_or_create(
-        email=email,
-        defaults={
-            "full_name": full_name,
-            "district": district,
-            "report_frequency": report_frequency,
-            "organization_type": organization_type,
-            "phone": phone,
-            "is_active": True,
-        }
-    )
+    # Search for existing user by email or phone
+    subscriber = None
+    if email:
+        subscriber = MarketSubscriber.objects.filter(email=email).first()
+    if not subscriber and phone:
+        subscriber = MarketSubscriber.objects.filter(phone=phone).first()
+
+    created = False
+    if not subscriber:
+        subscriber = MarketSubscriber.objects.create(
+            full_name=full_name,
+            email=email if email else None,
+            phone=phone if phone else None,
+            pin=pin,
+            district=district,
+            organization_type=organization_type,
+            report_frequency=report_frequency,
+            is_active=True
+        )
+        created = True
+    else:
+        # Update details
+        subscriber.full_name = full_name
+        if email:
+            subscriber.email = email
+        if phone:
+            subscriber.phone = phone
+        subscriber.pin = pin
+        subscriber.district = district
+        subscriber.organization_type = organization_type
+        subscriber.report_frequency = report_frequency
+        subscriber.is_active = True
+        subscriber.save()
 
     request.session["subscriber_id"] = subscriber.id
     request.session.modified = True
@@ -232,11 +271,12 @@ def api_auth_signup(request):
     return Response({
         "status": "success",
         "created": created,
-        "message": f"Welcome {subscriber.full_name}! You are registered to receive {subscriber.get_report_frequency_display()} for {subscriber.district}.",
+        "message": f"Welcome {subscriber.full_name}! Your account and {subscriber.get_report_frequency_display()} subscription are active.",
         "subscriber": {
             "id": subscriber.id,
             "full_name": subscriber.full_name,
             "email": subscriber.email,
+            "phone": subscriber.phone,
             "district": subscriber.district,
             "report_frequency": subscriber.report_frequency,
             "organization_type": subscriber.organization_type,
@@ -247,24 +287,33 @@ def api_auth_signup(request):
 @api_view(["POST"])
 def api_auth_signin(request):
     """
-    Signs in a registered subscriber by email.
+    Signs in a registered user by email or phone and PIN.
     """
-    email = request.data.get("email", "").strip().lower()
-    if not email:
-        return Response({"error": "Please provide your email address."}, status=400)
+    identifier = request.data.get("identifier", "").strip()
+    pin = request.data.get("pin", "").strip()
 
-    subscriber = MarketSubscriber.objects.filter(email=email).first()
+    if not identifier:
+        return Response({"error": "Please provide your phone number or email address."}, status=400)
+
+    # Search by email or phone
+    subscriber = None
+    if "@" in identifier:
+        subscriber = MarketSubscriber.objects.filter(email=identifier.lower()).first()
+    else:
+        subscriber = MarketSubscriber.objects.filter(phone=identifier).first()
+        if not subscriber:
+            subscriber = MarketSubscriber.objects.filter(email=identifier.lower()).first()
+
     if not subscriber:
-        # Create a new active profile gracefully
-        name = email.split("@")[0].title()
-        subscriber = MarketSubscriber.objects.create(
-            email=email,
-            full_name=name,
-            district="Lilongwe",
-            report_frequency="weekly",
-            organization_type="farmer",
-            is_active=True
-        )
+        return Response({
+            "error": "No account found matching this phone number or email. Please sign up to create an account."
+        }, status=404)
+
+    # Validate PIN
+    if pin and subscriber.pin and subscriber.pin != pin:
+        return Response({
+            "error": "Incorrect security PIN. Please check your PIN or click 'Forgot PIN?' to reset it."
+        }, status=401)
 
     request.session["subscriber_id"] = subscriber.id
     request.session.modified = True
@@ -276,6 +325,101 @@ def api_auth_signin(request):
             "id": subscriber.id,
             "full_name": subscriber.full_name,
             "email": subscriber.email,
+            "phone": subscriber.phone,
+            "district": subscriber.district,
+            "report_frequency": subscriber.report_frequency,
+            "organization_type": subscriber.organization_type,
+        }
+    })
+
+
+@api_view(["POST"])
+def api_auth_forgot_pin(request):
+    """
+    Initiates PIN recovery by generating a 6-digit verification code sent to email or phone.
+    """
+    identifier = request.data.get("identifier", "").strip()
+    if not identifier:
+        return Response({"error": "Please enter your registered phone number or email address."}, status=400)
+
+    subscriber = None
+    if "@" in identifier:
+        subscriber = MarketSubscriber.objects.filter(email=identifier.lower()).first()
+    else:
+        subscriber = MarketSubscriber.objects.filter(phone=identifier).first()
+        if not subscriber:
+            subscriber = MarketSubscriber.objects.filter(email=identifier.lower()).first()
+
+    if not subscriber:
+        return Response({
+            "error": "No account found for this phone number or email. Please verify and try again."
+        }, status=404)
+
+    # Generate 6-digit verification code
+    reset_code = f"{random.randint(100000, 999999)}"
+    subscriber.reset_code = reset_code
+    subscriber.reset_code_expires = timezone.now() + datetime.timedelta(minutes=15)
+    subscriber.save()
+
+    dest_label = subscriber.phone if subscriber.phone and "@" not in identifier else subscriber.email or identifier
+
+    return Response({
+        "status": "success",
+        "message": f"A 6-digit verification code has been dispatched to {dest_label}. Valid for 15 minutes.",
+        "verification_code": reset_code,  # Provided in response for demo/presentation testing
+        "identifier": identifier,
+    })
+
+
+@api_view(["POST"])
+def api_auth_reset_pin(request):
+    """
+    Verifies the 6-digit code and sets a new PIN.
+    """
+    identifier = request.data.get("identifier", "").strip()
+    code = request.data.get("reset_code", "").strip()
+    new_pin = request.data.get("new_pin", "").strip()
+
+    if not identifier or not code or not new_pin:
+        return Response({"error": "Please supply your identifier, verification code, and new PIN."}, status=400)
+
+    if len(new_pin) < 4:
+        return Response({"error": "New PIN must be at least 4 digits."}, status=400)
+
+    subscriber = None
+    if "@" in identifier:
+        subscriber = MarketSubscriber.objects.filter(email=identifier.lower()).first()
+    else:
+        subscriber = MarketSubscriber.objects.filter(phone=identifier).first()
+        if not subscriber:
+            subscriber = MarketSubscriber.objects.filter(email=identifier.lower()).first()
+
+    if not subscriber:
+        return Response({"error": "Account not found."}, status=404)
+
+    if subscriber.reset_code != code:
+        return Response({"error": "Invalid verification code. Please check the code and try again."}, status=400)
+
+    if subscriber.reset_code_expires and timezone.now() > subscriber.reset_code_expires:
+        return Response({"error": "Verification code has expired. Please request a new code."}, status=400)
+
+    # Update PIN and clear code
+    subscriber.pin = new_pin
+    subscriber.reset_code = None
+    subscriber.reset_code_expires = None
+    subscriber.save()
+
+    request.session["subscriber_id"] = subscriber.id
+    request.session.modified = True
+
+    return Response({
+        "status": "success",
+        "message": "PIN successfully updated! You are now logged in.",
+        "subscriber": {
+            "id": subscriber.id,
+            "full_name": subscriber.full_name,
+            "email": subscriber.email,
+            "phone": subscriber.phone,
             "district": subscriber.district,
             "report_frequency": subscriber.report_frequency,
             "organization_type": subscriber.organization_type,

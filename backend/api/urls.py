@@ -16,6 +16,8 @@ urlpatterns = [
     # User Authentication & Market Report Subscriptions
     path("api/auth/signup/", views.api_auth_signup, name="api_auth_signup"),
     path("api/auth/signin/", views.api_auth_signin, name="api_auth_signin"),
+    path("api/auth/forgot-pin/", views.api_auth_forgot_pin, name="api_auth_forgot_pin"),
+    path("api/auth/reset-pin/", views.api_auth_reset_pin, name="api_auth_reset_pin"),
     path("api/auth/me/", views.api_auth_me, name="api_auth_me"),
     path("api/auth/signout/", views.api_auth_signout, name="api_auth_signout"),
     path("api/reports/send/", views.api_send_market_report, name="api_send_market_report"),

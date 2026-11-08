@@ -62,6 +62,20 @@ DISTRICTS = [
         }
     },
     {
+        "id": "mzuzu",
+        "name": "Mzuzu",
+        "region": "Northern Region",
+        "market_center": "Mzuzu Central / Taifa Market",
+        "market_type": "Northern Commercial Capital & Trade Hub",
+        "lat": -11.4656,
+        "lon": 34.0207,
+        "base_factor": {
+            "Maize": 1.05,     # Urban consumer demand center, premium market
+            "Rice": 0.98,      # Proximity to Karonga/Nkhata Bay rice
+            "Beans": 1.04      # High urban bean consumption
+        }
+    },
+    {
         "id": "nkhata_bay",
         "name": "Nkhata Bay",
         "region": "Northern Region",

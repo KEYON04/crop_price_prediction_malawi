@@ -15,8 +15,11 @@ class MarketSubscriber(models.Model):
     ]
 
     full_name = models.CharField(max_length=150)
-    email = models.EmailField(unique=True)
+    email = models.CharField(max_length=150, blank=True, null=True)
     phone = models.CharField(max_length=30, blank=True, null=True)
+    pin = models.CharField(max_length=128, default='1234')
+    reset_code = models.CharField(max_length=10, blank=True, null=True)
+    reset_code_expires = models.DateTimeField(blank=True, null=True)
     district = models.CharField(max_length=100, default='Lilongwe')
     organization_type = models.CharField(max_length=50, choices=ORG_CHOICES, default='farmer')
     report_frequency = models.CharField(max_length=50, choices=REPORT_CHOICES, default='weekly')
