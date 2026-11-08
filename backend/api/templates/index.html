@@ -548,7 +548,9 @@
                     Unlock Full District Predictions & Official Reports
                 </h3>
                 <p class="text-xs sm:text-sm text-emerald-100 leading-relaxed font-normal">
-                    Sign in or register as a <strong>Farmer</strong> or <strong>Trader</strong> to inspect live spot recalibrations, simulate truck cargo freight margins, and download the Official AgriPrice Malawi Report.
+                    Sign in or register as a <strong>Farmer</strong> or <strong>Trader</strong> to inspect live spot
+                    recalibrations, simulate truck cargo freight margins, and download the Official AgriPrice Malawi
+                    Report.
                 </p>
                 <div class="pt-2 flex flex-wrap gap-3">
                     <button onclick="goToLogin('signup')"
@@ -567,12 +569,14 @@
     </section>
 
     <!-- DEDICATED LOGIN / REGISTRATION PAGE (Own Page with clear corn field background) -->
-    <section id="login-page-view" class="hidden relative min-h-[calc(100vh-104px)] flex items-center justify-center p-4 sm:p-8"
+    <section id="login-page-view"
+        class="hidden relative min-h-[calc(100vh-104px)] flex items-center justify-center p-4 sm:p-8"
         style="background: linear-gradient(135deg, rgba(2, 44, 34, 0.40) 0%, rgba(15, 23, 42, 0.46) 100%), url('/static/images/corn_field.jpg') center/cover no-repeat; filter: none !important;">
         <div class="w-full max-w-lg auth-card-light rounded-3xl p-6 sm:p-8 space-y-5 shadow-2xl relative z-10 my-8">
             <!-- Header with Logo -->
             <div class="flex items-center space-x-3.5 border-b border-slate-300 pb-4">
-                <img src="/static/images/logo.jpg" alt="Logo" class="w-12 h-12 rounded-2xl object-cover shadow-sm border border-slate-300">
+                <img src="/static/images/logo.jpg" alt="Logo"
+                    class="w-12 h-12 rounded-2xl object-cover shadow-sm border border-slate-300">
                 <div>
                     <h2 class="text-xl sm:text-2xl font-black font-heading text-slate-900 leading-tight">
                         AgriPrice Malawi
@@ -584,9 +588,11 @@
             </div>
 
             <!-- Gated Feature Alert Banner (shown when user is prompted to sign in first) -->
-            <div id="login-gate-banner" class="hidden text-xs p-3.5 rounded-xl bg-amber-50 text-amber-900 border border-amber-300 flex items-start space-x-2.5">
+            <div id="login-gate-banner"
+                class="hidden text-xs p-3.5 rounded-xl bg-amber-50 text-amber-900 border border-amber-300 flex items-start space-x-2.5">
                 <i data-lucide="shield-alert" class="w-4 h-4 text-amber-700 shrink-0 mt-0.5"></i>
-                <span id="login-gate-message" class="font-medium leading-relaxed">Please sign in as a Farmer or Trader to access this feature.</span>
+                <span id="login-gate-message" class="font-medium leading-relaxed">Please sign in as a Farmer or Trader
+                    to access this feature.</span>
             </div>
 
             <!-- Mode Switcher Tabs (Sign In & Register - NO FORGOT PIN) -->
@@ -678,17 +684,21 @@
                             Market Intelligence Delivery (Kulandira Malipoti)
                         </label>
                         <div class="grid grid-cols-3 gap-2">
-                            <label class="flex flex-col items-center justify-center p-2 rounded-xl bg-white border border-slate-300 cursor-pointer text-center text-xs font-bold">
-                                <input type="radio" name="report_freq" value="weekly" checked class="accent-emerald-700 mb-1">
+                            <label
+                                class="flex flex-col items-center justify-center p-2 rounded-xl bg-white border border-slate-300 cursor-pointer text-center text-xs font-bold">
+                                <input type="radio" name="report_freq" value="weekly" checked
+                                    class="accent-emerald-700 mb-1">
                                 <span>Weekly</span>
                                 <span class="text-[10px] text-slate-500 font-normal">Masabata Onse</span>
                             </label>
-                            <label class="flex flex-col items-center justify-center p-2 rounded-xl bg-white border border-slate-300 cursor-pointer text-center text-xs font-bold">
+                            <label
+                                class="flex flex-col items-center justify-center p-2 rounded-xl bg-white border border-slate-300 cursor-pointer text-center text-xs font-bold">
                                 <input type="radio" name="report_freq" value="monthly" class="accent-emerald-700 mb-1">
                                 <span>Monthly</span>
                                 <span class="text-[10px] text-slate-500 font-normal">Mwezi Uliwonse</span>
                             </label>
-                            <label class="flex flex-col items-center justify-center p-2 rounded-xl bg-white border border-slate-300 cursor-pointer text-center text-xs font-bold">
+                            <label
+                                class="flex flex-col items-center justify-center p-2 rounded-xl bg-white border border-slate-300 cursor-pointer text-center text-xs font-bold">
                                 <input type="radio" name="report_freq" value="both" class="accent-emerald-700 mb-1">
                                 <span>Both</span>
                                 <span class="text-[10px] text-slate-500 font-normal">Zonse</span>
@@ -708,14 +718,15 @@
                 </button>
 
                 <div class="pt-2 text-center">
-                    <button type="button" onclick="goToHome()" class="text-xs text-slate-500 hover:text-slate-800 font-semibold">
+                    <button type="button" onclick="goToHome()"
+                        class="text-xs text-slate-500 hover:text-slate-800 font-semibold">
                         ← Back to Overview (Bwererani)
                     </button>
                 </div>
             </form>
         </div>
     </section>
-        </div>
+    </div>
     </section>
 
     <!-- LIVE DASHBOARD VIEW (Full interactive analytics) -->
@@ -897,7 +908,8 @@
                             <span class="text-xs font-semibold text-slate-500">MWK/kg</span>
                         </h3>
                         <p class="text-[11px] text-slate-500 mt-0.5"><span id="stat-district-name">Lilongwe</span> •
-                            <span id="stat-region-name">Central Region</span></p>
+                            <span id="stat-region-name">Central Region</span>
+                        </p>
                     </div>
                 </div>
 
@@ -931,7 +943,8 @@
                         </p>
                         <p class="text-[10px] text-blue-700 font-semibold mb-0.5">Masabata Anayi Akubwera</p>
                         <h3 class="text-2xl font-black text-slate-900 font-heading"><span id="stat-4w-price">--</span>
-                            <span class="text-xs font-semibold text-slate-500">MWK</span></h3>
+                            <span class="text-xs font-semibold text-slate-500">MWK</span>
+                        </h3>
                         <p class="text-[11px] font-bold" id="stat-4w-change">--</p>
                     </div>
                 </div>
@@ -1283,7 +1296,8 @@
             <div
                 class="no-print flex items-center justify-between pb-4 mb-6 border-b border-slate-200 sticky top-0 bg-white z-20">
                 <div class="flex items-center space-x-2">
-                    <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-full">Official Brief</span>
+                    <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-full">Official
+                        Brief</span>
                     <span class="text-xs text-slate-700 font-bold">Official AgriPrice Malawi Report Document</span>
                 </div>
                 <div class="flex items-center space-x-3">
@@ -1440,11 +1454,13 @@
                     <!-- Stakeholder Directives (Strictly Focused on Farmers & Traders) -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                         <div class="p-3 bg-emerald-50/60 rounded-xl border border-emerald-200">
-                            <strong class="text-emerald-900 block text-[11px] mb-1">Smallholder & Commercial Farmers (Alimi):</strong>
+                            <strong class="text-emerald-900 block text-[11px] mb-1">Smallholder & Commercial Farmers
+                                (Alimi):</strong>
                             <p class="text-[10.5px] text-slate-700 leading-relaxed" id="brief-smallholder-text">--</p>
                         </div>
                         <div class="p-3 bg-blue-50/60 rounded-xl border border-blue-200">
-                            <strong class="text-blue-900 block text-[11px] mb-1">Grain Traders & Aggregators (Wamalonda / Wogulitsa):</strong>
+                            <strong class="text-blue-900 block text-[11px] mb-1">Grain Traders & Aggregators (Wamalonda
+                                / Wogulitsa):</strong>
                             <p class="text-[10.5px] text-slate-700 leading-relaxed" id="brief-trader-text">--</p>
                         </div>
                     </div>
@@ -1677,7 +1693,8 @@
             <div class="flex flex-col sm:flex-row items-center justify-between pb-6 border-b border-slate-800 gap-4">
                 <div>
                     <h4 class="font-heading font-extrabold text-base text-white">Connect with AgriPrice Malawi</h4>
-                    <p class="text-xs text-slate-400 mt-0.5">Direct crop bulletins, farmer advisories, and trade corridors across Malawi.</p>
+                    <p class="text-xs text-slate-400 mt-0.5">Direct crop bulletins, farmer advisories, and trade
+                        corridors across Malawi.</p>
                 </div>
                 <div class="flex items-center space-x-3">
                     <!-- WhatsApp Link & Official Logo -->
@@ -1705,8 +1722,10 @@
             </div>
 
             <div class="text-center text-slate-400 space-y-1">
-                <p class="font-medium text-slate-200">AgriPrice Malawi • National Agricultural Market Intelligence Platform</p>
-                <p class="text-[11px] text-slate-500">Maize, Rice, and Beans Coverage across all 28 Districts and Cities • FAMIS & WFP VAM Ground Data</p>
+                <p class="font-medium text-slate-200">AgriPrice Malawi • National Agricultural Market Intelligence
+                    Platform</p>
+                <p class="text-[11px] text-slate-500">Maize, Rice, and Beans Coverage across all 28 Districts and Cities
+                    • FAMIS & WFP VAM Ground Data</p>
             </div>
         </div>
     </footer>
@@ -1715,7 +1734,7 @@
     <script>
         // Global State
         let state = {
-            currentView: 'dashboard', // default to live dashboard so all interactive components load immediately
+            currentView: 'landing', // unauthenticated users start on landing overview
             currentDistrict: 'lilongwe',
             currentCommodity: 'Maize',
             currentHorizon: 'weeks',
@@ -1727,8 +1746,7 @@
             arbitrageData: null,
             topArbitrageData: null,
             currentUser: null,
-            authMode: 'signup', // 'signup', 'signin', 'forgot'
-            forgotIdentifier: ''
+            authMode: 'signin' // 'signin' or 'signup' (strictly no forgot pin)
         };
 
         let chartInstance = null;
@@ -1738,16 +1756,27 @@
         // Initialization
         document.addEventListener('DOMContentLoaded', async () => {
             lucide.createIcons();
-            switchView('dashboard');
-            initMap();
             await checkAuthStatus();
             await loadDistricts();
             await refreshAllData();
+            initMap();
+            // If user is already authenticated, show live dashboard; else show landing overview
+            if (state.currentUser) {
+                switchView('dashboard');
+            } else {
+                switchView('landing');
+            }
         });
 
         // Top Navigation Helpers
         function goToHome() {
             switchView('landing');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goToLogin(mode = 'signin') {
+            switchView('login');
+            setAuthTab(mode);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -1769,22 +1798,43 @@
             document.getElementById('contact-modal-overlay').classList.add('hidden');
         }
 
-        // View Switcher (Landing vs Dashboard)
+        // View Switcher (Landing vs Login Page vs Dashboard)
         function switchView(viewName) {
+            // Gating: If requesting live dashboard without active session, redirect to dedicated login page
+            if (viewName === 'dashboard' && !state.currentUser) {
+                showLoginGateNotice("Please sign in or register as a Farmer or Trader to access the Live Market Dashboard.");
+                goToLogin('signin');
+                return;
+            }
+
             state.currentView = viewName;
             const landingSection = document.getElementById('landing-section');
+            const loginPageView = document.getElementById('login-page-view');
             const dashboardContainer = document.getElementById('dashboard-view-container');
             const btnLanding = document.getElementById('nav-btn-landing');
             const btnDashboard = document.getElementById('nav-btn-dashboard');
+            const tickerBar = document.getElementById('news-ticker-bar');
 
             if (viewName === 'landing') {
                 if (landingSection) landingSection.classList.remove('hidden');
+                if (loginPageView) loginPageView.classList.add('hidden');
                 if (dashboardContainer) dashboardContainer.classList.add('hidden');
-                if (btnLanding) btnLanding.className = 'px-3.5 py-1.5 rounded-lg transition-all bg-white text-emerald-800 shadow-xs font-bold';
+                if (tickerBar) tickerBar.classList.remove('hidden');
+                if (btnLanding) btnLanding.className = 'px-3.5 py-1.5 rounded-lg trahite text-emerald-800 shadow-xs font-bold';
                 if (btnDashboard) btnDashboard.className = 'px-3.5 py-1.5 rounded-lg transition-all text-slate-600 hover:text-slate-900 font-bold';
-            } else {
+            } else if (viewName === 'login') {
                 if (landingSection) landingSection.classList.add('hidden');
+                if (loginPageView) loginPageView.classList.remove('hidden');
+                if (dashboardContainer) dashboardContainer.classList.add('hidden');
+                if (tickerBar) tickerBar.classList.add('hidden');
+                if (btnLanding) btnLanding.className = 'px-3.5 py-1.5 rounded-lg transition-all text-slate-600 hover:text-slate-900 font-bold';
+                if (btnDashboard) btnDashboard.className = 'px-3.5 py-1.5 rounded-lg transition-all text-slate-600 hover:text-slate-900 font-bold';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else { // dashboard
+                if (landingSection) landingSection.classList.add('hidden');
+                if (loginPageView) loginPageView.classList.add('hidden');
                 if (dashboardContainer) dashboardContainer.classList.remove('hidden');
+                if (tickerBar) tickerBar.classList.remove('hidden');
                 if (btnDashboard) btnDashboard.className = 'px-3.5 py-1.5 rounded-lg transition-all bg-white text-emerald-800 shadow-xs font-bold';
                 if (btnLanding) btnLanding.className = 'px-3.5 py-1.5 rounded-lg transition-all text-slate-600 hover:text-slate-900 font-bold';
                 
@@ -1797,11 +1847,26 @@
                     }
                 }, 150);
             }
+            lucide.createIcons();
+        }
+
+        function showLoginGateNotice(message) {
+            const banner = document.getElementById('login-gate-banner');
+            const msgEl = document.getElementById('login-gate-message');
+            if (banner && msgEl) {
+                msgEl.textContent = message;
+                banner.classList.remove('hidden');
+            }
         }
 
         function promptFeatureAccess(feature) {
-            switchView('dashboard');
-            window.scrollTo({ top: 400, behavior: 'smooth' });
+            if (!state.currentUser) {
+                showLoginGateNotice("Please sign in or register as a Farmer or Trader to access this intelligence feature.");
+                goToLogin('signin');
+            } else {
+                switchView('dashboard');
+                window.scrollTo({ top: 400, behavior: 'smooth' });
+            }
         }
 
         // Initialize Leaflet Map locked strictly to Malawi
@@ -2242,8 +2307,8 @@
             document.getElementById('dec-bag-gain').textContent = `${data.metrics.net_profit_per_50kg_bag_mwk >= 0 ? '+' : ''}${Math.round(data.metrics.net_profit_per_50kg_bag_mwk).toLocaleString()} MWK`;
 
             document.getElementById('advisory-smallholder').textContent = data.advisory.smallholder;
-            document.getElementById('advisory-coop').textContent = data.advisory.cooperative;
-            document.getElementById('advisory-institutional').textContent = data.advisory.institutional;
+            const traderAdv = document.getElementById('advisory-trader');
+            if (traderAdv) traderAdv.textContent = data.advisory.cooperative;
         }
 
         // Core 3: Fetch Inter-District Arbitrage
@@ -2440,69 +2505,45 @@
             fetchTopArbitrage();
         }
 
-        // Authentication & Subscription Modal Logic (Light Gray Styling)
-        function openAuthModal(mode = 'signup') {
-            setAuthMode(mode);
-            document.getElementById('auth-modal-overlay').classList.remove('hidden');
+        // Dedicated Login Page Tab Switcher (ONLY Sign In & Sign Up - strictly NO forgot PIN)
+        function setAuthTab(tab) {
+            state.authMode = tab;
+            const tabSignin = document.getElementById('page-tab-signin');
+            const tabSignup = document.getElementById('page-tab-signup');
+            const nameGroup = document.getElementById('page-auth-name-group');
+            const extraGroup = document.getElementById('page-auth-signup-extra');
+            const submitLabel = document.getElementById('auth-submit-label');
+            const identifierLabel = document.getElementById('page-auth-identifier-label');
+            const submitIcon = document.getElementById('auth-submit-icon');
+            const statusMsg = document.getElementById('auth-status-msg');
+
+            if (statusMsg) statusMsg.classList.add('hidden');
+
+            if (tab === 'signin') {
+                if (tabSignin) tabSignin.className = 'py-2.5 rounded-lg transition-all bg-emerald-700 text-white shadow-sm font-bold';
+                if (tabSignup) tabSignup.className = 'py-2.5 rounded-lg transition-all text-slate-700 hover:text-slate-950 font-bold';
+                if (nameGroup) nameGroup.classList.add('hidden');
+                if (extraGroup) extraGroup.classList.add('hidden');
+                if (identifierLabel) identifierLabel.innerHTML = 'Phone Number o Email (Lamya kapena Imelo) <span class="text-emerald-700">*</span>';
+                if (submitLabel) submitLabel.textContent = 'Sign In to AgriPrice (Lowani)';
+                if (submitIcon) submitIcon.setAttribute('data-lucide', 'log-in');
+            } else {
+                if (tabSignup) tabSignup.className = 'py-2.5 rounded-lg transition-all bg-emerald-700 text-white shadow-sm font-bold';
+                if (tabSignin) tabSignin.className = 'py-2.5 rounded-lg transition-all text-slate-700 hover:text-slate-950 font-bold';
+                if (nameGroup) nameGroup.classList.remove('hidden');
+                if (extraGroup) extraGroup.classList.remove('hidden');
+                if (identifierLabel) identifierLabel.innerHTML = 'Phone Number or Email (Lamya kapena Imelo) <span class="text-emerald-700">*</span>';
+                if (submitLabel) submitLabel.textContent = 'Create Account & Unlock Access (Lembetsani)';
+                if (submitIcon) submitIcon.setAttribute('data-lucide', 'user-check');
+            }
             lucide.createIcons();
         }
 
-        function closeAuthModal() {
-            document.getElementById('auth-modal-overlay').classList.add('hidden');
-        }
-
-        function setAuthMode(mode) {
-            state.authMode = mode;
-            const tabSignup = document.getElementById('tab-signup');
-            const tabSignin = document.getElementById('tab-signin');
-            const tabForgot = document.getElementById('tab-forgot');
-            const mainForm = document.getElementById('auth-main-form');
-            const forgotForm = document.getElementById('auth-forgot-form');
-            const nameGroup = document.getElementById('auth-name-group');
-            const extraGroup = document.getElementById('auth-signup-extra');
-            const submitLabel = document.getElementById('auth-submit-label');
-            const identifierLabel = document.getElementById('auth-identifier-label');
-
-            [tabSignup, tabSignin, tabForgot].forEach(t => {
-                t.className = 'py-2 rounded-lg transition-all text-slate-600 hover:text-slate-900';
-            });
-
-            if (mode === 'signup') {
-                tabSignup.className = 'py-2 rounded-lg transition-all bg-emerald-700 text-white shadow-sm';
-                mainForm.classList.remove('hidden');
-                forgotForm.classList.add('hidden');
-                nameGroup.classList.remove('hidden');
-                extraGroup.classList.remove('hidden');
-                identifierLabel.innerHTML = 'Phone Number or Email (Lamya kapena Imelo) <span class="text-emerald-700">*</span>';
-                submitLabel.textContent = 'Subscribe & Create Account';
-            } else if (mode === 'signin') {
-                tabSignin.className = 'py-2 rounded-lg transition-all bg-emerald-700 text-white shadow-sm';
-                mainForm.classList.remove('hidden');
-                forgotForm.classList.add('hidden');
-                nameGroup.classList.add('hidden');
-                extraGroup.classList.add('hidden');
-                identifierLabel.innerHTML = 'Phone Number or Email (Lamya kapena Imelo) <span class="text-emerald-700">*</span>';
-                submitLabel.textContent = 'Sign In to AgriPrice (Lowani)';
-            } else { // forgot
-                tabForgot.className = 'py-2 rounded-lg transition-all bg-emerald-700 text-white shadow-sm';
-                mainForm.classList.add('hidden');
-                forgotForm.classList.remove('hidden');
-                document.getElementById('forgot-step-2').classList.add('hidden');
-                document.getElementById('forgot-submit-label').textContent = 'Send Verification Code';
-            }
-            document.getElementById('auth-status-msg').classList.add('hidden');
-            document.getElementById('forgot-status-msg').classList.add('hidden');
-        }
-
+        // Handle Auth Submit for both Sign In and Sign Up (strictly Farmer or Trader)
         async function handleAuthSubmit(event) {
             event.preventDefault();
             const identifier = document.getElementById('auth-identifier').value.trim();
-            const fullName = document.getElementById('auth-name').value.trim();
             const pin = document.getElementById('auth-pin').value.trim();
-            const district = document.getElementById('auth-district').value;
-            const role = document.getElementById('auth-role').value;
-            const reportFreq = document.querySelector('input[name="report_freq"]:checked')?.value || 'weekly';
-
             const statusMsg = document.getElementById('auth-status-msg');
             const submitBtn = document.getElementById('auth-submit-btn');
 
@@ -2511,9 +2552,25 @@
 
             try {
                 let endpoint = state.authMode === 'signup' ? '/api/auth/signup/' : '/api/auth/signin/';
-                let payload = state.authMode === 'signup' 
-                    ? { identifier, full_name: fullName, pin, district, organization_type: role, report_frequency: reportFreq }
-                    : { identifier, pin };
+                let payload = {};
+
+                if (state.authMode === 'signup') {
+                    const fullName = document.getElementById('auth-name').value.trim();
+                    const district = document.getElementById('auth-district').value;
+                    const role = document.getElementById('auth-role').value; // 'farmer' or 'trader'
+                    const reportFreq = document.querySelector('input[name="report_freq"]:checked')?.value || 'weekly';
+
+                    payload = {
+                        identifier: identifier,
+                        full_name: fullName,
+                        pin: pin,
+                        district: district,
+                        organization_type: role,
+                        report_frequency: reportFreq
+                    };
+                } else {
+                    payload = { identifier: identifier, pin: pin };
+                }
 
                 const res = await fetch(endpoint, {
                     method: 'POST',
@@ -2525,109 +2582,31 @@
                 if (res.ok) {
                     state.currentUser = data.subscriber;
                     renderUserNav(data.subscriber);
-                   statusMsg.className = 'text-xs p-3 rounded-xl bg-emerald-100 text-emerald-900 border border-emerald-300';
-                    statusMsg.textContent = data.message || 'Success! Welcome to AgriPrice Malawi.';
+
+                    statusMsg.className = 'text-xs p-3.5 rounded-xl bg-emerald-100 text-emerald-900 border border-emerald-300 font-semibold';
+                    statusMsg.textContent = data.message || 'Success! Unlocking full dashboard intelligence...';
                     statusMsg.classList.remove('hidden');
 
+                    const gateBanner = document.getElementById('login-gate-banner');
+                    if (gateBanner) gateBanner.classList.add('hidden');
+
                     setTimeout(() => {
-                        closeAuthModal();
                         switchView('dashboard');
-                    }, 1400);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }, 900);
                 } else {
-                    statusMsg.className = 'text-xs p-3 rounded-xl bg-red-100 text-red-900 border border-red-300';
-                    statusMsg.textContent = data.error || 'Authentication failed. Please check your credentials.';
+                    statusMsg.className = 'text-xs p-3.5 rounded-xl bg-red-100 text-red-900 border border-red-300 font-semibold';
+                    statusMsg.textContent = data.error || 'Authentication failed. Please verify credentials.';
                     statusMsg.classList.remove('hidden');
                 }
             } catch (err) {
                 console.error("Auth error:", err);
-                statusMsg.className = 'text-xs p-3 rounded-xl bg-red-100 text-red-900 border border-red-300';
-                statusMsg.textContent = 'Network connection error. Please try again.';
+                statusMsg.className = 'text-xs p-3.5 rounded-xl bg-red-100 text-red-900 border border-red-300 font-semibold';
+                statusMsg.textContent = 'Network communication error. Please try again.';
                 statusMsg.classList.remove('hidden');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.classList.remove('opacity-70');
-            }
-        }
-
-        async function handleForgotPinSubmit(event) {
-            event.preventDefault();
-            const identifier = document.getElementById('forgot-identifier').value.trim();
-            const step2Container = document.getElementById('forgot-step-2');
-            const codeInput = document.getElementById('forgot-code');
-            const newPinInput = document.getElementById('forgot-new-pin');
-            const statusMsg = document.getElementById('forgot-status-msg');
-            const submitBtn = document.getElementById('forgot-submit-btn');
-
-            submitBtn.disabled = true;
-
-            if (step2Container.classList.contains('hidden')) {
-                try {
-                    const res = await fetch('/api/auth/forgot-pin/', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ identifier })
-                    });
-                    const data = await res.json();
-                    if (res.ok) {
-                        state.forgotIdentifier = identifier;
-                        step2Container.classList.remove('hidden');
-                        document.getElementById('forgot-submit-label').textContent = 'Verify Code & Set New PIN';
-                        statusMsg.className = 'text-xs p-3 rounded-xl bg-emerald-100 text-emerald-900 border border-emerald-300';
-                        statusMsg.innerHTML = `<strong>Code Sent!</strong> ${data.message} ${data.verification_code ? `<br/><span class="font-mono bg-slate-200 px-2 py-0.5 rounded text-emerald-800 font-bold">Verification Code: ${data.verification_code}</span>` : ''}`;
-                        statusMsg.classList.remove('hidden');
-                        if (data.verification_code) {
-                            codeInput.value = data.verification_code;
-                        }
-                    } else {
-                        statusMsg.className = 'text-xs p-3 rounded-xl bg-red-100 text-red-900 border border-red-300';
-                        statusMsg.textContent = data.error || 'Failed to request reset code.';
-                        statusMsg.classList.remove('hidden');
-                    }
-                } catch (err) {
-                    statusMsg.className = 'text-xs p-3 rounded-xl bg-red-100 text-red-900 border border-red-300';
-                    statusMsg.textContent = 'Network error while requesting code.';
-                    statusMsg.classList.remove('hidden');
-                } finally {
-                    submitBtn.disabled = false;
-                }
-            } else {
-                const code = codeInput.value.trim();
-                const newPin = newPinInput.value.trim();
-
-                try {
-                    const res = await fetch('/api/auth/reset-pin/', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            identifier: state.forgotIdentifier || identifier,
-                            reset_code: code,
-                            new_pin: newPin
-                        })
-                    });
-                    const data = await res.json();
-                    if (res.ok) {
-                        state.currentUser = data.subscriber;
-                        renderUserNav(data.subscriber);
-                        statusMsg.className = 'text-xs p-3 rounded-xl bg-emerald-100 text-emerald-900 border border-emerald-300';
-                        statusMsg.textContent = data.message || 'PIN successfully updated! Signing you in...';
-                        statusMsg.classList.remove('hidden');
-
-                        setTimeout(() => {
-                            closeAuthModal();
-                            switchView('dashboard');
-                        }, 1400);
-                    } else {
-                        statusMsg.className = 'text-xs p-3 rounded-xl bg-red-100 text-red-900 border border-red-300';
-                        statusMsg.textContent = data.error || 'Failed to reset PIN.';
-                        statusMsg.classList.remove('hidden');
-                    }
-                } catch (err) {
-                    statusMsg.className = 'text-xs p-3 rounded-xl bg-red-100 text-red-900 border border-red-300';
-                    statusMsg.textContent = 'Network error during PIN reset.';
-                    statusMsg.classList.remove('hidden');
-                } finally {
-                    submitBtn.disabled = false;
-                }
             }
         }
 
@@ -2645,34 +2624,68 @@
         }
 
         function renderUserNav(user) {
-            const container = document.getElementById('user-nav-container');
+            const userNavContainer = document.getElementById('user-nav-container');
+            const topBarLoginLink = document.getElementById('top-bar-login-link');
+            const topBarUserStatus = document.getElementById('top-bar-user-status');
+
             if (user) {
-                container.innerHTML = `
-                    <div class="flex items-center space-x-2">
-                        <div class="hidden sm:flex items-center space-x-2 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-xl text-xs">
-                            <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
-                            <span class="font-bold text-slate-800">${user.full_name}</span>
-                            <span class="text-emerald-700 font-semibold">• ${user.report_frequency.toUpperCase()} Reports</span>
+                const roleLabel = user.organization_type === 'trader' ? 'Trader' : 'Farmer';
+
+                if (userNavContainer) {
+                    userNavContainer.innerHTML = `
+                        <div class="flex items-center space-x-2">
+                            <div class="flex items-center space-x-2 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-xl text-xs">
+                                <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+                                <span class="font-bold text-slate-800">${user.full_name}</span>
+                                <span class="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-1.5 py-0.5 rounded">${roleLabel}</span>
+                            </div>
+                            <button onclick="handleSignOut()" title="Sign Out"
+                                class="inline-flex items-center space-x-1 text-slate-500 hover:text-red-700 p-2 rounded-xl hover:bg-slate-100 transition-colors">
+                                <i data-lucide="log-out" class="w-4 h-4"></i>
+                                <span class="text-xs hidden sm:inline">Sign Out</span>
+                            </button>
                         </div>
-                        <button onclick="sendTestReport()" title="Send Instant Market Bulletin to your device"
-                            class="inline-flex items-center space-x-1 text-xs font-bold bg-emerald-800 text-white hover:bg-emerald-700 px-3 py-2 rounded-xl transition-all shadow-xs">
-                            <i data-lucide="send" class="w-3.5 h-3.5 text-emerald-300"></i>
-                            <span class="hidden md:inline">Test Bulletin</span>
-                        </button>
-                        <button onclick="handleSignOut()" title="Sign Out"
-                            class="text-slate-400 hover:text-slate-700 p-2 rounded-xl hover:bg-slate-100 transition-colors">
-                            <i data-lucide="log-out" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                `;
+                    `;
+                }
+
+                if (topBarLoginLink) {
+                    topBarLoginLink.innerHTML = `
+                        <i data-lucide="log-out" class="w-3.5 h-3.5 text-slate-400"></i>
+                        <span>Sign Out (${user.full_name})</span>
+                    `;
+                    topBarLoginLink.onclick = handleSignOut;
+                }
+
+                if (topBarUserStatus) {
+                    topBarUserStatus.innerHTML = `
+                        <span class="text-emerald-400 font-bold">${roleLabel}:</span>
+                        <span class="text-slate-200 font-semibold">${user.full_name} (${user.district})</span>
+                    `;
+                }
             } else {
-                container.innerHTML = `
-                    <button onclick="openAuthModal('signup')" id="btn-auth-trigger"
-                        class="inline-flex items-center space-x-1.5 text-xs font-bold bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 px-3.5 py-2 rounded-xl transition-all shadow-xs">
-                        <i data-lucide="user-check" class="w-4 h-4 text-emerald-700"></i>
-                        <span>Sign In / Subscribe (Lowani)</span>
-                    </button>
-                `;
+                if (userNavContainer) {
+                    userNavContainer.innerHTML = `
+                        <button onclick="goToLogin('signup')" id="btn-auth-trigger"
+                            class="inline-flex items-center space-x-1.5 text-xs font-bold bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 px-3.5 py-2 rounded-xl transition-all shadow-xs">
+                            <i data-lucide="user-plus" class="w-4 h-4 text-emerald-700"></i>
+                            <span>Register (Lembetsani)</span>
+                        </button>
+                    `;
+                }
+
+                if (topBarLoginLink) {
+                    topBarLoginLink.innerHTML = `
+                        <i data-lucide="log-in" class="w-3.5 h-3.5 text-emerald-400"></i>
+                        <span>Sign In (Lowani)</span>
+                    `;
+                    topBarLoginLink.onclick = () => goToLogin('signin');
+                }
+
+                if (topBarUserStatus) {
+                    topBarUserStatus.innerHTML = `
+                        <span class="hidden sm:inline">Republic of Malawi • Agricultural Market Intelligence Network</span>
+                    `;
+                }
             }
             lucide.createIcons();
         }
@@ -2680,12 +2693,17 @@
         async function handleSignOut() {
             try {
                 await fetch('/api/auth/signout/', { method: 'POST' });
-                state.currentUser = null;
-                renderUserNav(null);
-                switchView('landing');
             } catch (err) {
                 console.error("Sign out error:", err);
             }
+            state.currentUser = null;
+            renderUserNav(null);
+            switchView('landing');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function downloadReportPdf() {
+            window.print();
         }
 
         async function sendTestReport() {
