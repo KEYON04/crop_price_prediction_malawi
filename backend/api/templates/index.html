@@ -38,7 +38,9 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Leaflet Map CSS & JS -->
@@ -53,44 +55,44 @@
             background-color: #f8fafc;
         }
 
-        h1, h2, h3, h4, .font-heading {
+        h1,
+        h2,
+        h3,
+        h4,
+        .font-heading {
             font-family: 'Outfit', sans-serif;
         }
 
-        .hero-carousel-container {
+        /* Clear, vibrant hero background (Not blurred, no image shuffling) */
+        .hero-banner-clear {
             position: relative;
-            overflow: hidden;
-        }
-
-        .hero-slide {
-            position: absolute;
-            inset: 0;
+            background-image: url('/static/images/corn_field.jpg');
             background-size: cover;
-            background-position: center;
-            transition: opacity 1.5s ease-in-out, transform 8s ease-in-out;
-            opacity: 0;
-            transform: scale(1.03);
+            background-position: center 35%;
         }
 
-        .hero-slide.active {
-            opacity: 1;
-            transform: scale(1.0);
-        }
-
-        .hero-overlay {
+        .hero-banner-overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(135deg, rgba(2, 44, 34, 0.90) 0%, rgba(6, 78, 59, 0.85) 55%, rgba(4, 120, 87, 0.80) 100%);
+            background: linear-gradient(135deg, rgba(2, 44, 34, 0.82) 0%, rgba(6, 78, 59, 0.72) 50%, rgba(4, 120, 87, 0.65) 100%);
         }
 
+        /* Light Gray Card Background */
         .glass-card {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(226, 232, 240, 0.9);
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
         }
 
-        .auth-backdrop {
-            background: linear-gradient(rgba(2, 44, 34, 0.88), rgba(6, 78, 59, 0.92)), url('/static/images/corn_field.jpg') center/cover no-repeat;
+        .card-light-gray {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Login & Auth Box Light Gray Theme */
+        .auth-card-light {
+            background-color: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
         }
 
         .badge-hold {
@@ -141,11 +143,25 @@
             background: #f8fafc;
         }
 
-        /* Pulsing ring animation for selected district */
-        @keyframes pulse-ring {
-            0% { transform: scale(0.95); opacity: 0.9; }
-            50% { transform: scale(1.4); opacity: 0.3; }
-            100% { transform: scale(0.95); opacity: 0.9; }
+        /* Television News Marquee Ticker */
+        @keyframes marquee {
+            0% {
+                transform: translateX(0%);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .animate-marquee {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 38s linear infinite;
+        }
+
+        .animate-marquee:hover {
+            animation-play-state: paused;
         }
 
         @media print {
@@ -154,7 +170,15 @@
                 color: #0f172a !important;
             }
 
-            .no-print, header, footer, section.hero-carousel-container, main, #auth-modal-overlay, #landing-section {
+            .no-print,
+            header,
+            footer,
+            section.hero-banner-clear,
+            main,
+            #auth-modal-overlay,
+            #landing-section,
+            #news-ticker-bar,
+            #top-utility-bar {
                 display: none !important;
             }
 
@@ -186,12 +210,64 @@
 
 <body class="text-slate-800 antialiased min-h-screen flex flex-col">
 
-    <!-- Top Navigation Bar -->
+    <!-- Top Utility Bar: Home, About Us, Contact Us, and Connect with us (WhatsApp, Facebook) -->
+    <div id="top-utility-bar" class="bg-slate-900 text-slate-300 text-xs border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-10 flex items-center justify-between">
+            <!-- Left: Top Navigation Links -->
+            <div class="flex items-center space-x-6">
+                <button onclick="goToHome()"
+                    class="flex items-center space-x-1.5 text-slate-200 hover:text-emerald-400 font-semibold transition-colors">
+                    <i data-lucide="home" class="w-3.5 h-3.5 text-emerald-400"></i>
+                    <span>Home</span>
+                </button>
+                <button onclick="openAboutModal()"
+                    class="flex items-center space-x-1.5 text-slate-300 hover:text-emerald-400 font-medium transition-colors">
+                    <i data-lucide="info" class="w-3.5 h-3.5 text-slate-400"></i>
+                    <span>About Us</span>
+                </button>
+                <button onclick="openContactModal()"
+                    class="flex items-center space-x-1.5 text-slate-300 hover:text-emerald-400 font-medium transition-colors">
+                    <i data-lucide="phone" class="w-3.5 h-3.5 text-slate-400"></i>
+                    <span>Contact Us</span>
+                </button>
+            </div>
+
+            <!-- Right: Connect With Us (WhatsApp & Facebook Logos) -->
+            <div class="flex items-center space-x-3">
+                <span class="text-[11px] font-medium text-slate-400 hidden sm:inline">Connect with us:</span>
+
+                <!-- WhatsApp Link & Official Logo -->
+                <a href="https://wa.me/265991234567" target="_blank" rel="noopener noreferrer"
+                    title="Chat on WhatsApp (+265 991 234 567)"
+                    class="flex items-center space-x-1.5 bg-[#25D366] hover:bg-[#20ba5a] text-white px-2.5 py-1 rounded-lg text-[11px] font-bold shadow-xs transition-transform hover:scale-105">
+                    <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                        <path
+                            d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
+                    </svg>
+                    <span>WhatsApp</span>
+                </a>
+
+                <!-- Facebook Link & Official Logo -->
+                <a href="https://facebook.com/AgriPriceMalawi" target="_blank" rel="noopener noreferrer"
+                    title="Follow on Facebook"
+                    class="flex items-center space-x-1.5 bg-[#1877F2] hover:bg-[#166fe5] text-white px-2.5 py-1 rounded-lg text-[11px] font-bold shadow-xs transition-transform hover:scale-105">
+                    <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                        <path
+                            d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                    </svg>
+                    <span>Facebook</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation Bar -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <!-- Brand & Official Logo -->
-            <div class="flex items-center space-x-3.5 cursor-pointer" onclick="switchView('landing')">
-                <img src="/static/images/logo.jpg" alt="AgriPrice Malawi Logo" class="w-11 h-11 object-cover rounded-xl shadow-sm border border-slate-200">
+            <div class="flex items-center space-x-3.5 cursor-pointer" onclick="goToHome()">
+                <img src="/static/images/logo.jpg" alt="AgriPrice Malawi Logo"
+                    class="w-11 h-11 object-cover rounded-xl shadow-sm border border-slate-200">
                 <div>
                     <h1 class="font-heading font-extrabold text-xl text-slate-900 tracking-tight leading-none">
                         AgriPrice <span class="text-emerald-700">Malawi</span>
@@ -203,11 +279,14 @@
             </div>
 
             <!-- View Switcher Tabs -->
-            <div class="hidden md:flex items-center space-x-1 bg-slate-100 p-1 rounded-xl text-xs font-bold text-slate-600">
-                <button onclick="switchView('landing')" id="nav-btn-landing" class="px-3.5 py-1.5 rounded-lg transition-all text-slate-600 hover:text-slate-900">
+            <div
+                class="hidden md:flex items-center space-x-1 bg-slate-100 p-1 rounded-xl text-xs font-bold text-slate-600">
+                <button onclick="switchView('landing')" id="nav-btn-landing"
+                    class="px-3.5 py-1.5 rounded-lg transition-all text-slate-600 hover:text-slate-900">
                     Overview (Chidule)
                 </button>
-                <button onclick="switchView('dashboard')" id="nav-btn-dashboard" class="px-3.5 py-1.5 rounded-lg transition-all bg-white text-emerald-800 shadow-xs">
+                <button onclick="switchView('dashboard')" id="nav-btn-dashboard"
+                    class="px-3.5 py-1.5 rounded-lg transition-all bg-white text-emerald-800 shadow-xs">
                     Live Dashboard (Msika wa Lero)
                 </button>
             </div>
@@ -226,91 +305,136 @@
                 <button onclick="openSupervisorBriefModal()"
                     class="no-print inline-flex items-center space-x-1.5 bg-emerald-800 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-sm transition-all hover:scale-102">
                     <i data-lucide="file-text" class="w-4 h-4 text-emerald-300"></i>
-                    <span class="hidden sm:inline">Supervisor Brief</span>
+                    <span class="hidden sm:inline">Official Report Brief</span>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Malawi Agricultural Intelligence Section (With 5-Second Image Shuffling Carousel) -->
-    <section class="hero-carousel-container text-white py-10 px-4 sm:px-6 lg:px-8 relative min-h-[380px] flex items-center">
-        <!-- Slide 1: Corn Field Photo -->
-        <div id="hero-slide-1" class="hero-slide active" style="background-image: url('/static/images/corn_field.jpg');"></div>
-        <!-- Slide 2: Paddy Rice Photo -->
-        <div id="hero-slide-2" class="hero-slide" style="background-image: url('/static/images/paddy_rice.jpg');"></div>
-        <!-- Gradient Color Filter Overlay -->
-        <div class="hero-overlay"></div>
+    <!-- Malawi Agricultural Intelligence Section (Clean & Clear, Not Blurred, Shuffling Hidden) -->
+    <section class="hero-banner-clear text-white py-12 px-4 sm:px-6 lg:px-8 relative min-h-[380px] flex items-center">
+        <!-- Clear Natural Color Overlay (Not blurred, crops clearly visible) -->
+        <div class="hero-banner-overlay"></div>
 
         <div class="max-w-7xl mx-auto relative z-10 w-full">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                 <div class="max-w-2xl">
                     <div class="flex items-center space-x-2 mb-3">
-                        <span class="inline-flex items-center space-x-1.5 text-xs font-bold tracking-wider uppercase bg-emerald-950/80 text-emerald-300 px-3 py-1 rounded-full border border-emerald-800/80 backdrop-blur-sm">
+                        <span
+                            class="inline-flex items-center space-x-1.5 text-xs font-bold tracking-wider uppercase bg-emerald-950/85 text-emerald-300 px-3 py-1 rounded-full border border-emerald-800/80">
                             <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400"></i>
                             <span>National Agricultural Intelligence & Arbitrage Platform</span>
                         </span>
                     </div>
 
-                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-2 leading-tight">
+                    <h1
+                        class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-2 leading-tight">
                         Malawi Agricultural Intelligence
                     </h1>
-                    <p class="text-emerald-100 text-xs sm:text-sm leading-relaxed font-normal mb-4">
-                        Precision wholesale & retail price trajectories, automated <strong>Sell vs. Store</strong> economic guidance, and road freight arbitrage across all 28 districts and major cities including <strong>Mzuzu, Lilongwe, and Blantyre</strong>.
+                    <p class="text-emerald-100 text-xs sm:text-sm leading-relaxed font-normal mb-5">
+                        Precision wholesale & retail price trajectories, automated <strong>Sell vs. Store</strong>
+                        economic guidance, and road freight arbitrage across all 28 districts and major cities including
+                        <strong>Mzuzu, Lilongwe, and Blantyre</strong>.
                     </p>
 
                     <!-- Fast Action Buttons for New Users -->
-                    <div class="flex flex-wrap items-center gap-3 pt-1">
+                    <div class="flex flex-wrap items-center gap-3">
                         <button onclick="switchView('dashboard')"
-                            class="inline-flex items-center space-x-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-extrabold px-4 py-2.5 rounded-xl shadow-lg transition-all hover:scale-102">
+                            class="inline-flex items-center space-x-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-extrabold px-5 py-3 rounded-xl shadow-lg transition-all hover:scale-102">
                             <i data-lucide="line-chart" class="w-4 h-4"></i>
                             <span>Open Market Dashboard</span>
                         </button>
                         <button onclick="openAuthModal('signup')"
-                            class="inline-flex items-center space-x-2 bg-white/15 hover:bg-white/25 text-white border border-white/25 text-xs font-bold px-4 py-2.5 rounded-xl backdrop-blur-md transition-all">
+                            class="inline-flex items-center space-x-2 bg-white/20 hover:bg-white/30 text-white border border-white/30 text-xs font-bold px-5 py-3 rounded-xl transition-all">
                             <i data-lucide="bell" class="w-4 h-4 text-emerald-300"></i>
                             <span>Subscribe for Weekly/Monthly Reports</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- 5-Second Carousel Indicator Badge -->
-                <div class="self-start lg:self-end bg-black/40 backdrop-blur-md border border-white/20 p-3 rounded-2xl text-xs space-y-1.5 max-w-xs">
-                    <div class="flex items-center justify-between text-emerald-200 text-[11px] font-semibold">
-                        <span>Background Photo Shuffling (5s):</span>
-                        <div class="flex items-center space-x-1">
-                            <span id="carousel-dot-1" class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                            <span id="carousel-dot-2" class="w-2 h-2 rounded-full bg-white/40"></span>
-                        </div>
+                <!-- National Coverage Summary Badge -->
+                <div
+                    class="self-start lg:self-end bg-emerald-950/80 border border-emerald-700/60 p-4 rounded-2xl text-xs space-y-2 max-w-xs shadow-xl">
+                    <div class="flex items-center space-x-2 text-emerald-300 text-xs font-bold">
+                        <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+                        <span>29 Markets & Districts Active</span>
                     </div>
-                    <p class="text-white font-bold" id="carousel-current-title">Corn Field (Munda wa Chimanga)</p>
-                    <p class="text-[10px] text-emerald-300/80">Alternating automatically between Corn Field & Paddy Rice images.</p>
+                    <p class="text-[11.5px] text-emerald-100/90 leading-relaxed">
+                        Continuous price tracking for Maize (Chimanga), Rice (Mpunga), and Beans (Nyemba) with M1 & M5
+                        transport cost modeling.
+                    </p>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- Television-Style Moving News Ticker Headline (Directly Below Malawi Agricultural Intelligence Box) -->
+    <div id="news-ticker-bar"
+        class="bg-slate-950 text-white border-y border-slate-800 flex items-center shadow-md overflow-hidden relative z-20">
+        <!-- Breaking Headline Badge -->
+        <div
+            class="bg-red-600 text-white font-black text-xs px-4 py-2.5 uppercase tracking-wider flex items-center space-x-2 shrink-0 shadow-lg z-10">
+            <span class="w-2.5 h-2.5 rounded-full bg-white animate-pulse"></span>
+            <span class="whitespace-nowrap">MARKET HEADLINES</span>
+        </div>
+
+        <!-- Moving Ticker Track (Television News Style) -->
+        <div class="overflow-hidden whitespace-nowrap flex-1 py-2 text-xs font-semibold tracking-wide text-slate-200">
+            <div class="animate-marquee hover:pause">
+                <span class="mx-4 text-emerald-400 font-bold">• LILONGWE:</span> Maize spot price steady at 780 MWK/kg
+                (4-week projected outlook: 845 MWK/kg, +8.3%)
+                <span class="mx-4 text-emerald-400 font-bold">• MZUZU:</span> Rice demand surging in Taifa Central
+                Market, Kilombero trading at 1,750 MWK/kg
+                <span class="mx-4 text-emerald-400 font-bold">• BLANTYRE:</span> Southern pulse deficit pushing Sugar
+                Beans to 2,100 MWK/kg; Dedza-Blantyre corridor delivering +450 MWK/kg net spread
+                <span class="mx-4 text-emerald-400 font-bold">• KARONGA:</span> Lakeshore paddy harvests maintaining
+                stable supply for regional aggregators
+                <span class="mx-4 text-emerald-400 font-bold">• STORAGE ADVISORY:</span> Hermetic PICS bags recommended
+                nationwide to capture projected +34.6% lean season price surge
+                <span class="mx-4 text-emerald-400 font-bold">• LOGISTICS CORRIDOR:</span> Kasungu to Blantyre road
+                freight delivering top simulated cargo ROI (+38.2%)
+                <span class="mx-4 text-emerald-400 font-bold">• DEDZA:</span> High-altitude bean harvest consolidated;
+                Lizulu border market active
+                <!-- Duplicate set for seamless continuous marquee loop -->
+                <span class="mx-4 text-emerald-400 font-bold">• LILONGWE:</span> Maize spot price steady at 780 MWK/kg
+                (4-week projected outlook: 845 MWK/kg, +8.3%)
+                <span class="mx-4 text-emerald-400 font-bold">• MZUZU:</span> Rice demand surging in Taifa Central
+                Market, Kilombero trading at 1,750 MWK/kg
+                <span class="mx-4 text-emerald-400 font-bold">• BLANTYRE:</span> Southern pulse deficit pushing Sugar
+                Beans to 2,100 MWK/kg; Dedza-Blantyre corridor delivering +450 MWK/kg net spread
+                <span class="mx-4 text-emerald-400 font-bold">• KARONGA:</span> Lakeshore paddy harvests maintaining
+                stable supply for regional aggregators
+            </div>
+        </div>
+    </div>
+
     <!-- LANDING VIEW (Shown to new visitors / overview tab) -->
     <section id="landing-section" class="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-10">
-        <!-- Value Pillars Grid with Real Photos -->
+        <!-- Value Pillars Grid with Crisp, Clear Photos (Not Blurred) -->
         <div>
             <div class="text-center max-w-2xl mx-auto mb-8">
-                <span class="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
+                <span
+                    class="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
                     Core Intelligence Capabilities
                 </span>
                 <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-heading mt-2">
                     Empowering Malawian Farmers, Traders & Buyers
                 </h2>
                 <p class="text-xs sm:text-sm text-slate-500 mt-1">
-                    Everything you need to anticipate price surges, minimize storage loss, and capture the best inter-district trade margins.
+                    Anticipate price surges, minimize storage losses, and capture the highest inter-district trade
+                    margins.
                 </p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Pillar 1: Price Forecasting -->
-                <div class="glass-card rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-slate-200 flex flex-col">
-                    <div class="h-44 overflow-hidden relative">
-                        <img src="/static/images/maize.jpg" alt="Maize Forecasting" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
-                        <span class="absolute top-3 left-3 bg-emerald-900/90 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg backdrop-blur-xs">
+                <div
+                    class="glass-card rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-slate-200 flex flex-col">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="/static/images/maize.jpg" alt="Maize Forecasting"
+                            class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                        <span
+                            class="absolute top-3 left-3 bg-emerald-900/90 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg">
                             Core 1: Predictive Engine
                         </span>
                     </div>
@@ -320,7 +444,8 @@
                                 1. Crop Price Forecasting (Zolosera Zoyembekezeka)
                             </h3>
                             <p class="text-xs text-slate-600 leading-relaxed mt-1">
-                                1 to 4 week short-term outlooks and 1 to 6 month seasonal lean projections for Maize, Rice, and Beans across all 28 districts with statistical confidence bands.
+                                1 to 4 week short-term outlooks and 1 to 6 month seasonal lean projections for Maize,
+                                Rice, and Beans across all 28 districts with statistical confidence bands.
                             </p>
                         </div>
                         <button onclick="promptFeatureAccess('forecast')"
@@ -332,10 +457,13 @@
                 </div>
 
                 <!-- Pillar 2: Sell vs Store -->
-                <div class="glass-card rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-slate-200 flex flex-col">
-                    <div class="h-44 overflow-hidden relative">
-                        <img src="/static/images/beans.jpg" alt="Storage Economics" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
-                        <span class="absolute top-3 left-3 bg-blue-900/90 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg backdrop-blur-xs">
+                <div
+                    class="glass-card rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-slate-200 flex flex-col">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="/static/images/beans.jpg" alt="Storage Economics"
+                            class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                        <span
+                            class="absolute top-3 left-3 bg-blue-900/90 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg">
                             Core 2: Decision Making
                         </span>
                     </div>
@@ -345,7 +473,8 @@
                                 2. Sell vs. Store Guidance (Kugulitsa kapena Kusunga)
                             </h3>
                             <p class="text-xs text-slate-600 leading-relaxed mt-1">
-                                Automated financial appraisal comparing monthly hermetic PICS bag carrying overhead against anticipated price increases to determine whether to liquidate or store.
+                                Automated financial appraisal comparing monthly hermetic PICS bag carrying overhead
+                                against anticipated price increases to determine whether to liquidate or store.
                             </p>
                         </div>
                         <button onclick="promptFeatureAccess('decision')"
@@ -357,10 +486,13 @@
                 </div>
 
                 <!-- Pillar 3: Trade Arbitrage -->
-                <div class="glass-card rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-slate-200 flex flex-col">
-                    <div class="h-44 overflow-hidden relative">
-                        <img src="/static/images/market.jpg" alt="Market Arbitrage" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
-                        <span class="absolute top-3 left-3 bg-purple-900/90 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg backdrop-blur-xs">
+                <div
+                    class="glass-card rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-slate-200 flex flex-col">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="/static/images/market.jpg" alt="Market Arbitrage"
+                            class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                        <span
+                            class="absolute top-3 left-3 bg-purple-900/90 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg">
                             Core 3: Trade Arbitrage
                         </span>
                     </div>
@@ -370,7 +502,8 @@
                                 3. Market Recommendations (Misika Yopindulitsa)
                             </h3>
                             <p class="text-xs text-slate-600 leading-relaxed mt-1">
-                                Comprehensive road corridor optimizer evaluating 756 district pairs across Malawi to surface the most lucrative destinations after freight and handling tariffs.
+                                Comprehensive road corridor optimizer evaluating 756 district pairs across Malawi to
+                                surface the most lucrative destinations after freight and handling tariffs.
                             </p>
                         </div>
                         <button onclick="promptFeatureAccess('arbitrage')"
@@ -383,18 +516,20 @@
             </div>
         </div>
 
-        <!-- Call to Action Banner (Paddy Rice Backdrop) -->
+        <!-- Call to Action Banner (Clear, unblurred paddy rice image) -->
         <div class="relative rounded-3xl overflow-hidden p-8 sm:p-12 text-white shadow-xl"
-            style="background: linear-gradient(rgba(2, 44, 34, 0.88), rgba(6, 78, 59, 0.92)), url('/static/images/paddy_rice.jpg') center/cover;">
-            <div class="max-w-2xl space-y-3">
-                <span class="text-xs font-bold uppercase tracking-wider text-emerald-300 bg-emerald-950/80 px-3 py-1 rounded-full border border-emerald-800">
+            style="background: linear-gradient(135deg, rgba(2, 44, 34, 0.85) 0%, rgba(6, 78, 59, 0.80) 100%), url('/static/images/paddy_rice.jpg') center/cover;">
+            <div class="max-w-2xl space-y-3 relative z-10">
+                <span
+                    class="text-xs font-bold uppercase tracking-wider text-emerald-300 bg-emerald-950/80 px-3 py-1 rounded-full border border-emerald-800">
                     Free Registration & Instant Access
                 </span>
                 <h3 class="text-2xl sm:text-3xl font-extrabold font-heading">
                     Unlock Full District Predictions & Calibration
                 </h3>
                 <p class="text-xs sm:text-sm text-emerald-100 leading-relaxed">
-                    Sign up with your phone number or email to run customized spot price recalibrations, simulate truck cargo freight margins, and receive weekly market bulletins.
+                    Sign up with your phone number or email to run customized spot price recalibrations, simulate truck
+                    cargo freight margins, and receive weekly market bulletins.
                 </p>
                 <div class="pt-2 flex flex-wrap gap-3">
                     <button onclick="openAuthModal('signup')"
@@ -403,7 +538,7 @@
                         <span>Register with Phone or Email</span>
                     </button>
                     <button onclick="switchView('dashboard')"
-                        class="bg-white/15 hover:bg-white/25 text-white text-xs font-bold px-5 py-3 rounded-xl border border-white/25 transition-all">
+                        class="bg-white/20 hover:bg-white/30 text-white text-xs font-bold px-5 py-3 rounded-xl border border-white/30 transition-all">
                         <span>Continue to Live Dashboard Preview</span>
                     </button>
                 </div>
@@ -415,13 +550,16 @@
     <div id="dashboard-view-container" class="space-y-6">
         <!-- Global Filter Toolbar -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-            <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+            <div
+                class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
                 <!-- District Selection (Includes Mzuzu!) -->
                 <div class="bg-slate-50 rounded-xl p-2.5 border border-slate-200">
                     <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                        <i data-lucide="map-pin" class="w-3.5 h-3.5 inline mr-1 text-emerald-600"></i>Target District (Boma)
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5 inline mr-1 text-emerald-600"></i>Target District
+                        (Boma)
                     </label>
-                    <select id="district-select" onchange="onDistrictChange()" class="w-full text-xs font-bold text-slate-900 bg-transparent focus:outline-none">
+                    <select id="district-select" onchange="onDistrictChange()"
+                        class="w-full text-xs font-bold text-slate-900 bg-transparent focus:outline-none">
                         <optgroup label="Northern Region (7 Markets / Districts)">
                             <option value="mzuzu">Mzuzu (Northern Capital & Commercial Hub)</option>
                             <option value="mzimba">Mzimba (Grain Basin & Jenda)</option>
@@ -463,7 +601,8 @@
                 <!-- Commodity Selection Pills (With Photos & Chichewa Names) -->
                 <div class="bg-slate-50 rounded-xl p-2.5 border border-slate-200 md:col-span-2">
                     <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                        <i data-lucide="sprout" class="w-3.5 h-3.5 inline mr-1 text-emerald-600"></i>Commodity (Sankhani Mbewu)
+                        <i data-lucide="sprout" class="w-3.5 h-3.5 inline mr-1 text-emerald-600"></i>Commodity (Sankhani
+                        Mbewu)
                     </label>
                     <div class="grid grid-cols-3 gap-2">
                         <button onclick="setCommodity('Maize')" id="btn-crop-Maize"
@@ -487,7 +626,8 @@
                 <!-- Forecast Horizon Toggle -->
                 <div class="bg-slate-50 rounded-xl p-2.5 border border-slate-200">
                     <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                        <i data-lucide="clock" class="w-3.5 h-3.5 inline mr-1 text-emerald-600"></i>Forecast Horizon (Nthawi)
+                        <i data-lucide="clock" class="w-3.5 h-3.5 inline mr-1 text-emerald-600"></i>Forecast Horizon
+                        (Nthawi)
                     </label>
                     <div class="grid grid-cols-2 gap-1.5 bg-slate-200/80 p-1 rounded-lg">
                         <button onclick="setHorizon('weeks')" id="btn-horizon-weeks"
@@ -508,23 +648,29 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
                 <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
                     <div class="flex items-center space-x-3">
-                        <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-200">
+                        <div
+                            class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-200">
                             <i data-lucide="sliders" class="w-5 h-5"></i>
                         </div>
                         <div>
                             <div class="flex items-center space-x-2">
-                                <span class="text-xs font-extrabold uppercase tracking-wider text-slate-900">Spot Price Calibration</span>
-                                <span class="text-xs font-semibold text-emerald-700">(Sinthani Mtengo wa Lero m'Boma)</span>
+                                <span class="text-xs font-extrabold uppercase tracking-wider text-slate-900">Spot Price
+                                    Calibration</span>
+                                <span class="text-xs font-semibold text-emerald-700">(Sinthani Mtengo wa Lero
+                                    m'Boma)</span>
                             </div>
                             <p class="text-[11px] text-slate-500">
-                                Enter today's field market price to immediately update all forecasts, storage economics, and trade corridors.
+                                Enter today's field market price to immediately update all forecasts, storage economics,
+                                and trade corridors.
                             </p>
                         </div>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2">
-                        <div class="flex items-center bg-slate-100 rounded-lg p-1 border border-slate-200 text-xs font-medium">
-                            <span class="px-2 text-slate-500">Benchmark: <strong class="text-slate-900" id="calib-baseline-display">-- MWK</strong></span>
+                        <div
+                            class="flex items-center bg-slate-100 rounded-lg p-1 border border-slate-200 text-xs font-medium">
+                            <span class="px-2 text-slate-500">Benchmark: <strong class="text-slate-900"
+                                    id="calib-baseline-display">-- MWK</strong></span>
                         </div>
 
                         <div class="flex items-center space-x-1.5">
@@ -534,9 +680,11 @@
                                 <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 font-bold">MWK</span>
                             </div>
 
-                            <button onclick="adjustCalibration(-50)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-2 py-1.5 rounded-lg border border-slate-200 transition-colors">-50</button>
-                            <button onclick="adjustCalibration(50)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-2 py-1.5 rounded-lg border border-slate-200 transition-colors">+50</button>
-                            
+                            <button onclick="adjustCalibration(-50)"
+                                class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-2 py-1.5 rounded-lg border border-slate-200 transition-colors">-50</button>
+                            <button onclick="adjustCalibration(50)"
+                                class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-2 py-1.5 rounded-lg border border-slate-200 transition-colors">+50</button>
+
                             <button onclick="applyCalibration()"
                                 class="inline-flex items-center space-x-1 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold px-3.5 py-1.5 rounded-lg transition-colors shadow-xs">
                                 <i data-lucide="check" class="w-3.5 h-3.5"></i>
@@ -548,7 +696,8 @@
                             </button>
                         </div>
 
-                        <span id="calib-status-badge" class="hidden text-[11px] font-bold px-2.5 py-1 rounded-md bg-amber-100 text-amber-900 border border-amber-200">
+                        <span id="calib-status-badge"
+                            class="hidden text-[11px] font-bold px-2.5 py-1 rounded-md bg-amber-100 text-amber-900 border border-amber-200">
                             Calibrated Active
                         </span>
                     </div>
@@ -557,12 +706,13 @@
         </div>
 
         <!-- Main Dashboard Body -->
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 flex-1 space-y-8">
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 flex-1 space-y-8" id="dashboard-analytics-top">
             <!-- Top District Snapshot Banner -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <!-- 1. Spot Price -->
                 <div class="glass-card rounded-2xl p-5 shadow-sm border border-slate-200 flex items-center space-x-4">
-                    <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-100">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-100">
                         <i data-lucide="tag" class="w-6 h-6"></i>
                     </div>
                     <div>
@@ -570,16 +720,19 @@
                             Current Spot Benchmark
                         </p>
                         <p class="text-[10px] text-emerald-700 font-semibold mb-0.5">Mtengo wa Pano m'Boma</p>
-                        <h3 class="text-2xl font-black text-slate-900 font-heading"><span id="stat-current-price">--</span>
+                        <h3 class="text-2xl font-black text-slate-900 font-heading"><span
+                                id="stat-current-price">--</span>
                             <span class="text-xs font-semibold text-slate-500">MWK/kg</span>
                         </h3>
-                        <p class="text-[11px] text-slate-500 mt-0.5"><span id="stat-district-name">Lilongwe</span> • <span id="stat-region-name">Central Region</span></p>
+                        <p class="text-[11px] text-slate-500 mt-0.5"><span id="stat-district-name">Lilongwe</span> •
+                            <span id="stat-region-name">Central Region</span></p>
                     </div>
                 </div>
 
                 <!-- 2. Bag Price -->
                 <div class="glass-card rounded-2xl p-5 shadow-sm border border-slate-200 flex items-center space-x-4">
-                    <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center border border-purple-100">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center border border-purple-100">
                         <i data-lucide="package" class="w-6 h-6"></i>
                     </div>
                     <div>
@@ -596,7 +749,8 @@
 
                 <!-- 3. Short Term Forecast -->
                 <div class="glass-card rounded-2xl p-5 shadow-sm border border-slate-200 flex items-center space-x-4">
-                    <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center border border-blue-100">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center border border-blue-100">
                         <i data-lucide="trending-up" class="w-6 h-6"></i>
                     </div>
                     <div>
@@ -604,14 +758,16 @@
                             Short-Term (4 Weeks)
                         </p>
                         <p class="text-[10px] text-blue-700 font-semibold mb-0.5">Masabata Anayi Akubwera</p>
-                        <h3 class="text-2xl font-black text-slate-900 font-heading"><span id="stat-4w-price">--</span> <span class="text-xs font-semibold text-slate-500">MWK</span></h3>
+                        <h3 class="text-2xl font-black text-slate-900 font-heading"><span id="stat-4w-price">--</span>
+                            <span class="text-xs font-semibold text-slate-500">MWK</span></h3>
                         <p class="text-[11px] font-bold" id="stat-4w-change">--</p>
                     </div>
                 </div>
 
                 <!-- 4. Seasonal Peak -->
                 <div class="glass-card rounded-2xl p-5 shadow-sm border border-slate-200 flex items-center space-x-4">
-                    <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center border border-amber-100">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center border border-amber-100">
                         <i data-lucide="calendar" class="w-6 h-6"></i>
                     </div>
                     <div>
@@ -632,13 +788,16 @@
                 <!-- Left 7 Cols: Interactive Price Forecast Engine -->
                 <div class="lg:col-span-7 space-y-6">
                     <div class="glass-card rounded-2xl p-6 shadow-sm border border-slate-200">
-                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 pb-3 border-b border-slate-100 gap-2">
+                        <div
+                            class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 pb-3 border-b border-slate-100 gap-2">
                             <div>
                                 <div class="flex items-center space-x-2">
                                     <h2 class="text-xl font-bold text-slate-900 font-heading" id="chart-main-title">
                                         Price Trajectory: Maize in Lilongwe
                                     </h2>
-                                    <span class="bg-slate-100 text-slate-700 text-xs px-2.5 py-0.5 rounded-full font-bold" id="badge-horizon-type">Weekly (1-4w)</span>
+                                    <span
+                                        class="bg-slate-100 text-slate-700 text-xs px-2.5 py-0.5 rounded-full font-bold"
+                                        id="badge-horizon-type">Weekly (1-4w)</span>
                                 </div>
                                 <p class="text-xs text-slate-500 mt-0.5">
                                     Ensemble Time-Series with 80% & 95% Confidence Bounds (Zolosera Zoyembekezeka)
@@ -668,23 +827,29 @@
 
                 <!-- Right 5 Cols: Core 2 Decision Making Engine -->
                 <div class="lg:col-span-5 space-y-6">
-                    <div class="glass-card rounded-2xl p-6 shadow-sm border border-slate-200 relative overflow-hidden" id="decision-card-container">
+                    <div class="glass-card rounded-2xl p-6 shadow-sm border border-slate-200 relative overflow-hidden"
+                        id="decision-card-container">
                         <div class="flex items-center justify-between mb-3">
                             <div>
-                                <span class="text-xs font-bold uppercase tracking-wider text-slate-500 block">Core 2: Decision Engine</span>
-                                <span class="text-xs font-semibold text-emerald-800">Kugulitsa kapena Kusunga Mbewu</span>
+                                <span class="text-xs font-bold uppercase tracking-wider text-slate-500 block">Core 2:
+                                    Decision Engine</span>
+                                <span class="text-xs font-semibold text-emerald-800">Kugulitsa kapena Kusunga
+                                    Mbewu</span>
                             </div>
-                            <span id="decision-risk-badge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">
+                            <span id="decision-risk-badge"
+                                class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">
                                 Medium Risk
                             </span>
                         </div>
 
                         <!-- Main Decision Callout (English & Chichewa) -->
-                        <div class="text-center py-4 px-3 rounded-2xl mb-4" id="decision-banner-bg" style="background-color: #ecfdf5;">
+                        <div class="text-center py-4 px-3 rounded-2xl mb-4" id="decision-banner-bg"
+                            style="background-color: #ecfdf5;">
                             <span class="text-[11px] font-bold uppercase tracking-widest text-slate-600 block mb-1">
                                 Strategic Recommended Action (Uphungu wa Katswiri)
                             </span>
-                            <div class="text-2xl sm:text-3xl font-extrabold tracking-tight font-heading mb-0.5" id="decision-badge-text">
+                            <div class="text-2xl sm:text-3xl font-extrabold tracking-tight font-heading mb-0.5"
+                                id="decision-badge-text">
                                 HOLD & STORE
                             </div>
                             <div class="text-sm font-bold text-emerald-800 mb-1" id="decision-chichewa-text">
@@ -698,7 +863,8 @@
                         <!-- Storage Economics Calculations -->
                         <div class="space-y-3 mb-5 bg-slate-50 p-4 rounded-xl border border-slate-200">
                             <div class="flex items-center justify-between border-b border-slate-200 pb-2">
-                                <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Storage Economics (Phindu Posunga)</span>
+                                <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Storage
+                                    Economics (Phindu Posunga)</span>
                                 <span class="text-[11px] text-slate-500 font-semibold">12-Week Horizon</span>
                             </div>
 
@@ -708,16 +874,19 @@
                                     <span class="text-sm font-bold text-emerald-700" id="dec-surge-pct">+0.0%</span>
                                 </div>
                                 <div>
-                                    <span class="text-[11px] text-slate-500 block">Carrying Cost (Ndalama Zosungira):</span>
+                                    <span class="text-[11px] text-slate-500 block">Carrying Cost (Ndalama
+                                        Zosungira):</span>
                                     <span class="text-sm font-bold text-slate-600" id="dec-carrying-cost">-7.5%</span>
                                 </div>
                                 <div>
                                     <span class="text-[11px] text-slate-500 block">Net Profit ROI (% Phindu):</span>
-                                    <span class="text-base font-black text-slate-900 font-heading" id="dec-net-roi">+0.0%</span>
+                                    <span class="text-base font-black text-slate-900 font-heading"
+                                        id="dec-net-roi">+0.0%</span>
                                 </div>
                                 <div>
                                     <span class="text-[11px] text-slate-500 block">Net Gain (pa Thumba la 50kg):</span>
-                                    <span class="text-base font-black text-emerald-700 font-heading" id="dec-bag-gain">+0 MWK</span>
+                                    <span class="text-base font-black text-emerald-700 font-heading"
+                                        id="dec-bag-gain">+0 MWK</span>
                                 </div>
                             </div>
                         </div>
@@ -757,7 +926,8 @@
 
                         <!-- Hermetic Storage Guidelines -->
                         <div class="mt-4 pt-3 border-t border-slate-200 text-[11px] text-slate-500 space-y-1">
-                            <span class="font-bold text-slate-700 block mb-0.5">PICS Hermetic Storage Checklist (Kusunga Motetezeka):</span>
+                            <span class="font-bold text-slate-700 block mb-0.5">PICS Hermetic Storage Checklist (Kusunga
+                                Motetezeka):</span>
                             <p>1. Moisture must be under 13.5% (Maize/Rice) or 12.0% (Beans) before bagging.</p>
                             <p>2. Seal each of the 2 internal polyethylene liners individually with airtight twists.</p>
                         </div>
@@ -767,16 +937,20 @@
 
             <!-- Section 3: Market Recommendation & Inter-District Arbitrage Engine -->
             <div class="glass-card rounded-2xl p-6 shadow-sm border border-slate-200 space-y-6">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between pb-4 border-b border-slate-200 gap-4">
+                <div
+                    class="flex flex-col md:flex-row md:items-center md:justify-between pb-4 border-b border-slate-200 gap-4">
                     <div>
                         <div class="flex items-center space-x-2">
-                            <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-0.5 rounded-full">Core 3 Engine</span>
+                            <span
+                                class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-0.5 rounded-full">Core
+                                3 Engine</span>
                             <h2 class="text-2xl font-bold text-slate-900 font-heading">
                                 Market Recommendation: Where to Buy or Sell for Maximum Profit
                             </h2>
                         </div>
                         <p class="text-xs text-slate-500 mt-1">
-                            Cross-district trade optimizer comparing prices across all 28 districts against realistic M1 / M5 road corridor freight tariffs.
+                            Cross-district trade optimizer comparing prices across all 28 districts against realistic M1
+                            / M5 road corridor freight tariffs.
                         </p>
                     </div>
 
@@ -787,29 +961,37 @@
                         </span>
                         <input type="range" id="tonnage-slider" min="1" max="30" value="5" step="1"
                             oninput="onTonnageChange(this.value)" class="w-28 accent-emerald-600">
-                        <span class="font-extrabold text-emerald-800 bg-white px-2.5 py-1 rounded-md shadow-xs" id="tonnage-display">5 Metric Tons</span>
+                        <span class="font-extrabold text-emerald-800 bg-white px-2.5 py-1 rounded-md shadow-xs"
+                            id="tonnage-display">5 Metric Tons</span>
                     </div>
                 </div>
 
                 <!-- Trade Simulator Financial Summary -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-emerald-900 text-white rounded-xl">
+                <div
+                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-emerald-900 text-white rounded-xl">
                     <div>
-                        <span class="text-[11px] text-emerald-200 uppercase tracking-wider block">Origin Sourcing District:</span>
+                        <span class="text-[11px] text-emerald-200 uppercase tracking-wider block">Origin Sourcing
+                            District:</span>
                         <span class="text-lg font-bold" id="sim-origin-name">Lilongwe</span>
-                        <p class="text-xs text-emerald-300">Purchase at <strong class="text-white" id="sim-origin-price">--</strong> MWK/kg</p>
+                        <p class="text-xs text-emerald-300">Purchase at <strong class="text-white"
+                                id="sim-origin-price">--</strong> MWK/kg</p>
                     </div>
                     <div>
-                        <span class="text-[11px] text-emerald-200 uppercase tracking-wider block">Top Selling Destination:</span>
+                        <span class="text-[11px] text-emerald-200 uppercase tracking-wider block">Top Selling
+                            Destination:</span>
                         <span class="text-lg font-bold" id="sim-best-dest-name">--</span>
-                        <p class="text-xs text-emerald-300">Selling at <strong class="text-white" id="sim-dest-price">--</strong> MWK/kg</p>
+                        <p class="text-xs text-emerald-300">Selling at <strong class="text-white"
+                                id="sim-dest-price">--</strong> MWK/kg</p>
                     </div>
                     <div>
-                        <span class="text-[11px] text-emerald-200 uppercase tracking-wider block">Estimated Freight & Tariffs:</span>
+                        <span class="text-[11px] text-emerald-200 uppercase tracking-wider block">Estimated Freight &
+                            Tariffs:</span>
                         <span class="text-lg font-bold" id="sim-freight-total">-- MWK</span>
                         <p class="text-xs text-emerald-300" id="sim-distance-summary">-- km transit</p>
                     </div>
                     <div>
-                        <span class="text-[11px] text-emerald-200 uppercase tracking-wider block">Simulated Net Profit:</span>
+                        <span class="text-[11px] text-emerald-200 uppercase tracking-wider block">Simulated Net
+                            Profit:</span>
                         <span class="text-xl font-extrabold text-emerald-300" id="sim-net-profit">-- MWK</span>
                         <p class="text-xs font-semibold text-white" id="sim-net-roi">-- ROI</p>
                     </div>
@@ -817,9 +999,12 @@
 
                 <!-- Ranked Destinations Table -->
                 <div>
-                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-700 mb-3 flex items-center justify-between">
-                        <span>Ranked Selling Opportunities from <span id="tbl-origin-label" class="text-emerald-700">Lilongwe</span> (Top Corridors)</span>
-                        <span class="text-xs text-slate-500 font-normal">Sorted by highest Net Profit Margin per kg</span>
+                    <h3
+                        class="text-sm font-bold uppercase tracking-wider text-slate-700 mb-3 flex items-center justify-between">
+                        <span>Ranked Selling Opportunities from <span id="tbl-origin-label"
+                                class="text-emerald-700">Lilongwe</span> (Top Corridors)</span>
+                        <span class="text-xs text-slate-500 font-normal">Sorted by highest Net Profit Margin per
+                            kg</span>
                     </h3>
 
                     <div class="overflow-x-auto border border-slate-200 rounded-xl">
@@ -867,7 +1052,8 @@
             </div>
 
             <!-- Section 5: Interactive Malawi District Geographic Map (Enhanced with Mzuzu) -->
-            <div class="glass-card rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4">
+            <div class="glass-card rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4"
+                id="interactive-map-section">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div>
                         <div class="flex items-center space-x-2">
@@ -879,27 +1065,45 @@
                             </span>
                         </div>
                         <p class="text-xs text-slate-500 mt-0.5">
-                            Click any district or city marker (including <strong>Mzuzu, Lilongwe, Blantyre</strong>) to highlight it and run analytics.
+                            Click any district on the map (including <strong>Mzuzu, Lilongwe, Blantyre</strong>) to jump
+                            directly to the top and inspect projection details.
                         </p>
                     </div>
                     <div class="flex items-center space-x-3 text-xs">
-                        <span class="flex items-center"><span class="w-3 h-3 rounded-full bg-emerald-600 inline-block mr-1"></span> Low Price (Surplus)</span>
-                        <span class="flex items-center"><span class="w-3 h-3 rounded-full bg-blue-600 inline-block mr-1"></span> Medium Price</span>
-                        <span class="flex items-center"><span class="w-3 h-3 rounded-full bg-red-600 inline-block mr-1"></span> High Price (Deficit)</span>
+                        <span class="flex items-center"><span
+                                class="w-3 h-3 rounded-full bg-emerald-600 inline-block mr-1"></span> Low Price
+                            (Surplus)</span>
+                        <span class="flex items-center"><span
+                                class="w-3 h-3 rounded-full bg-blue-600 inline-block mr-1"></span> Medium Price</span>
+                        <span class="flex items-center"><span
+                                class="w-3 h-3 rounded-full bg-red-600 inline-block mr-1"></span> High Price
+                            (Deficit)</span>
                     </div>
                 </div>
 
                 <!-- Quick District Jump Pills (With Mzuzu prominent!) -->
-                <div class="flex flex-wrap items-center gap-1.5 p-2 bg-slate-50 rounded-xl border border-slate-200 text-xs">
+                <div
+                    class="flex flex-wrap items-center gap-1.5 p-2 bg-slate-50 rounded-xl border border-slate-200 text-xs">
                     <span class="font-bold text-slate-500 text-[11px] mr-1 uppercase">Quick Jump:</span>
-                    <button onclick="selectDistrictFromMap('mzuzu')" class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 hover:bg-emerald-200 font-bold transition-colors">Mzuzu (North)</button>
-                    <button onclick="selectDistrictFromMap('lilongwe')" class="px-2.5 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold transition-colors">Lilongwe (Central)</button>
-                    <button onclick="selectDistrictFromMap('blantyre')" class="px-2.5 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold transition-colors">Blantyre (South)</button>
-                    <button onclick="selectDistrictFromMap('kasungu')" class="px-2.5 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold transition-colors">Kasungu</button>
-                    <button onclick="selectDistrictFromMap('karonga')" class="px-2.5 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold transition-colors">Karonga</button>
-                    <button onclick="selectDistrictFromMap('dedza')" class="px-2.5 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold transition-colors">Dedza</button>
-                    <button onclick="selectDistrictFromMap('mzimba')" class="px-2.5 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold transition-colors">Mzimba</button>
-                    <button onclick="selectDistrictFromMap('zomba')" class="px-2.5 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold transition-colors">Zomba</button>
+                    <button onclick="selectDistrictFromMap('mzuzu')"
+                        class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 hover:bg-emerald-200 font-bold transition-colors">Mzuzu
+                        (North)</button>
+                    <button onclick="selectDistrictFromMap('lilongwe')"
+                        class="px-2.5 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold transition-colors">Lilongwe
+                        (Central)</button>
+                    <button onclick="selectDistrictFromMap('blantyre')"
+                        class="px-2.5 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold transition-colors">Blantyre
+                        (South)</button>
+                    <button onclick="selectDistrictFromMap('kasungu')"
+                        class="px-2.5 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold transition-colors">Kasungu</button>
+                    <button onclick="selectDistrictFromMap('karonga')"
+                        class="px-2.5 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold transition-colors">Karonga</button>
+                    <button onclick="selectDistrictFromMap('dedza')"
+                        class="px-2.5 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold transition-colors">Dedza</button>
+                    <button onclick="selectDistrictFromMap('mzimba')"
+                        class="px-2.5 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold transition-colors">Mzimba</button>
+                    <button onclick="selectDistrictFromMap('zomba')"
+                        class="px-2.5 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold transition-colors">Zomba</button>
                 </div>
 
                 <div id="malawi-map"></div>
@@ -908,37 +1112,44 @@
         </main>
     </div>
 
-    <!-- Sign In / Sign Up / Forgot PIN Modal with corn_field.jpg Background -->
-    <div id="auth-modal-overlay" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="auth-backdrop max-w-lg w-full rounded-3xl shadow-2xl p-6 sm:p-8 text-white border border-white/20 relative my-auto">
+    <!-- Sign In / Sign Up / Forgot PIN Modal (Light Gray Box Theme) -->
+    <div id="auth-modal-overlay"
+        class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs z-[9999] hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="auth-card-light max-w-lg w-full rounded-3xl p-6 sm:p-8 text-slate-800 relative my-auto">
             <!-- Modal Close Button -->
-            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-white/70 hover:text-white p-1.5 rounded-full hover:bg-white/10 transition-colors">
+            <button onclick="closeAuthModal()"
+                class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 p-1.5 rounded-full hover:bg-slate-200 transition-colors">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
 
             <!-- Modal Header -->
             <div class="space-y-4">
-                <div class="flex items-center space-x-3.5 border-b border-white/15 pb-4">
-                    <img src="/static/images/logo.jpg" alt="Logo" class="w-12 h-12 rounded-2xl object-cover shadow-md border border-white/30">
+                <div class="flex items-center space-x-3.5 border-b border-slate-300/80 pb-4">
+                    <img src="/static/images/logo.jpg" alt="Logo"
+                        class="w-12 h-12 rounded-2xl object-cover shadow-sm border border-slate-300">
                     <div>
-                        <h2 class="text-xl sm:text-2xl font-black font-heading tracking-tight text-white leading-tight">
+                        <h2
+                            class="text-xl sm:text-2xl font-black font-heading tracking-tight text-slate-900 leading-tight">
                             AgriPrice Malawi
                         </h2>
-                        <p class="text-xs text-emerald-200 font-medium">
+                        <p class="text-xs text-emerald-800 font-semibold">
                             Market Intelligence & Decision Network
                         </p>
                     </div>
                 </div>
 
                 <!-- 3-Way Mode Switcher (Sign Up, Sign In, Forgot PIN) -->
-                <div class="grid grid-cols-3 gap-1 bg-black/35 p-1 rounded-xl text-xs font-bold text-center">
-                    <button onclick="setAuthMode('signup')" id="tab-signup" class="py-2 rounded-lg transition-all bg-emerald-600 text-white shadow-sm">
+                <div class="grid grid-cols-3 gap-1 bg-slate-200/90 p-1 rounded-xl text-xs font-bold text-center">
+                    <button onclick="setAuthMode('signup')" id="tab-signup"
+                        class="py-2 rounded-lg transition-all bg-emerald-700 text-white shadow-sm">
                         Sign Up
                     </button>
-                    <button onclick="setAuthMode('signin')" id="tab-signin" class="py-2 rounded-lg transition-all text-emerald-200 hover:text-white">
+                    <button onclick="setAuthMode('signin')" id="tab-signin"
+                        class="py-2 rounded-lg transition-all text-slate-600 hover:text-slate-900">
                         Sign In
                     </button>
-                    <button onclick="setAuthMode('forgot')" id="tab-forgot" class="py-2 rounded-lg transition-all text-emerald-200 hover:text-white">
+                    <button onclick="setAuthMode('forgot')" id="tab-forgot"
+                        class="py-2 rounded-lg transition-all text-slate-600 hover:text-slate-900">
                         Forgot PIN?
                     </button>
                 </div>
@@ -947,34 +1158,37 @@
                 <form id="auth-main-form" onsubmit="handleAuthSubmit(event)" class="space-y-3.5">
                     <!-- Full Name (Sign Up only) -->
                     <div id="auth-name-group">
-                        <label class="block text-xs font-semibold text-emerald-100 mb-1">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">
                             Full Name (Dzina Lanu Lamu)
                         </label>
                         <input type="text" id="auth-name" placeholder="e.g. Kondwani Phiri"
-                            class="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-emerald-200/50 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                            class="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600">
                     </div>
 
                     <!-- Phone Number or Email (Accepted for both Sign Up & Sign In) -->
                     <div>
-                        <label class="block text-xs font-semibold text-emerald-100 mb-1" id="auth-identifier-label">
-                            Phone Number or Email (Lamya kapena Imelo) <span class="text-emerald-400">*</span>
+                        <label class="block text-xs font-bold text-slate-700 mb-1" id="auth-identifier-label">
+                            Phone Number or Email (Lamya kapena Imelo) <span class="text-emerald-700">*</span>
                         </label>
-                        <input type="text" id="auth-identifier" required placeholder="e.g. +265 991 234 567 or user@gmail.com"
-                            class="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-emerald-200/50 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                        <input type="text" id="auth-identifier" required
+                            placeholder="e.g. +265 991 234 567 or user@gmail.com"
+                            class="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600">
                     </div>
 
                     <!-- Security PIN (4+ digits) -->
                     <div id="auth-pin-group">
                         <div class="flex items-center justify-between mb-1">
-                            <label class="text-xs font-semibold text-emerald-100">
-                                Security PIN / Password (PIN Yanu) <span class="text-emerald-400">*</span>
+                            <label class="text-xs font-bold text-slate-700">
+                                Security PIN / Password (PIN Yanu) <span class="text-emerald-700">*</span>
                             </label>
-                            <button type="button" onclick="setAuthMode('forgot')" class="text-[11px] text-emerald-300 hover:text-white underline">
+                            <button type="button" onclick="setAuthMode('forgot')"
+                                class="text-[11px] text-emerald-800 font-semibold hover:underline">
                                 Forgot PIN?
                             </button>
                         </div>
-                        <input type="password" id="auth-pin" required maxlength="12" placeholder="4-6 digit numeric PIN (e.g. 1234)"
-                            class="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-emerald-200/50 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                        <input type="password" id="auth-pin" required maxlength="12"
+                            placeholder="4-6 digit numeric PIN (e.g. 1234)"
+                            class="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600">
                     </div>
 
                     <!-- Additional Details (Sign Up Only) -->
@@ -982,10 +1196,11 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <!-- District (Includes Mzuzu!) -->
                             <div>
-                                <label class="block text-xs font-semibold text-emerald-100 mb-1">
+                                <label class="block text-xs font-bold text-slate-700 mb-1">
                                     Primary District (Boma)
                                 </label>
-                                <select id="auth-district" class="w-full text-xs font-semibold px-3 py-2.5 rounded-xl bg-emerald-950/90 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                                <select id="auth-district"
+                                    class="w-full text-xs font-semibold px-3 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600">
                                     <option value="Mzuzu">Mzuzu (North)</option>
                                     <option value="Lilongwe" selected>Lilongwe (Central)</option>
                                     <option value="Blantyre">Blantyre (South)</option>
@@ -1003,10 +1218,11 @@
 
                             <!-- Role / Stakeholder -->
                             <div>
-                                <label class="block text-xs font-semibold text-emerald-100 mb-1">
+                                <label class="block text-xs font-bold text-slate-700 mb-1">
                                     Your Sector / Role
                                 </label>
-                                <select id="auth-role" class="w-full text-xs font-semibold px-3 py-2.5 rounded-xl bg-emerald-950/90 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                                <select id="auth-role"
+                                    class="w-full text-xs font-semibold px-3 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600">
                                     <option value="farmer">Smallholder Farmer (Mlimi)</option>
                                     <option value="coop">Agricultural Cooperative</option>
                                     <option value="trader">Grain Aggregator / Trader</option>
@@ -1017,24 +1233,29 @@
 
                         <!-- Report Frequency Preference -->
                         <div>
-                            <label class="block text-xs font-semibold text-emerald-100 mb-1.5">
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">
                                 Market Bulletins Frequency (Kulandira Malipoti)
                             </label>
                             <div class="grid grid-cols-3 gap-2">
-                                <label class="flex flex-col items-center justify-center p-2 rounded-xl bg-white/10 border border-white/20 cursor-pointer hover:bg-white/20 text-center transition-all">
-                                    <input type="radio" name="report_freq" value="weekly" checked class="accent-emerald-400 mb-1">
-                                    <span class="text-xs font-bold">Weekly</span>
-                                    <span class="text-[10px] text-emerald-300">Masabata Onse</span>
+                                <label
+                                    class="flex flex-col items-center justify-center p-2 rounded-xl bg-white border border-slate-300 cursor-pointer hover:border-emerald-600 text-center transition-all">
+                                    <input type="radio" name="report_freq" value="weekly" checked
+                                        class="accent-emerald-700 mb-1">
+                                    <span class="text-xs font-bold text-slate-800">Weekly</span>
+                                    <span class="text-[10px] text-slate-500">Masabata Onse</span>
                                 </label>
-                                <label class="flex flex-col items-center justify-center p-2 rounded-xl bg-white/10 border border-white/20 cursor-pointer hover:bg-white/20 text-center transition-all">
-                                    <input type="radio" name="report_freq" value="monthly" class="accent-emerald-400 mb-1">
-                                    <span class="text-xs font-bold">Monthly</span>
-                                    <span class="text-[10px] text-emerald-300">Mwezi Uliwonse</span>
+                                <label
+                                    class="flex flex-col items-center justify-center p-2 rounded-xl bg-white border border-slate-300 cursor-pointer hover:border-emerald-600 text-center transition-all">
+                                    <input type="radio" name="report_freq" value="monthly"
+                                        class="accent-emerald-700 mb-1">
+                                    <span class="text-xs font-bold text-slate-800">Monthly</span>
+                                    <span class="text-[10px] text-slate-500">Mwezi Uliwonse</span>
                                 </label>
-                                <label class="flex flex-col items-center justify-center p-2 rounded-xl bg-white/10 border border-white/20 cursor-pointer hover:bg-white/20 text-center transition-all">
-                                    <input type="radio" name="report_freq" value="both" class="accent-emerald-400 mb-1">
-                                    <span class="text-xs font-bold">Both</span>
-                                    <span class="text-[10px] text-emerald-300">Zonse</span>
+                                <label
+                                    class="flex flex-col items-center justify-center p-2 rounded-xl bg-white border border-slate-300 cursor-pointer hover:border-emerald-600 text-center transition-all">
+                                    <input type="radio" name="report_freq" value="both" class="accent-emerald-700 mb-1">
+                                    <span class="text-xs font-bold text-slate-800">Both</span>
+                                    <span class="text-[10px] text-slate-500">Zonse</span>
                                 </label>
                             </div>
                         </div>
@@ -1045,7 +1266,7 @@
 
                     <!-- Submit Button -->
                     <button type="submit" id="auth-submit-btn"
-                        class="w-full bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-extrabold text-xs py-3 px-4 rounded-xl shadow-lg transition-all hover:scale-101 flex items-center justify-center space-x-2">
+                        class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs py-3 px-4 rounded-xl shadow-md transition-all hover:scale-101 flex items-center justify-center space-x-2">
                         <i data-lucide="check-circle" class="w-4 h-4"></i>
                         <span id="auth-submit-label">Subscribe & Create Account</span>
                     </button>
@@ -1053,34 +1274,37 @@
 
                 <!-- FORM 3: FORGOT PIN & RESET FLOW -->
                 <form id="auth-forgot-form" onsubmit="handleForgotPinSubmit(event)" class="hidden space-y-3.5">
-                    <p class="text-xs text-emerald-100 leading-relaxed">
-                        Enter your registered phone number or email. We will generate and dispatch a 6-digit verification code to reset your PIN.
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Enter your registered phone number or email. We will generate and dispatch a 6-digit
+                        verification code to reset your PIN.
                     </p>
 
                     <div>
-                        <label class="block text-xs font-semibold text-emerald-100 mb-1">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">
                             Registered Phone Number or Email
                         </label>
-                        <input type="text" id="forgot-identifier" required placeholder="e.g. +265 991 234 567 or user@gmail.com"
-                            class="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-emerald-200/50 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                        <input type="text" id="forgot-identifier" required
+                            placeholder="e.g. +265 991 234 567 or user@gmail.com"
+                            class="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600">
                     </div>
 
                     <!-- Step 2 Inputs (Shown after code is sent) -->
-                    <div id="forgot-step-2" class="hidden space-y-3 pt-1 border-t border-white/15">
+                    <div id="forgot-step-2" class="hidden space-y-3 pt-1 border-t border-slate-300">
                         <div>
-                            <label class="block text-xs font-semibold text-emerald-100 mb-1">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">
                                 Enter 6-Digit Verification Code (Khodi)
                             </label>
                             <input type="text" id="forgot-code" maxlength="6" placeholder="e.g. 482915"
-                                class="w-full text-sm font-mono tracking-widest text-center px-3.5 py-2 rounded-xl bg-white/15 border border-white/30 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                                class="w-full text-sm font-mono tracking-widest text-center px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600">
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-emerald-100 mb-1">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">
                                 Enter New Security PIN (PIN Yatsopano)
                             </label>
-                            <input type="password" id="forgot-new-pin" maxlength="12" placeholder="Enter new 4-6 digit PIN"
-                                class="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                            <input type="password" id="forgot-new-pin" maxlength="12"
+                                placeholder="Enter new 4-6 digit PIN"
+                                class="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600">
                         </div>
                     </div>
 
@@ -1089,27 +1313,32 @@
 
                     <!-- Action Button -->
                     <button type="submit" id="forgot-submit-btn"
-                        class="w-full bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-extrabold text-xs py-3 px-4 rounded-xl shadow-lg transition-all hover:scale-101 flex items-center justify-center space-x-2">
+                        class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs py-3 px-4 rounded-xl shadow-md transition-all hover:scale-101 flex items-center justify-center space-x-2">
                         <i data-lucide="key" class="w-4 h-4"></i>
                         <span id="forgot-submit-label">Send Verification Code</span>
                     </button>
                 </form>
 
-                <p class="text-[11px] text-emerald-200/80 text-center">
-                    SMS and email bulletins provide district price trajectories, seasonal storage advice, and trade corridor profits.
+                <p class="text-[11px] text-slate-500 text-center">
+                    SMS and email bulletins provide district price trajectories, seasonal storage advice, and trade
+                    corridor profits.
                 </p>
             </div>
         </div>
     </div>
 
-    <!-- Official Supervisor Brief Report Modal -->
-    <div id="brief-modal-overlay" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[9999] hidden flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-        <div id="brief-modal-container" class="bg-white max-w-4xl w-full rounded-2xl shadow-2xl p-6 sm:p-10 text-slate-800 border border-slate-200 relative my-auto">
+    <!-- Official AgriPrice Malawi Report Document Modal -->
+    <div id="brief-modal-overlay"
+        class="fixed inset-0 bg-slate-950/80 backdrop-blur-xs z-[9999] hidden flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+        <div id="brief-modal-container"
+            class="bg-white max-w-4xl w-full rounded-2xl shadow-2xl p-6 sm:p-10 text-slate-800 border border-slate-200 relative my-auto">
             <!-- Modal Actions Bar (hidden when printing) -->
-            <div class="no-print flex items-center justify-between pb-4 mb-6 border-b border-slate-200 sticky top-0 bg-white z-20">
+            <div
+                class="no-print flex items-center justify-between pb-4 mb-6 border-b border-slate-200 sticky top-0 bg-white z-20">
                 <div class="flex items-center space-x-2">
-                    <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-full">Official Briefing Document</span>
-                    <span class="text-xs text-slate-500 font-medium">Ready for Supervisory Presentation</span>
+                    <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-full">Official
+                        Briefing Document</span>
+                    <span class="text-xs text-slate-700 font-bold">Official AgriPrice Malawi Report Document</span>
                 </div>
                 <div class="flex items-center space-x-3">
                     <button onclick="window.print()"
@@ -1130,19 +1359,26 @@
                 <div class="border-b-2 border-emerald-800 pb-5">
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <div class="flex items-center space-x-3.5">
-                            <img src="/static/images/logo.jpg" alt="Logo" class="w-14 h-14 rounded-xl object-cover shadow-sm border border-slate-200">
+                            <img src="/static/images/logo.jpg" alt="Logo"
+                                class="w-14 h-14 rounded-xl object-cover shadow-sm border border-slate-200">
                             <div>
-                                <span class="text-[10px] font-extrabold uppercase tracking-widest text-emerald-800 block">Republic of Malawi • Agricultural Market Intelligence Network</span>
+                                <span
+                                    class="text-[10px] font-extrabold uppercase tracking-widest text-emerald-800 block">Republic
+                                    of Malawi • Agricultural Market Intelligence Network</span>
                                 <h1 class="text-xl sm:text-2xl font-black text-slate-900 font-heading">
                                     NATIONAL CROP PRICE & MARKET INTELLIGENCE BRIEF
                                 </h1>
-                                <p class="text-xs text-slate-500 font-medium">Predictive Analytics & Strategic Arbitrage Advisory</p>
+                                <p class="text-xs text-slate-500 font-medium">Predictive Analytics & Strategic Arbitrage
+                                    Advisory</p>
                             </div>
                         </div>
                         <div class="text-left sm:text-right text-xs text-slate-500 space-y-0.5">
-                            <div><strong class="text-slate-800">Doc Ref:</strong> <span id="brief-doc-ref" class="font-mono">AGRI-MWI-2026/W45</span></div>
-                            <div><strong class="text-slate-800">Date Issued:</strong> <span id="brief-date-issued">--</span></div>
-                            <div><strong class="text-slate-800">Classification:</strong> <span class="text-emerald-700 font-bold">OFFICIAL DECISION SUPPORT</span></div>
+                            <div><strong class="text-slate-800">Doc Ref:</strong> <span id="brief-doc-ref"
+                                    class="font-mono">AGRI-MWI-2026/W45</span></div>
+                            <div><strong class="text-slate-800">Date Issued:</strong> <span
+                                    id="brief-date-issued">--</span></div>
+                            <div><strong class="text-slate-800">Classification:</strong> <span
+                                    class="text-emerald-700 font-bold">OFFICIAL DECISION SUPPORT</span></div>
                         </div>
                     </div>
                 </div>
@@ -1153,8 +1389,14 @@
                         <span class="w-2 h-2 rounded-full bg-emerald-700 inline-block mr-2"></span>
                         1. Executive Market Context (Nationwide Overview)
                     </h3>
-                    <p class="text-xs text-slate-700 leading-relaxed bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-                        This briefing delivers multi-district wholesale and retail price forecasts, grain storage economics, and inter-district trade optimization across Malawi. Market evaluations cover all 28 districts and key commercial centers including <strong class="text-slate-900">Mzuzu, Lilongwe, and Blantyre</strong> across the 3 primary national commodities: <strong class="text-slate-900">Maize (Chimanga)</strong>, <strong class="text-slate-900">Rice (Mpunga)</strong>, and <strong class="text-slate-900">Beans (Nyemba)</strong>.
+                    <p
+                        class="text-xs text-slate-700 leading-relaxed bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                        This briefing delivers multi-district wholesale and retail price forecasts, grain storage
+                        economics, and inter-district trade optimization across Malawi. Market evaluations cover all 28
+                        districts and key commercial centers including <strong class="text-slate-900">Mzuzu, Lilongwe,
+                            and Blantyre</strong> across the 3 primary national commodities: <strong
+                            class="text-slate-900">Maize (Chimanga)</strong>, <strong class="text-slate-900">Rice
+                            (Mpunga)</strong>, and <strong class="text-slate-900">Beans (Nyemba)</strong>.
                     </p>
                 </div>
 
@@ -1162,25 +1404,31 @@
                 <div class="brief-avoid-break">
                     <h3 class="text-xs font-extrabold uppercase tracking-wider text-emerald-900 mb-2 flex items-center">
                         <span class="w-2 h-2 rounded-full bg-emerald-700 inline-block mr-2"></span>
-                        2. Target District Profile & Price Projections (<span id="brief-target-district-title" class="text-emerald-700">Lilongwe</span>)
+                        2. Target District Profile & Price Projections (<span id="brief-target-district-title"
+                            class="text-emerald-700">Lilongwe</span>)
                     </h3>
 
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
                         <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
                             <span class="text-[10px] text-slate-500 uppercase block font-bold">District / Hub:</span>
-                            <span class="text-xs font-bold text-slate-900" id="brief-dist-meta">Lilongwe (Central)</span>
+                            <span class="text-xs font-bold text-slate-900" id="brief-dist-meta">Lilongwe
+                                (Central)</span>
                         </div>
                         <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
                             <span class="text-[10px] text-slate-500 uppercase block font-bold">Target Commodity:</span>
-                            <span class="text-xs font-bold text-emerald-800" id="brief-crop-meta">Maize (Chimanga)</span>
+                            <span class="text-xs font-bold text-emerald-800" id="brief-crop-meta">Maize
+                                (Chimanga)</span>
                         </div>
                         <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
-                            <span class="text-[10px] text-slate-500 uppercase block font-bold">Current Spot Price:</span>
-                            <span class="text-xs font-black text-slate-900 font-heading" id="brief-spot-meta">780 MWK/kg</span>
+                            <span class="text-[10px] text-slate-500 uppercase block font-bold">Current Spot
+                                Price:</span>
+                            <span class="text-xs font-black text-slate-900 font-heading" id="brief-spot-meta">780
+                                MWK/kg</span>
                         </div>
                         <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
                             <span class="text-[10px] text-slate-500 uppercase block font-bold">Standard 50kg Bag:</span>
-                            <span class="text-xs font-black text-emerald-700 font-heading" id="brief-bag-meta">39,000 MWK</span>
+                            <span class="text-xs font-black text-emerald-700 font-heading" id="brief-bag-meta">39,000
+                                MWK</span>
                         </div>
                     </div>
 
@@ -1214,20 +1462,30 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
                         <div class="p-4 rounded-xl border flex flex-col justify-center items-center text-center"
                             id="brief-decision-box" style="background-color: #ecfdf5; border-color: #a7f3d0;">
-                            <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">Recommended Action</span>
-                            <span class="text-2xl font-black font-heading mb-1" id="brief-decision-badge" style="color: #15803d;">HOLD & STORE</span>
-                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white text-slate-700" id="brief-decision-risk">Low Risk</span>
+                            <span
+                                class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">Recommended
+                                Action</span>
+                            <span class="text-2xl font-black font-heading mb-1" id="brief-decision-badge"
+                                style="color: #15803d;">HOLD & STORE</span>
+                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white text-slate-700"
+                                id="brief-decision-risk">Low Risk</span>
                         </div>
 
-                        <div class="md:col-span-2 p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1.5">
-                            <div class="font-bold text-slate-800 text-[11px] mb-1">Hermetic Storage Economics Breakdown (12-Week Horizon):</div>
+                        <div
+                            class="md:col-span-2 p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1.5">
+                            <div class="font-bold text-slate-800 text-[11px] mb-1">Hermetic Storage Economics Breakdown
+                                (12-Week Horizon):</div>
                             <div class="grid grid-cols-2 gap-2 text-[11px]">
-                                <div>Projected Seasonal Surge: <strong class="text-emerald-700" id="brief-surge-pct">+0.0%</strong></div>
+                                <div>Projected Seasonal Surge: <strong class="text-emerald-700"
+                                        id="brief-surge-pct">+0.0%</strong></div>
                                 <div>Carrying Overhead (2.5%/mo): <strong class="text-slate-600">-7.5%</strong></div>
-                                <div>Net Storage Return (% ROI): <strong class="text-slate-900" id="brief-net-roi">+0.0%</strong></div>
-                                <div>Net Profit per 50kg PICS Bag: <strong class="text-emerald-700" id="brief-bag-gain">+0 MWK</strong></div>
+                                <div>Net Storage Return (% ROI): <strong class="text-slate-900"
+                                        id="brief-net-roi">+0.0%</strong></div>
+                                <div>Net Profit per 50kg PICS Bag: <strong class="text-emerald-700"
+                                        id="brief-bag-gain">+0 MWK</strong></div>
                             </div>
-                            <p class="text-[10px] text-slate-500 pt-1 border-t border-slate-200 mt-1" id="brief-decision-summary">
+                            <p class="text-[10px] text-slate-500 pt-1 border-t border-slate-200 mt-1"
+                                id="brief-decision-summary">
                                 Summary rationale loading...
                             </p>
                         </div>
@@ -1257,21 +1515,26 @@
                         4. Inter-District Arbitrage & Market Recommendations (Where to Buy or Sell for Maximum Profit)
                     </h3>
 
-                    <div class="p-3 bg-emerald-900 text-white rounded-lg text-xs mb-3 flex flex-wrap justify-between items-center gap-2">
+                    <div
+                        class="p-3 bg-emerald-900 text-white rounded-lg text-xs mb-3 flex flex-wrap justify-between items-center gap-2">
                         <div>
-                            <span class="text-[10px] text-emerald-300 uppercase block font-semibold">Origin Sourcing Market:</span>
+                            <span class="text-[10px] text-emerald-300 uppercase block font-semibold">Origin Sourcing
+                                Market:</span>
                             <span class="font-bold text-sm" id="brief-sim-origin">Lilongwe</span>
                         </div>
                         <div>
-                            <span class="text-[10px] text-emerald-300 uppercase block font-semibold">Optimal Destination Market:</span>
+                            <span class="text-[10px] text-emerald-300 uppercase block font-semibold">Optimal Destination
+                                Market:</span>
                             <span class="font-bold text-sm text-emerald-200" id="brief-sim-dest">--</span>
                         </div>
                         <div>
-                            <span class="text-[10px] text-emerald-300 uppercase block font-semibold">Freight & Tariffs:</span>
+                            <span class="text-[10px] text-emerald-300 uppercase block font-semibold">Freight &
+                                Tariffs:</span>
                             <span class="font-bold text-sm" id="brief-sim-freight">--</span>
                         </div>
                         <div>
-                            <span class="text-[10px] text-emerald-300 uppercase block font-semibold">Simulated Net Profit (<span id="brief-sim-tonnage">5</span> MT Load):</span>
+                            <span class="text-[10px] text-emerald-300 uppercase block font-semibold">Simulated Net
+                                Profit (<span id="brief-sim-tonnage">5</span> MT Load):</span>
                             <span class="font-black text-sm text-emerald-300" id="brief-sim-profit">-- MWK</span>
                         </div>
                     </div>
@@ -1303,18 +1566,163 @@
                     <div class="grid grid-cols-2 gap-8 text-xs text-slate-600">
                         <div>
                             <div class="border-b border-slate-400 pb-8 mb-2"></div>
-                            <span class="font-bold text-slate-900 block">Lead Agricultural Market Intelligence Analyst</span>
-                            <span class="text-[11px] text-slate-500">AgriPrice Malawi Research & Forecasting Directorate</span>
+                            <span class="font-bold text-slate-900 block">Lead Agricultural Market Intelligence
+                                Analyst</span>
+                            <span class="text-[11px] text-slate-500">AgriPrice Malawi Research & Forecasting
+                                Directorate</span>
                         </div>
                         <div>
                             <div class="border-b border-slate-400 pb-8 mb-2"></div>
-                            <span class="font-bold text-slate-900 block">Supervisory Approval / Director of Marketing</span>
-                            <span class="text-[11px] text-slate-500">Ministry of Agriculture Decision Review Board</span>
+                            <span class="font-bold text-slate-900 block">Supervisory Approval / Director of
+                                Marketing</span>
+                            <span class="text-[11px] text-slate-500">Ministry of Agriculture Decision Review
+                                Board</span>
                         </div>
                     </div>
-                    <p class="text-[10px] text-slate-400 mt-4 text-center">
-                        Generated by AgriPrice Malawi Decision Support System • Powered by Machine Learning Time-Series & Cross-District Corridor Intelligence
+                    <!-- Updated Official System Footer as requested -->
+                    <p class="text-[10px] text-slate-500 mt-4 text-center font-medium">
+                        Generated by AgriPrice Malawi National Agricultural Market Intelligence System
                     </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Us Modal -->
+    <div id="about-modal-overlay"
+        class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs z-[9999] hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div
+            class="bg-white max-w-xl w-full rounded-3xl p-6 sm:p-8 text-slate-800 border border-slate-200 relative my-auto shadow-2xl">
+            <button onclick="closeAboutModal()"
+                class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 p-1.5 rounded-full hover:bg-slate-100 transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div class="space-y-4">
+                <div class="flex items-center space-x-3.5 border-b border-slate-200 pb-4">
+                    <img src="/static/images/logo.jpg" alt="Logo"
+                        class="w-12 h-12 rounded-2xl object-cover shadow-sm border border-slate-200">
+                    <div>
+                        <h2 class="text-xl font-black font-heading text-slate-900">About AgriPrice Malawi</h2>
+                        <p class="text-xs text-emerald-700 font-semibold">National Agricultural Market Intelligence
+                            System</p>
+                    </div>
+                </div>
+
+                <div class="text-xs text-slate-600 space-y-3 leading-relaxed">
+                    <p>
+                        <strong>AgriPrice Malawi</strong> is the sovereign decision-support platform engineered to
+                        transform grain marketing, storage economics, and food security planning across all 28 districts
+                        and key urban centers of Malawi.
+                    </p>
+                    <p>
+                        Specializing strictly in Malawi's core commodities—<strong>Maize (Chimanga)</strong>,
+                        <strong>Rice (Mpunga)</strong>, and <strong>Beans (Nyemba)</strong>—the platform fuses
+                        time-series econometric forecasting (Prophet + SARIMAX) with empirical ground data from the
+                        Ministry of Agriculture, FAMIS Malawi, and WFP VAM.
+                    </p>
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2">
+                        <strong class="text-slate-900 block font-bold">Key Objectives:</strong>
+                        <div class="flex items-start space-x-2">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 mt-0.5 shrink-0"></i>
+                            <span>Eliminate smallholder price distress selling during post-harvest gluts.</span>
+                        </div>
+                        <div class="flex items-start space-x-2">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 mt-0.5 shrink-0"></i>
+                            <span>Promote airtight hermetic PICS bag storage with quantified monthly ROI.</span>
+                        </div>
+                        <div class="flex items-start space-x-2">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 mt-0.5 shrink-0"></i>
+                            <span>Optimize inter-district transport freight corridors (M1 & M5 highways) for
+                                cooperatives and traders.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex justify-end">
+                    <button onclick="closeAboutModal()"
+                        class="bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-xl hover:bg-slate-800 transition-colors">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Us Modal -->
+    <div id="contact-modal-overlay"
+        class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs z-[9999] hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div
+            class="bg-white max-w-lg w-full rounded-3xl p-6 sm:p-8 text-slate-800 border border-slate-200 relative my-auto shadow-2xl">
+            <button onclick="closeContactModal()"
+                class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 p-1.5 rounded-full hover:bg-slate-100 transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div class="space-y-4">
+                <div class="flex items-center space-x-3.5 border-b border-slate-200 pb-4">
+                    <img src="/static/images/logo.jpg" alt="Logo"
+                        class="w-12 h-12 rounded-2xl object-cover shadow-sm border border-slate-200">
+                    <div>
+                        <h2 class="text-xl font-black font-heading text-slate-900">Contact AgriPrice Malawi</h2>
+                        <p class="text-xs text-emerald-700 font-semibold">Market Desk & Technical Directorate</p>
+                    </div>
+                </div>
+
+                <div class="space-y-3 text-xs">
+                    <div class="flex items-start space-x-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+                            <i data-lucide="map-pin" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <strong class="text-slate-900 block font-bold">Headquarters:</strong>
+                            <p class="text-slate-600">Capital Hill, Agricultural Development Division (ADD), Lilongwe 3,
+                                Malawi</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+                            <i data-lucide="mail" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <strong class="text-slate-900 block font-bold">Official Email:</strong>
+                            <p class="text-slate-600">info@agriprice.mw • marketdesk@agriprice.mw</p>
+                        </div>
+                    </div>
+
+                    <!-- Direct Instant Chat Links -->
+                    <div class="pt-2 space-y-2">
+                        <span class="font-bold text-slate-700 block">Direct Channels:</span>
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="https://wa.me/265991234567" target="_blank" rel="noopener noreferrer"
+                                class="flex items-center justify-center space-x-2 bg-[#25D366] hover:bg-[#20ba5a] text-white py-2.5 px-3 rounded-xl font-bold transition-transform hover:scale-102">
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                    <path
+                                        d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
+                                </svg>
+                                <span>WhatsApp Us</span>
+                            </a>
+
+                            <a href="https://facebook.com/AgriPriceMalawi" target="_blank" rel="noopener noreferrer"
+                                class="flex items-center justify-center space-x-2 bg-[#1877F2] hover:bg-[#166fe5] text-white py-2.5 px-3 rounded-xl font-bold transition-transform hover:scale-102">
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                    <path
+                                        d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                                </svg>
+                                <span>Facebook Page</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex justify-end">
+                    <button onclick="closeContactModal()"
+                        class="bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-xl hover:bg-slate-800 transition-colors">
+                        Close
+                    </button>
                 </div>
             </div>
         </div>
@@ -1323,8 +1731,10 @@
     <!-- Footer -->
     <footer class="bg-white border-t border-slate-200 py-6 mt-auto text-center text-xs text-slate-500">
         <div class="max-w-7xl mx-auto px-4">
-            <p class="font-medium text-slate-700">AgriPrice Malawi • National Agricultural Market Intelligence Platform</p>
-            <p class="mt-1 text-slate-500">Maize, Rice, and Beans Coverage across all 28 Districts and Cities • WFP VAM & FAMIS Ground Data</p>
+            <p class="font-medium text-slate-700">AgriPrice Malawi • National Agricultural Market Intelligence Platform
+            </p>
+            <p class="mt-1 text-slate-500">Maize, Rice, and Beans Coverage across all 28 Districts and Cities • WFP VAM
+                & FAMIS Ground Data</p>
         </div>
     </footer>
 
@@ -1352,50 +1762,37 @@
         let mapInstance = null;
         let mapMarkers = [];
 
-        // Carousel State for Hero Section
-        let carouselTimer = null;
-        let currentSlide = 1;
-
         // Initialization
         document.addEventListener('DOMContentLoaded', async () => {
             lucide.createIcons();
-            startHeroCarousel();
             initMap();
             await checkAuthStatus();
             await loadDistricts();
             await refreshAllData();
         });
 
-        // 5-Second Carousel Shuffler (Cone field vs Paddy rice)
-        function startHeroCarousel() {
-            if (carouselTimer) clearInterval(carouselTimer);
-            carouselTimer = setInterval(shuffleHeroBackground, 5000);
+        // Top Navigation Helpers
+        function goToHome() {
+            switchView('landing');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function shuffleHeroBackground() {
-            const slide1 = document.getElementById('hero-slide-1');
-            const slide2 = document.getElementById('hero-slide-2');
-            const dot1 = document.getElementById('carousel-dot-1');
-            const dot2 = document.getElementById('carousel-dot-2');
-            const title = document.getElementById('carousel-current-title');
+        function openAboutModal() {
+            document.getElementById('about-modal-overlay').classList.remove('hidden');
+            lucide.createIcons();
+        }
 
-            if (currentSlide === 1) {
-                // Switch to Paddy Rice
-                slide1.classList.remove('active');
-                slide2.classList.add('active');
-                dot1.className = 'w-2 h-2 rounded-full bg-white/40';
-                dot2.className = 'w-2 h-2 rounded-full bg-emerald-400';
-                title.textContent = 'Paddy Rice (Munda wa Mpunga)';
-                currentSlide = 2;
-            } else {
-                // Switch to Corn Field
-                slide2.classList.remove('active');
-                slide1.classList.add('active');
-                dot2.className = 'w-2 h-2 rounded-full bg-white/40';
-                dot1.className = 'w-2 h-2 rounded-full bg-emerald-400';
-                title.textContent = 'Corn Field (Munda wa Chimanga)';
-                currentSlide = 1;
-            }
+        function closeAboutModal() {
+            document.getElementById('about-modal-overlay').classList.add('hidden');
+        }
+
+        function openContactModal() {
+            document.getElementById('contact-modal-overlay').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeContactModal() {
+            document.getElementById('contact-modal-overlay').classList.add('hidden');
         }
 
         // View Switcher (Landing vs Dashboard)
@@ -1417,14 +1814,12 @@
                 btnDashboard.className = 'px-3.5 py-1.5 rounded-lg transition-all bg-white text-emerald-800 shadow-xs';
                 btnLanding.className = 'px-3.5 py-1.5 rounded-lg transition-all text-slate-600 hover:text-slate-900';
                 
-                // Ensure map renders properly after container is displayed
                 setTimeout(() => {
                     if (mapInstance) {
                         mapInstance.invalidateSize();
                     }
                 }, 150);
             }
-            window.scrollTo({ top: 380, behavior: 'smooth' });
         }
 
         function promptFeatureAccess(feature) {
@@ -1432,14 +1827,14 @@
                 openAuthModal('signup');
             } else {
                 switchView('dashboard');
+                window.scrollTo({ top: 400, behavior: 'smooth' });
             }
         }
 
-        // Initialize Leaflet Map locked strictly to Malawi (Zero watermarks, No API key)
+        // Initialize Leaflet Map locked strictly to Malawi
         function initMap() {
-            const malawiBounds = L.latLngBounds([
-                [-17.15, 32.65], // Southernmost tip: Nsanje
-                [-9.35, 35.95]   // Northernmost tip: Chitipa
+            const malawiBounds = L.latL           [-17.15, 32.65],
+                [-9.35, 35.95]
             ]);
 
             mapInstance = L.map('malawi-map', {
@@ -1451,13 +1846,11 @@
                 maxZoom: 12
             });
 
-            // 1. Esri World Street Map (Default: 100% free, NO API key required, zero watermarks)
             const esriStreet = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
                 maxZoom: 18,
                 attribution: 'Map &copy; Esri & Contributors'
             });
 
-            // 2. Esri World Topo Map (Topography, terrain contours, rivers & Lake Malawi)
             const esriTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
                 maxZoom: 18,
                 attribution: 'Map &copy; Esri Topo'
@@ -1472,7 +1865,6 @@
 
             mapInstance.fitBounds(malawiBounds, { padding: [15, 15] });
 
-            // National boundary outline of Malawi
             const malawiBoundaryCoords = [
                 [-9.37, 33.05], [-9.45, 33.25], [-9.60, 33.60], [-9.85, 33.85],
                 [-10.25, 34.20], [-10.80, 34.30], [-11.50, 34.40], [-12.20, 34.50],
@@ -1501,7 +1893,6 @@
             }, 300);
         }
 
-        // Fetch District Registry from API
         async function loadDistricts() {
             try {
                 const res = await fetch('/api/districts/');
@@ -1513,7 +1904,6 @@
             }
         }
 
-        // Plot districts onto Leaflet Map (With enhanced Mzuzu highlighting)
         function plotMapMarkers() {
             if (!mapInstance || !state.districts.length) return;
 
@@ -1532,7 +1922,6 @@
                     markerColor = '#dc2626'; // Red (Deficit/Premium)
                 }
 
-                // If selected, apply distinct highlight styling
                 const marker = L.circleMarker([d.lat, d.lon], {
                     radius: isSelected ? 13 : 8,
                     fillColor: isSelected ? '#047857' : markerColor,
@@ -1542,7 +1931,7 @@
                     fillOpacity: isSelected ? 0.95 : 0.85
                 }).addTo(mapInstance);
 
-                // Immediate click selection
+                // Immediate click selection that navigates straight to projection details
                 marker.on('click', () => {
                     selectDistrictFromMap(d.id);
                 });
@@ -1561,7 +1950,7 @@
                             <strong>Market Profile:</strong><br/>${d.market_type || 'Agricultural Market Center'}
                         </div>
                         <button onclick="selectDistrictFromMap('${d.id}')" style="width: 100%; background: #047857; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; transition: background 0.2s;">
-                            Select & Analyze
+                            Analyze Projections
                         </button>
                     </div>
                 `);
@@ -1573,13 +1962,13 @@
                 mapMarkers.push(marker);
             });
 
-            // Pan to selected district smoothly
             const active = state.districts.find(d => d.id === state.currentDistrict);
             if (active && mapInstance) {
-                mapInstance.flyTo([active.lat, active.lon], 9, { duration: 1.0 });
+                mapInstance.flyTo([active.lat, active.lon], 9, { duration: 0.9 });
             }
         }
 
+        // Tap on district: Updates data, activates dashboard, and scrolls directly to projection details
         function selectDistrictFromMap(distId) {
             state.currentDistrict = distId;
             const selectEl = document.getElementById('district-select');
@@ -1588,9 +1977,19 @@
             }
             plotMapMarkers();
             refreshAllData();
-            if (state.currentView === 'landing') {
+
+            // Always switch to dashboard view so user sees analytics immediately
+            if (state.currentView !== 'dashboard') {
                 switchView('dashboard');
             }
+
+            // Smoothly scroll to the top of the analytics & projection section
+            setTimeout(() => {
+                const target = document.getElementById('dashboard-analytics-top') || document.getElementById('chart-main-title');
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100);
         }
 
         // Refresh all dashboard sections
@@ -2055,7 +2454,7 @@
             fetchTopArbitrage();
         }
 
-        // Authentication & Subscription Modal Logic
+        // Authentication & Subscription Modal Logic (Light Gray Styling)
         function openAuthModal(mode = 'signup') {
             setAuthMode(mode);
             document.getElementById('auth-modal-overlay').classList.remove('hidden');
@@ -2079,27 +2478,27 @@
             const identifierLabel = document.getElementById('auth-identifier-label');
 
             [tabSignup, tabSignin, tabForgot].forEach(t => {
-                t.className = 'py-2 rounded-lg transition-all text-emerald-200 hover:text-white';
+                t.className = 'py-2 rounded-lg transition-all text-slate-600 hover:text-slate-900';
             });
 
             if (mode === 'signup') {
-                tabSignup.className = 'py-2 rounded-lg transition-all bg-emerald-600 text-white shadow-sm';
+                tabSignup.className = 'py-2 rounded-lg transition-all bg-emerald-700 text-white shadow-sm';
                 mainForm.classList.remove('hidden');
                 forgotForm.classList.add('hidden');
                 nameGroup.classList.remove('hidden');
                 extraGroup.classList.remove('hidden');
-                identifierLabel.innerHTML = 'Phone Number or Email (Lamya kapena Imelo) <span class="text-emerald-400">*</span>';
+                identifierLabel.innerHTML = 'Phone Number or Email (Lamya kapena Imelo) <span class="text-emerald-700">*</span>';
                 submitLabel.textContent = 'Subscribe & Create Account';
             } else if (mode === 'signin') {
-                tabSignin.className = 'py-2 rounded-lg transition-all bg-emerald-600 text-white shadow-sm';
+                tabSignin.className = 'py-2 rounded-lg transition-all bg-emerald-700 text-white shadow-sm';
                 mainForm.classList.remove('hidden');
                 forgotForm.classList.add('hidden');
                 nameGroup.classList.add('hidden');
                 extraGroup.classList.add('hidden');
-                identifierLabel.innerHTML = 'Phone Number or Email (Lamya kapena Imelo) <span class="text-emerald-400">*</span>';
+                identifierLabel.innerHTML = 'Phone Number or Email (Lamya kapena Imelo) <span class="text-emerald-700">*</span>';
                 submitLabel.textContent = 'Sign In to AgriPrice (Lowani)';
             } else { // forgot
-                tabForgot.className = 'py-2 rounded-lg transition-all bg-emerald-600 text-white shadow-sm';
+                tabForgot.className = 'py-2 rounded-lg transition-all bg-emerald-700 text-white shadow-sm';
                 mainForm.classList.add('hidden');
                 forgotForm.classList.remove('hidden');
                 document.getElementById('forgot-step-2').classList.add('hidden');
@@ -2140,7 +2539,7 @@
                 if (res.ok) {
                     state.currentUser = data.subscriber;
                     renderUserNav(data.subscriber);
-                    statusMsg.className = 'text-xs p-3 rounded-xl bg-emerald-600/40 text-emerald-100 border border-emerald-400/40';
+                   statusMsg.className = 'text-xs p-3 rounded-xl bg-emerald-100 text-emerald-900 border border-emerald-300';
                     statusMsg.textContent = data.message || 'Success! Welcome to AgriPrice Malawi.';
                     statusMsg.classList.remove('hidden');
 
@@ -2149,13 +2548,13 @@
                         switchView('dashboard');
                     }, 1400);
                 } else {
-                    statusMsg.className = 'text-xs p-3 rounded-xl bg-red-600/40 text-red-100 border border-red-400/40';
+                    statusMsg.className = 'text-xs p-3 rounded-xl bg-red-100 text-red-900 border border-red-300';
                     statusMsg.textContent = data.error || 'Authentication failed. Please check your credentials.';
                     statusMsg.classList.remove('hidden');
                 }
             } catch (err) {
                 console.error("Auth error:", err);
-                statusMsg.className = 'text-xs p-3 rounded-xl bg-red-600/40 text-red-100 border border-red-400/40';
+                statusMsg.className = 'text-xs p-3 rounded-xl bg-red-100 text-red-900 border border-red-300';
                 statusMsg.textContent = 'Network connection error. Please try again.';
                 statusMsg.classList.remove('hidden');
             } finally {
@@ -2175,7 +2574,6 @@
 
             submitBtn.disabled = true;
 
-            // If Step 2 is not yet visible, we are requesting the code
             if (step2Container.classList.contains('hidden')) {
                 try {
                     const res = await fetch('/api/auth/forgot-pin/', {
@@ -2188,26 +2586,25 @@
                         state.forgotIdentifier = identifier;
                         step2Container.classList.remove('hidden');
                         document.getElementById('forgot-submit-label').textContent = 'Verify Code & Set New PIN';
-                        statusMsg.className = 'text-xs p-3 rounded-xl bg-emerald-600/40 text-emerald-100 border border-emerald-400/40';
-                        statusMsg.innerHTML = `<strong>Code Sent!</strong> ${data.message} ${data.verification_code ? `<br/><span class="font-mono bg-black/40 px-2 py-0.5 rounded text-amber-300">Test Code: ${data.verification_code}</span>` : ''}`;
+                        statusMsg.className = 'text-xs p-3 rounded-xl bg-emerald-100 text-emerald-900 border border-emerald-300';
+                        statusMsg.innerHTML = `<strong>Code Sent!</strong> ${data.message} ${data.verification_code ? `<br/><span class="font-mono bg-slate-200 px-2 py-0.5 rounded text-emerald-800 font-bold">Verification Code: ${data.verification_code}</span>` : ''}`;
                         statusMsg.classList.remove('hidden');
                         if (data.verification_code) {
                             codeInput.value = data.verification_code;
                         }
                     } else {
-                        statusMsg.className = 'text-xs p-3 rounded-xl bg-red-600/40 text-red-100 border border-red-400/40';
+                        statusMsg.className = 'text-xs p-3 rounded-xl bg-red-100 text-red-900 border border-red-300';
                         statusMsg.textContent = data.error || 'Failed to request reset code.';
                         statusMsg.classList.remove('hidden');
                     }
                 } catch (err) {
-                    statusMsg.className = 'text-xs p-3 rounded-xl bg-red-600/40 text-red-100 border border-red-400/40';
+                    statusMsg.className = 'text-xs p-3 rounded-xl bg-red-100 text-red-900 border border-red-300';
                     statusMsg.textContent = 'Network error while requesting code.';
                     statusMsg.classList.remove('hidden');
                 } finally {
                     submitBtn.disabled = false;
                 }
             } else {
-                // Step 2: Submit Code and New PIN
                 const code = codeInput.value.trim();
                 const newPin = newPinInput.value.trim();
 
@@ -2225,7 +2622,7 @@
                     if (res.ok) {
                         state.currentUser = data.subscriber;
                         renderUserNav(data.subscriber);
-                        statusMsg.className = 'text-xs p-3 rounded-xl bg-emerald-600/40 text-emerald-100 border border-emerald-400/40';
+                        statusMsg.className = 'text-xs p-3 rounded-xl bg-emerald-100 text-emerald-900 border border-emerald-300';
                         statusMsg.textContent = data.message || 'PIN successfully updated! Signing you in...';
                         statusMsg.classList.remove('hidden');
 
@@ -2234,12 +2631,12 @@
                             switchView('dashboard');
                         }, 1400);
                     } else {
-                        statusMsg.className = 'text-xs p-3 rounded-xl bg-red-600/40 text-red-100 border border-red-400/40';
+                        statusMsg.className = 'text-xs p-3 rounded-xl bg-red-100 text-red-900 border border-red-300';
                         statusMsg.textContent = data.error || 'Failed to reset PIN.';
                         statusMsg.classList.remove('hidden');
                     }
                 } catch (err) {
-                    statusMsg.className = 'text-xs p-3 rounded-xl bg-red-600/40 text-red-100 border border-red-400/40';
+                    statusMsg.className = 'text-xs p-3 rounded-xl bg-red-100 text-red-900 border border-red-300';
                     statusMsg.textContent = 'Network error during PIN reset.';
                     statusMsg.classList.remove('hidden');
                 } finally {
@@ -2264,7 +2661,6 @@
         function renderUserNav(user) {
             const container = document.getElementById('user-nav-container');
             if (user) {
-                const contactDisplay = user.phone || user.email || user.full_name;
                 container.innerHTML = `
                     <div class="flex items-center space-x-2">
                         <div class="hidden sm:flex items-center space-x-2 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-xl text-xs">
@@ -2463,6 +2859,8 @@
             if (e.key === 'Escape') {
                 closeSupervisorBriefModal();
                 closeAuthModal();
+                closeAboutModal();
+                closeContactModal();
             }
         });
     </script>
