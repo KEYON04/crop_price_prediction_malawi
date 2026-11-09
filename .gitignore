@@ -23,3 +23,5 @@ data/raw/*.csv
 # Jupyter checkpoints
 *.ipynb_checkpoints
 
+# Production static collected files
+backend/staticfiles/
